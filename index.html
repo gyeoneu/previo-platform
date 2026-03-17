@@ -528,6 +528,73 @@ body {
 .quick-card .desc { font-size: .65rem; color: var(--muted); margin-top: 3px; }
 
 /* 준비중 페이지 */
+.locked-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 500px;
+  text-align: center;
+  padding: 40px 20px;
+}
+.locked-previ {
+  font-size: 5rem;
+  margin-bottom: 16px;
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+.locked-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.8rem;
+  color: var(--white);
+  margin-bottom: 8px;
+  letter-spacing: 2px;
+}
+.locked-desc {
+  font-size: .85rem;
+  color: var(--muted);
+  margin-bottom: 28px;
+  line-height: 1.8;
+  max-width: 400px;
+}
+.locked-btn {
+  background: linear-gradient(135deg, #C9A84C, #e8c46a);
+  border: none;
+  border-radius: 10px;
+  padding: 14px 36px;
+  color: #0D1B3E;
+  font-size: .95rem;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: all .2s;
+  box-shadow: 0 4px 20px rgba(201,168,76,.3);
+}
+.locked-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(201,168,76,.5);
+}
+.locked-features {
+  display: flex;
+  gap: 16px;
+  margin-top: 32px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.locked-feature-item {
+  background: rgba(255,255,255,.04);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 18px;
+  font-size: .75rem;
+  color: var(--muted);
+  text-align: center;
+  min-width: 100px;
+}
+.locked-feature-item .fi-icon { font-size: 1.4rem; margin-bottom: 6px; }
 .coming-soon {
   display: flex;
   flex-direction: column;
@@ -5970,9 +6037,33 @@ function doLogout() {
 }
 
 // 페이지 전환
+// 권한별 접근 가능 페이지 정의
+const PAGE_PERMISSIONS = {
+  demo:    ['dashboard','chat','compare','scoring-guide'],
+  field:   ['dashboard','chat','equipment','score','as','error','checklist','compare','events','scoring-guide'],
+  manager: ['dashboard','chat','equipment','score','as','error','checklist','schedule','report','parts','dms','compare','events','scoring-guide'],
+  client:  ['dashboard','chat','score','report','compare'],
+  admin:   ['dashboard','chat','equipment','score','as','error','checklist','schedule','report','parts','dms','compare','events','scoring-guide','sites','users'],
+};
+
 function showPage(name, skipHistory) {
+  const role = window.currentRole || 'demo';
+  const allowed = PAGE_PERMISSIONS[role] || PAGE_PERMISSIONS['demo'];
+
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+
+  // 권한 없으면 잠금 화면 표시
+  if (!allowed.includes(name)) {
+    const el = document.getElementById('page-dashboard');
+    if (el) {
+      el.classList.add('active');
+      const dc = document.getElementById('dashboard-content');
+      if (dc) dc.innerHTML = renderLockedPage(name);
+    }
+    return;
+  }
+
   const el = document.getElementById('page-' + name);
   if (el) el.classList.add('active');
   // 현재 페이지 사이드바 아이템 active 표시
@@ -7597,10 +7688,10 @@ function renderDashboard() {
 
   // 권한별 상단 배너
   const roleBanner = {
-    'demo':    '<div style="background:rgba(212,175,95,.1);border:1px solid rgba(212,175,95,.3);border-radius:8px;padding:10px 16px;margin-bottom:16px;font-size:.78rem;color:var(--accent-yellow)">👀 체험 모드 — 실제 데이터를 조회할 수 있습니다. 도입 문의: celsius.anue@gmail.com</div>',
-    'field':   '<div style="background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);border-radius:8px;padding:10px 16px;margin-bottom:16px;font-size:.78rem;color:var(--accent-blue)">🔧 현장기사 모드 — 오늘 할 일을 확인하세요.</div>',
-    'manager': '<div style="background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);border-radius:8px;padding:10px 16px;margin-bottom:16px;font-size:.78rem;color:var(--accent-green)">⚙️ 관리자 모드 — 전체 현황을 관리합니다.</div>',
-    'admin':   '<div style="background:rgba(168,85,247,.08);border:1px solid rgba(168,85,247,.2);border-radius:8px;padding:10px 16px;margin-bottom:16px;font-size:.78rem;color:#a855f7">👑 운영자 모드 — 전체 시스템을 관리합니다.</div>',
+    'demo':    '<div style="background:rgba(201,168,76,.15);border:1px solid rgba(201,168,76,.5);border-radius:10px;padding:12px 18px;margin-bottom:20px;font-size:.82rem;color:#e8c46a;font-weight:600">👀 체험 모드 — 실제 현장 데이터를 조회 중입니다. &nbsp;|&nbsp; 도입 문의: celsius.anue@gmail.com &nbsp; 📞 010.3966.9691</div>',
+    'field':   '<div style="background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.4);border-radius:10px;padding:12px 18px;margin-bottom:20px;font-size:.82rem;color:#60a5fa;font-weight:600">🔧 현장기사 모드 — 오늘 할 일을 확인하세요.</div>',
+    'manager': '<div style="background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.4);border-radius:10px;padding:12px 18px;margin-bottom:20px;font-size:.82rem;color:#34d399;font-weight:600">⚙️ 관리자 모드 — 전체 현황을 관리합니다.</div>',
+    'admin':   '<div style="background:rgba(168,85,247,.12);border:1px solid rgba(168,85,247,.4);border-radius:10px;padding:12px 18px;margin-bottom:20px;font-size:.82rem;color:#c084fc;font-weight:600">👑 운영자 모드 — 전체 시스템을 관리합니다.</div>',
   }[role] || '';
 
   return `
@@ -7930,6 +8021,63 @@ function renderDashboardClient() {
     </div>
   `;
 }
+
+// ════ 잠금 화면 ════
+function renderLockedPage(pageName) {
+  const pageNames = {
+    equipment: '장비 관리', score: '건강점수', as: 'AS 관리',
+    error: '에러코드 진단', checklist: '설치 체크리스트',
+    schedule: '점검 일정', report: '점검 보고서', parts: '부품 관리',
+    dms: 'DMS 관리', sites: '건물 관리', users: '사용자 관리',
+    events: '이벤트코드 룰', compare: '전력 분석',
+  };
+  const name = pageNames[pageName] || pageName;
+
+  return `
+    <div class="locked-page">
+      <div class="locked-previ">🌡️</div>
+      <div class="locked-title">🔒 ${name}</div>
+      <div class="locked-desc">
+        이 기능은 Previo 도입 고객에게 제공됩니다.<br>
+        지금 체험 중인 내용이 마음에 드셨나요?<br>
+        <strong style="color:var(--gold)">도입 문의를 남겨주시면 바로 연락드립니다.</strong>
+      </div>
+      <button class="locked-btn" onclick="window.location.href='mailto:celsius.anue@gmail.com?subject=Previo 도입 문의&body=안녕하세요, Previo 플랫폼 도입에 관심이 있습니다.'">
+        📩 도입 문의하기
+      </button>
+      <div class="locked-features">
+        <div class="locked-feature-item">
+          <div class="fi-icon">🌀</div>
+          장비 관리
+        </div>
+        <div class="locked-feature-item">
+          <div class="fi-icon">🏥</div>
+          건강점수
+        </div>
+        <div class="locked-feature-item">
+          <div class="fi-icon">🚨</div>
+          AS 관리
+        </div>
+        <div class="locked-feature-item">
+          <div class="fi-icon">📋</div>
+          점검 보고서
+        </div>
+        <div class="locked-feature-item">
+          <div class="fi-icon">📦</div>
+          부품 관리
+        </div>
+        <div class="locked-feature-item">
+          <div class="fi-icon">⚡</div>
+          전력 분석
+        </div>
+      </div>
+      <div style="margin-top:24px;font-size:.72rem;color:var(--muted)">
+        📞 010.3966.9691 &nbsp;|&nbsp; ✉️ celsius.anue@gmail.com
+      </div>
+    </div>
+  `;
+}
+
 
 function loadDashboard() {
   const el = document.getElementById('dashboard-content');
