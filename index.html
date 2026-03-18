@@ -6847,6 +6847,50 @@ const PAGE_PERMISSIONS = {
   admin:   ['dashboard','chat','equipment','score','as','error','checklist','schedule','report','parts','dms','compare','events','scoring-guide','sites','users'],
 };
 
+// ════ 온보딩 ════
+let obCurrentSlide = 1;
+const OB_TOTAL = 6;
+
+function showOnboarding() {
+  const screen = document.getElementById('onboarding-screen');
+  if (screen) { screen.style.display = 'flex'; screen.style.opacity = '1'; }
+  goToSlide(1);
+}
+
+function goToSlide(n) {
+  document.querySelectorAll('.ob-slide').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.ob-dot').forEach(d => d.classList.remove('active'));
+  obCurrentSlide = n;
+  const slide = document.getElementById('ob-slide-' + n);
+  if (slide) slide.classList.add('active');
+  const dots = document.querySelectorAll('.ob-dot');
+  if (dots[n-1]) dots[n-1].classList.add('active');
+  const bar = document.getElementById('ob-bar');
+  if (bar) bar.style.width = (n / OB_TOTAL * 100) + '%';
+  const btn = document.getElementById('ob-next-btn');
+  if (btn) btn.textContent = n === OB_TOTAL ? '시작하기 →' : '다음 →';
+}
+
+function nextSlide() {
+  if (obCurrentSlide < OB_TOTAL) goToSlide(obCurrentSlide + 1);
+  else skipOnboarding();
+}
+
+function skipOnboarding() {
+  const screen = document.getElementById('onboarding-screen');
+  if (screen) {
+    screen.style.transition = 'opacity .3s';
+    screen.style.opacity = '0';
+    setTimeout(() => { screen.style.display = 'none'; screen.style.opacity = '1'; }, 300);
+  }
+  setTimeout(() => {
+    const html = renderDashboard();
+    const el = document.getElementById('dashboard-content');
+    if (el && html) el.innerHTML = html;
+  }, 100);
+}
+
+
 function showPage(name, skipHistory) {
   const role = window.currentRole || 'demo';
   const allowed = PAGE_PERMISSIONS[role] || PAGE_PERMISSIONS['demo'];
