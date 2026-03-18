@@ -4463,20 +4463,29 @@ body {
           <div style="font-size:.68rem;color:var(--muted);margin-bottom:4px">접수 내용</div>
           <textarea id="as-content" style="width:100%;background:var(--card);border:1px solid var(--border);border-radius:6px;padding:8px 10px;color:var(--white);font-size:.82rem;resize:vertical;min-height:80px" placeholder="증상 및 요청 내용을 입력하세요..."></textarea>
         </div>
-        <button onclick="submitAS()" style="background:linear-gradient(135deg,var(--red),#c0392b);border:none;border-radius:8px;padding:10px 28px;color:#fff;font-size:.82rem;cursor:pointer;font-weight:600">🚨 접수하기</button>
+        <div style="display:flex;gap:12px;align-items:center">
+          <div>
+            <div style="font-size:.68rem;color:var(--muted);margin-bottom:4px">우선순위</div>
+            <select id="as-priority" style="background:var(--card);border:1px solid var(--border);border-radius:6px;padding:8px 10px;color:var(--white);font-size:.82rem">
+              <option value="normal">일반</option>
+              <option value="high">🔴 긴급</option>
+            </select>
+          </div>
+          <button onclick="asSubmit()" style="margin-top:18px;background:linear-gradient(135deg,#e24b4a,#c0392b);border:none;border-radius:8px;padding:10px 28px;color:#fff;font-size:.82rem;cursor:pointer;font-weight:600">🚨 접수하기</button>
+        </div>
       </div>
 
       <!-- AS 목록 -->
       <div style="background:var(--panel);border:1px solid var(--border);border-radius:12px;overflow:hidden">
         <!-- 필터 탭 -->
         <div style="display:flex;border-bottom:1px solid var(--border)">
-          <div id="as-tab-all" onclick="filterAS('all',this)" style="padding:12px 20px;font-size:.78rem;cursor:pointer;border-bottom:2px solid var(--red);color:var(--white)">전체</div>
-          <div id="as-tab-emergency" onclick="filterAS('emergency',this)" style="padding:12px 20px;font-size:.78rem;cursor:pointer;border-bottom:2px solid transparent;color:var(--muted)">🚨 긴급</div>
-          <div id="as-tab-progress" onclick="filterAS('progress',this)" style="padding:12px 20px;font-size:.78rem;cursor:pointer;border-bottom:2px solid transparent;color:var(--muted)">🔧 처리중</div>
-          <div id="as-tab-done" onclick="filterAS('done',this)" style="padding:12px 20px;font-size:.78rem;cursor:pointer;border-bottom:2px solid transparent;color:var(--muted)">✅ 완료</div>
-          <div style="margin-left:auto;display:flex;align-items:center;padding:0 16px;font-size:.68rem;color:var(--muted)" id="as-count">로드 중...</div>
+          <div class="as-filter-btn" onclick="asSetFilter('all',this)" style="padding:12px 20px;font-size:.78rem;cursor:pointer;border-bottom:2px solid var(--accent-red);color:var(--white);background:transparent">전체</div>
+          <div class="as-filter-btn" onclick="asSetFilter('emergency',this)" style="padding:12px 20px;font-size:.78rem;cursor:pointer;border-bottom:2px solid transparent;color:var(--muted);background:transparent">🚨 긴급</div>
+          <div class="as-filter-btn" onclick="asSetFilter('progress',this)" style="padding:12px 20px;font-size:.78rem;cursor:pointer;border-bottom:2px solid transparent;color:var(--muted);background:transparent">🔧 처리중</div>
+          <div class="as-filter-btn" onclick="asSetFilter('done',this)" style="padding:12px 20px;font-size:.78rem;cursor:pointer;border-bottom:2px solid transparent;color:var(--muted);background:transparent">✅ 완료</div>
+          <div style="margin-left:auto;display:flex;align-items:center;padding:0 16px;font-size:.68rem;color:var(--muted)" id="as-count"></div>
         </div>
-        <div id="as-list" style="min-height:200px"></div>
+        <div id="as-list" style="min-height:200px;padding:12px"></div>
       </div>
     </div>
     <div class="page" id="page-dms">
@@ -6542,6 +6551,47 @@ async function sbFetch(path) {
   return res.json();
 }
 
+async function sbPost(table, data) {
+  const res = await fetch(SUPABASE_URL + '/rest/v1/' + table, {
+    method: 'POST',
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'Authorization': 'Bearer ' + SUPABASE_KEY,
+      'Content-Type': 'application/json',
+      'Prefer': 'return=representation'
+    },
+    body: JSON.stringify(data)
+  });
+  if (!res.ok) { const e = await res.text(); throw new Error('등록 실패: ' + e); }
+  return res.json();
+}
+
+async function sbPatch(table, id, data) {
+  const res = await fetch(SUPABASE_URL + '/rest/v1/' + table + '?id=eq.' + id, {
+    method: 'PATCH',
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'Authorization': 'Bearer ' + SUPABASE_KEY,
+      'Content-Type': 'application/json',
+      'Prefer': 'return=representation'
+    },
+    body: JSON.stringify(data)
+  });
+  if (!res.ok) { const e = await res.text(); throw new Error('수정 실패: ' + e); }
+  return res.json();
+}
+
+async function sbDelete(table, id) {
+  const res = await fetch(SUPABASE_URL + '/rest/v1/' + table + '?id=eq.' + id, {
+    method: 'DELETE',
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'Authorization': 'Bearer ' + SUPABASE_KEY,
+    }
+  });
+  if (!res.ok) throw new Error('삭제 실패');
+}
+
 async function loadSystemsFromDB() {
   try {
     const data = await sbFetch('hvac_systems?select=system_id,system_code,system_name,dms_number,current_score,score_grade&order=current_score.asc');
@@ -6681,6 +6731,11 @@ function doLogin() {
     showOnboarding();
   } else {
     showPage('dashboard');
+    setTimeout(() => {
+      const html = renderDashboard();
+      const el = document.getElementById('dashboard-content');
+      if (el && html) el.innerHTML = html;
+    }, 100);
   }
   updateTime();
   setInterval(updateTime, 1000);
@@ -6729,8 +6784,12 @@ function showPage(name, skipHistory) {
       i.classList.add('active');
     }
   });
-  if (name === 'dashboard') setTimeout(() => loadDashboard(), 50);
-  if (name === 'as') renderAS();
+  if (name === 'dashboard') setTimeout(() => {
+    const html = renderDashboard();
+    const el = document.getElementById('dashboard-content');
+    if (el && html) el.innerHTML = html;
+  }, 50);
+  if (name === 'as') loadAS();
   if (name === 'compare') { setTimeout(function(){ renderCompareCharts(); }, 100); }
   if (name === 'score') loadSystemsFromDB();
   if (name === 'parts') loadPartsFromDB();
@@ -8644,14 +8703,14 @@ function renderPowerTable() {
 }
 
 
-// ════ AS 관리 ════
-var asData = [
-  { id:'AS-2603-001', type:'emergency', system:'DMS-101', content:'사무실B 3층 전체 냉방 불량 — DMS 알람 반복 발생', engineer:'아느', status:'progress', date:'2026-03-16', priority:'high' },
-  { id:'AS-2603-002', type:'complaint', system:'DMS-102', content:'301호 냉방 불량 민원 — 냉매 압력 저하 의심', engineer:'아느', status:'done', date:'2026-03-15', priority:'normal' },
-  { id:'AS-2603-003', type:'repair', system:'DMS-100', content:'실외기 11.03 팬 소음 심화 — 현장 확인 요청', engineer:'', status:'pending', date:'2026-03-14', priority:'normal' },
-  { id:'AS-2603-004', type:'emergency', system:'DMS-101', content:'PCB 통신 이상 — COM-04 에러 반복', engineer:'아느', status:'done', date:'2026-03-08', priority:'high' },
-];
+// ════ AS 관리 (Supabase 연동) ════
 var asFilter = 'all';
+var asData = []; // Supabase에서 로드
+
+// complaints 테이블 컬럼:
+// id, type(emergency/complaint/repair/consult), system(DMS-100/101/102),
+// content, engineer, status(pending/progress/done), priority(high/normal),
+// created_at, updated_at, site_id
 
 function asTypeLabel(t) {
   return { emergency:'🚨 긴급', complaint:'📢 민원', repair:'🔧 수리', consult:'💬 문의' }[t] || t;
@@ -8660,316 +8719,178 @@ function asStatusLabel(s) {
   return { pending:'⏳ 대기', progress:'🔧 처리중', done:'✅ 완료' }[s] || s;
 }
 function asStatusColor(s) {
-  return { pending:'var(--yellow)', progress:'var(--orange)', done:'var(--green)' }[s] || 'var(--muted)';
-}
-function asPriorityColor(p) {
-  return p === 'high' ? 'var(--red)' : 'var(--muted)';
+  return { pending:'var(--accent-yellow)', progress:'var(--accent-blue)', done:'var(--accent-green)' }[s] || 'var(--muted)';
 }
 
+// ── Supabase 로드 ──
+async function loadAS() {
+  try {
+    const data = await sbFetch('complaints?order=created_at.desc&limit=50');
+    asData = data || [];
+    renderAS();
+  } catch(e) {
+    console.warn('AS 로드 실패 (로컬 데이터 사용):', e.message);
+    // 로컬 fallback
+    if (asData.length === 0) {
+      asData = [
+        { id:1, type:'emergency', system:'DMS-101', content:'사무실B 3층 전체 냉방 불량 — DMS 알람 반복 발생', engineer:'강형직', status:'progress', priority:'high', created_at:'2026-03-16' },
+        { id:2, type:'complaint', system:'DMS-102', content:'301호 냉방 불량 민원 — 냉매 압력 저하 의심', engineer:'강형직', status:'done', priority:'normal', created_at:'2026-03-15' },
+        { id:3, type:'repair', system:'DMS-100', content:'실외기 11.03 팬 소음 심화 — 현장 확인 요청', engineer:'', status:'pending', priority:'normal', created_at:'2026-03-14' },
+        { id:4, type:'emergency', system:'DMS-101', content:'PCB 통신 이상 — COM-04 에러 반복', engineer:'강형직', status:'done', priority:'high', created_at:'2026-03-08' },
+      ];
+    }
+    renderAS();
+  }
+}
+
+// ── 렌더링 ──
 function renderAS() {
   const list = document.getElementById('as-list');
-  const cnt  = document.getElementById('as-count');
   if (!list) return;
 
-  let filtered = asFilter === 'all' ? asData
-    : asFilter === 'progress' ? asData.filter(a => a.status === 'progress')
-    : asFilter === 'done' ? asData.filter(a => a.status === 'done')
-    : asFilter === 'emergency' ? asData.filter(a => a.type === 'emergency')
-    : asData;
+  let filtered = asData;
+  if (asFilter === 'pending')   filtered = asData.filter(a => a.status === 'pending');
+  else if (asFilter === 'progress') filtered = asData.filter(a => a.status === 'progress');
+  else if (asFilter === 'done') filtered = asData.filter(a => a.status === 'done');
+  else if (asFilter === 'emergency') filtered = asData.filter(a => a.type === 'emergency');
 
-  // 요약 카드 업데이트
   const setEl = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
   setEl('as-urgent',   asData.filter(a => a.type === 'emergency' && a.status !== 'done').length);
   setEl('as-progress', asData.filter(a => a.status === 'progress').length);
   setEl('as-done',     asData.filter(a => a.status === 'done').length);
   setEl('as-total',    asData.length);
-  if(cnt) cnt.textContent = filtered.length + '건';
 
-  if(filtered.length === 0) {
-    list.innerHTML = '<div style="text-align:center;padding:40px;color:var(--muted);font-size:.82rem">접수된 AS가 없습니다</div>';
+  if (filtered.length === 0) {
+    list.innerHTML = '<div style="padding:40px;text-align:center;color:var(--muted)">해당 항목 없음</div>';
     return;
   }
 
-  list.innerHTML = filtered.map(a => `
-    <div style="padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.04);display:flex;align-items:flex-start;gap:14px">
-      <div style="min-width:80px;font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--muted);margin-top:2px">${a.date}</div>
-      <div style="flex:1">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
-          <span style="font-size:.72rem;color:${asPriorityColor(a.priority)}">${asTypeLabel(a.type)}</span>
-          <span style="font-size:.68rem;color:var(--muted);font-family:'JetBrains Mono',monospace">${a.system}</span>
-          <span style="font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--muted)">${a.id}</span>
-        </div>
-        <div style="font-size:.85rem;font-weight:600;margin-bottom:4px">${a.content}</div>
-        <div style="font-size:.7rem;color:var(--muted)">담당: ${a.engineer || '미배정'}</div>
-      </div>
-      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
-        <span style="font-size:.72rem;color:${asStatusColor(a.status)};padding:3px 10px;border-radius:12px;border:1px solid ${asStatusColor(a.status)}44;background:${asStatusColor(a.status)}11">${asStatusLabel(a.status)}</span>
-        ${a.status !== 'done' ? `<button onclick="completeAS('${a.id}')" style="font-size:.65rem;padding:4px 10px;background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3);color:var(--green);border-radius:6px;cursor:pointer">완료 처리</button>` : ''}
-      </div>
-    </div>
-  `).join('');
+  list.innerHTML = filtered.map(a => {
+    const dateStr = (a.created_at || '').substring(0, 10);
+    const isHigh = a.priority === 'high';
+    return '<div class="card" style="padding:16px 20px;margin-bottom:10px;border-left:3px solid '+(isHigh?'var(--accent-red)':'var(--border)')+';">'
+      + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">'
+      +   '<div style="display:flex;gap:8px;align-items:center">'
+      +     '<span style="font-size:.72rem;padding:3px 10px;border-radius:12px;background:rgba(255,255,255,.08)">'+asTypeLabel(a.type)+'</span>'
+      +     '<span style="font-size:.72rem;color:var(--muted)">'+a.system+'</span>'
+      +     (isHigh ? '<span style="font-size:.68rem;color:var(--accent-red)">● 긴급</span>' : '')
+      +   '</div>'
+      +   '<div style="display:flex;gap:8px;align-items:center">'
+      +     '<span style="font-size:.72rem;color:'+asStatusColor(a.status)+'">'+asStatusLabel(a.status)+'</span>'
+      +     '<span style="font-size:.68rem;color:var(--muted)">'+dateStr+'</span>'
+      +   '</div>'
+      + '</div>'
+      + '<div style="font-size:.85rem;margin-bottom:8px">'+a.content+'</div>'
+      + '<div style="display:flex;justify-content:space-between;align-items:center">'
+      +   '<span style="font-size:.72rem;color:var(--muted)">'+(a.engineer ? '👷 '+a.engineer : '담당자 미배정')+'</span>'
+      +   '<div style="display:flex;gap:6px">'
+      +     (a.status === 'pending'   ? '<button onclick="asChangeStatus(' + a.id + ', \'progress\')" style="font-size:.7rem;padding:4px 12px;border:1px solid var(--accent-blue);background:transparent;color:var(--accent-blue);border-radius:6px;cursor:pointer">처리 시작</button>' : '')
+      +     (a.status === 'progress'  ? '<button onclick="asChangeStatus(' + a.id + ', \'done\')" style="font-size:.7rem;padding:4px 12px;border:1px solid var(--accent-green);background:transparent;color:var(--accent-green);border-radius:6px;cursor:pointer">완료 처리</button>' : '')
+      +     (a.status === 'done'      ? '<button onclick="asChangeStatus(' + a.id + ', \'pending\')" style="font-size:.7rem;padding:4px 12px;border:1px solid var(--muted);background:transparent;color:var(--muted);border-radius:6px;cursor:pointer">재접수</button>' : '')
+      +     '<button onclick="asDelete(' + a.id + ')" style="font-size:.7rem;padding:4px 10px;border:1px solid rgba(239,68,68,.4);background:transparent;color:var(--accent-red);border-radius:6px;cursor:pointer">삭제</button>'
+      +   '</div>'
+      + '</div>'
+      + '</div>';
+  }).join('');
 }
 
-function filterAS(type, el) {
-  asFilter = type;
-  document.querySelectorAll('[id^="as-tab-"]').forEach(t => {
-    t.style.borderBottomColor = 'transparent';
-    t.style.color = 'var(--muted)';
+// ── 필터 ──
+function asSetFilter(f, el) {
+  asFilter = f;
+  document.querySelectorAll('.as-filter-btn').forEach(b => {
+    b.style.background = 'transparent';
+    b.style.color = 'var(--muted)';
   });
-  if(el) { el.style.borderBottomColor = 'var(--red)'; el.style.color = 'var(--white)'; }
+  if (el) { el.style.background = 'var(--accent-blue)'; el.style.color = '#fff'; }
   renderAS();
 }
 
-function submitAS() {
-  const type    = document.getElementById('as-type')?.value;
-  const system  = document.getElementById('as-system')?.value;
-  const content = document.getElementById('as-content')?.value?.trim();
-  const engineer= document.getElementById('as-engineer')?.value?.trim();
-
-  if(!content) { alert('접수 내용을 입력해주세요.'); return; }
-
-  const now = new Date();
-  const dateStr = now.toISOString().split('T')[0];
-  const newId = 'AS-' + dateStr.replace(/-/g,'').slice(2) + '-' + String(asData.length+1).padStart(3,'0');
-
-  asData.unshift({
-    id: newId, type, system: system||'전체', content,
-    engineer: engineer||'', status:'pending', date:dateStr, priority: type==='emergency'?'high':'normal'
-  });
-
-  document.getElementById('as-content').value = '';
-  document.getElementById('as-engineer').value = '';
-  renderAS();
-  alert('✅ AS가 접수되었습니다!\n\n' + newId);
+// ── 상태 변경 (Supabase) ──
+async function asChangeStatus(id, newStatus) {
+  try {
+    await sbPatch('complaints', id, { status: newStatus, updated_at: new Date().toISOString() });
+    const item = asData.find(a => a.id === id);
+    if (item) item.status = newStatus;
+    renderAS();
+    showToast('상태가 변경됐어요');
+  } catch(e) {
+    // 로컬 fallback
+    const item = asData.find(a => a.id === id);
+    if (item) item.status = newStatus;
+    renderAS();
+    showToast('로컬 상태 변경 (DB 미연동)');
+  }
 }
 
-function completeAS(id) {
-  const item = asData.find(a => a.id === id);
-  if(item) { item.status = 'done'; renderAS(); }
+// ── 삭제 (Supabase) ──
+async function asDelete(id) {
+  if (!confirm('이 AS 항목을 삭제할까요?')) return;
+  try {
+    await sbDelete('complaints', id);
+    asData = asData.filter(a => a.id !== id);
+    renderAS();
+    showToast('삭제됐어요');
+  } catch(e) {
+    asData = asData.filter(a => a.id !== id);
+    renderAS();
+    showToast('로컬 삭제 (DB 미연동)');
+  }
 }
 
-
-// ═══════════════════════════════════════════════
-// 전력분석 — 실제 데이터 하드코딩
-// ═══════════════════════════════════════════════
-
-
-// ════ 고객사(L2-B) 전용 대시보드 ════
-function renderDashboardClient() {
-  return `
-    <div class="section-header">
-      <h1 class="page-title">건물 현황</h1>
-      <div style="font-family:'JetBrains Mono';font-size:0.75rem;color:var(--text-muted)">LEAD SMART SQUARE · 안산 단원구 산단로 325</div>
-    </div>
-
-    <div class="dms-grid">
-      <div class="dms-card" style="border-color:rgba(59,130,246,0.3)">
-        <div class="dms-num" style="color:#3b82f6">100</div>
-        <div class="dms-info">
-          <div class="dms-title">DMS 100 — 사무실 A구역</div>
-          <div class="dms-status" style="color:var(--accent-green)">ONLINE · 실외기 19대 · 실내기 114대</div>
-          <div style="font-size:0.68rem;color:var(--text-muted);font-family:'JetBrains Mono';margin-top:2px">2025 연간 216,564 kWh · 27.2%</div>
-        </div>
-        <div style="font-size:1.8rem">🟦</div>
-      </div>
-      <div class="dms-card" style="border-color:rgba(245,158,11,0.4);background:linear-gradient(135deg,rgba(245,158,11,0.05),var(--bg-card))">
-        <div class="dms-num" style="color:#f59e0b">101</div>
-        <div class="dms-info">
-          <div class="dms-title">DMS 101 — 사무실 B구역 <span style="font-size:0.7rem;color:var(--accent-yellow)">⚠️이상</span></div>
-          <div class="dms-status" style="color:var(--accent-green)">ONLINE · 실외기 16대 · 실내기 59대</div>
-          <div style="font-size:0.68rem;color:var(--accent-yellow);font-family:'JetBrains Mono';margin-top:2px">전년비 +27.4% ↑ 점검 필요</div>
-        </div>
-        <div style="font-size:1.8rem">🟨</div>
-      </div>
-      <div class="dms-card" style="border-color:rgba(239,68,68,0.3)">
-        <div class="dms-num" style="color:#ef4444">102</div>
-        <div class="dms-info">
-          <div class="dms-title">DMS 102 — 근린상가 (2F 식당)</div>
-          <div class="dms-status" style="color:var(--accent-green)">ONLINE · 실외기 21대 · 실내기 108대</div>
-          <div style="font-size:0.68rem;color:var(--text-muted);font-family:'JetBrains Mono';margin-top:2px">2025 연간 441,566 kWh · 55.6% 집중</div>
-        </div>
-        <div style="font-size:1.8rem">🟥</div>
-      </div>
-    </div>
-
-    <!-- 전력 요약 -->
-    <div class="card card-glow" style="margin-top:1.5rem">
-      <div style="font-family:'Orbitron';font-size:0.78rem;color:var(--accent-blue);letter-spacing:2px;margin-bottom:1rem">⚡ 전력 현황 요약 (2025년 기준)</div>
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1rem">
-        <div style="text-align:center">
-          <div style="font-family:'Orbitron';font-size:1.4rem;font-weight:900;color:var(--accent-blue)">794K</div>
-          <div style="font-size:0.72rem;color:var(--text-muted);margin-top:3px">연간 kWh</div>
-        </div>
-        <div style="text-align:center">
-          <div style="font-family:'Orbitron';font-size:1.4rem;font-weight:900;color:var(--accent-green)">▲25.8%</div>
-          <div style="font-size:0.72rem;color:var(--accent-yellow);margin-top:3px">전년 대비 증가</div>
-        </div>
-        <div style="text-align:center">
-          <div style="font-family:'Orbitron';font-size:1.4rem;font-weight:900;color:var(--accent-cyan)">2,186만</div>
-          <div style="font-size:0.72rem;color:var(--accent-yellow);margin-top:3px">증가 금액(원)</div>
-        </div>
-        <div style="text-align:center">
-          <div style="font-family:'Orbitron';font-size:1.4rem;font-weight:900;color:var(--accent-yellow)">DMS101</div>
-          <div style="font-size:0.72rem;color:var(--accent-yellow);margin-top:3px">⚠️ 이상 감지</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 최근 점검 보고서 -->
-    <div class="card" style="margin-top:1.5rem">
-      <div style="font-family:'Orbitron';font-size:0.78rem;color:var(--accent-blue);letter-spacing:2px;margin-bottom:1rem">📋 최근 점검 현황</div>
-      <div style="display:flex;align-items:center;gap:0.8rem;padding:0.8rem 0;border-bottom:1px solid var(--border)">
-        <div style="width:8px;height:8px;border-radius:50%;background:var(--accent-green);flex-shrink:0"></div>
-        <div style="flex:1;font-size:0.83rem">2026년 3월 월간 정기 보고서</div>
-        <div style="font-size:0.75rem;color:var(--text-muted)">2026.03.10</div>
-        <div style="font-size:0.72rem;color:var(--accent-green);padding:2px 8px;border:1px solid rgba(29,158,117,0.3);border-radius:4px">검토 중</div>
-      </div>
-      <div style="display:flex;align-items:center;gap:0.8rem;padding:0.8rem 0;border-bottom:1px solid var(--border)">
-        <div style="width:8px;height:8px;border-radius:50%;background:var(--accent-blue);flex-shrink:0"></div>
-        <div style="flex:1;font-size:0.83rem">SYS-06 PCB 교체 긴급출동 보고서</div>
-        <div style="font-size:0.75rem;color:var(--text-muted)">2026.03.08</div>
-        <div style="font-size:0.72rem;color:var(--accent-blue);padding:2px 8px;border:1px solid rgba(55,138,221,0.3);border-radius:4px">완료</div>
-      </div>
-      <div style="display:flex;align-items:center;gap:0.8rem;padding:0.8rem 0">
-        <div style="width:8px;height:8px;border-radius:50%;background:var(--accent-cyan);flex-shrink:0"></div>
-        <div style="flex:1;font-size:0.83rem">하절기 전 예방정비 보고서</div>
-        <div style="font-size:0.75rem;color:var(--text-muted)">2026.02.28</div>
-        <div style="font-size:0.72rem;color:var(--accent-cyan);padding:2px 8px;border:1px solid rgba(6,182,212,0.3);border-radius:4px">발송 완료</div>
-      </div>
-    </div>
-
-    <div style="margin-top:1.5rem;padding:16px 20px;background:rgba(59,130,246,0.05);border:1px solid rgba(59,130,246,0.2);border-radius:10px;font-size:0.78rem;color:var(--text-muted)">
-      💡 장비 상세 현황 및 건강점수는 좌측 메뉴에서 확인하실 수 있습니다.
-    </div>
-  `;
+// ── 신규 접수 모달 (미사용 — 폼이 페이지에 내장됨) ──
+function asOpenForm() {}
+function asCloseForm() {
+  const f = document.getElementById('as-form');
+  if (f) f.reset();
 }
 
-// ════ 잠금 화면 ════
-function renderLockedPage(pageName) {
-  const pageNames = {
-    equipment: '장비 관리', score: '건강점수', as: 'AS 관리',
-    error: '에러코드 진단', checklist: '설치 체크리스트',
-    schedule: '점검 일정', report: '점검 보고서', parts: '부품 관리',
-    dms: 'DMS 관리', sites: '건물 관리', users: '사용자 관리',
-    events: '이벤트코드 룰', compare: '전력 분석',
+async function asSubmit() {
+  const type     = document.getElementById('as-type').value;
+  const system   = document.getElementById('as-system').value;
+  const content  = document.getElementById('as-content').value.trim();
+  const engineer = document.getElementById('as-engineer').value.trim();
+  const priority = document.getElementById('as-priority').value;
+
+  if (!content) { alert('내용을 입력해주세요'); return; }
+
+  const payload = {
+    type, system, content, engineer,
+    priority, status: 'pending',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    site_id: 1
   };
-  const name = pageNames[pageName] || pageName;
 
-  return `
-    <div class="locked-page">
-      <div class="locked-previ">🌡️</div>
-      <div class="locked-title">🔒 ${name}</div>
-      <div class="locked-desc">
-        이 기능은 Previo 도입 고객에게 제공됩니다.<br>
-        지금 체험 중인 내용이 마음에 드셨나요?<br>
-        <strong style="color:var(--gold)">도입 문의를 남겨주시면 바로 연락드립니다.</strong>
-      </div>
-      <button class="locked-btn" onclick="window.location.href='mailto:celsius.anue@gmail.com?subject=Previo 도입 문의&body=안녕하세요, Previo 플랫폼 도입에 관심이 있습니다.'">
-        📩 도입 문의하기
-      </button>
-      <div class="locked-features">
-        <div class="locked-feature-item">
-          <div class="fi-icon">🌀</div>
-          장비 관리
-        </div>
-        <div class="locked-feature-item">
-          <div class="fi-icon">🏥</div>
-          건강점수
-        </div>
-        <div class="locked-feature-item">
-          <div class="fi-icon">🚨</div>
-          AS 관리
-        </div>
-        <div class="locked-feature-item">
-          <div class="fi-icon">📋</div>
-          점검 보고서
-        </div>
-        <div class="locked-feature-item">
-          <div class="fi-icon">📦</div>
-          부품 관리
-        </div>
-        <div class="locked-feature-item">
-          <div class="fi-icon">⚡</div>
-          전력 분석
-        </div>
-      </div>
-      <div style="margin-top:24px;font-size:.72rem;color:var(--muted)">
-        📞 010.3966.9691 &nbsp;|&nbsp; ✉️ celsius.anue@gmail.com
-      </div>
-    </div>
-  `;
-}
-
-
-// ════ 온보딩 ════
-let obCurrentSlide = 1;
-const OB_TOTAL = 6;
-
-function showOnboarding() {
-  document.getElementById('onboarding-screen').style.display = 'flex';
-  goToSlide(1);
-}
-
-function goToSlide(n) {
-  // 이전 슬라이드 숨기기
-  document.querySelectorAll('.ob-slide').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.ob-dot').forEach(d => d.classList.remove('active'));
-
-  obCurrentSlide = n;
-
-  // 현재 슬라이드 활성화
-  const slide = document.getElementById('ob-slide-' + n);
-  if (slide) slide.classList.add('active');
-
-  // 점 인디케이터
-  const dots = document.querySelectorAll('.ob-dot');
-  if (dots[n-1]) dots[n-1].classList.add('active');
-
-  // 진행 바
-  const bar = document.getElementById('ob-bar');
-  if (bar) bar.style.width = (n / OB_TOTAL * 100) + '%';
-
-  // 마지막 장 버튼 변경
-  const btn = document.getElementById('ob-next-btn');
-  if (btn) {
-    if (n === OB_TOTAL) {
-      btn.textContent = '시작하기 →';
-      btn.className = 'ob-next-btn primary';
-    } else {
-      btn.textContent = '다음 →';
-      btn.className = 'ob-next-btn primary';
-    }
+  try {
+    const result = await sbPost('complaints', payload);
+    const newItem = Array.isArray(result) ? result[0] : result;
+    asData.unshift(newItem);
+    // 폼 초기화
+    ['as-content','as-engineer'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+    renderAS();
+    showToast('✅ AS 접수됐어요');
+  } catch(e) {
+    // 로컬 fallback
+    payload.id = Date.now();
+    asData.unshift(payload);
+    ['as-content','as-engineer'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+    renderAS();
+    showToast('접수됐어요 (로컬 저장)');
   }
 }
 
-function nextSlide() {
-  if (obCurrentSlide < OB_TOTAL) {
-    goToSlide(obCurrentSlide + 1);
-  } else {
-    skipOnboarding();
+function showToast(msg) {
+  let t = document.getElementById('toast-msg');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'toast-msg';
+    t.style.cssText = 'position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:#1e3a5f;color:#fff;padding:10px 24px;border-radius:20px;font-size:.82rem;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,.4);pointer-events:none;transition:opacity .3s';
+    document.body.appendChild(t);
   }
-}
-
-function skipOnboarding() {
-  const screen = document.getElementById('onboarding-screen');
-  if (screen) {
-    screen.style.opacity = '0';
-    screen.style.transition = 'opacity .3s';
-    setTimeout(() => { screen.style.display = 'none'; screen.style.opacity = '1'; }, 300);
-  }
-  // 대시보드로 이동
-  setTimeout(() => loadDashboard(), 100);
-}
-
-
-function loadDashboard() {
-  const el = document.getElementById('dashboard-content');
-  if (el) {
-    el.innerHTML = renderDashboard();
-  } else {
-    // DOM 아직 준비 안 됐으면 재시도
-    setTimeout(() => loadDashboard(), 200);
-  }
+  t.textContent = msg;
+  t.style.opacity = '1';
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.style.opacity = '0', 2200);
 }
 
 
