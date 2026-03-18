@@ -3443,9 +3443,6 @@ body {
       <div class="sidebar-item" onclick="showPage('report')">
         <span class="icon">📋</span> 점검 보고서
       </div>
-      <div class="sidebar-item" onclick="showPage('compare')">
-        <span class="icon">📊</span> 전력 분석
-      </div>
     </div>
 
     <!-- L3 운영자 전용 메뉴 -->
@@ -4977,15 +4974,17 @@ body {
 
   <!-- 1차 vs 2차 비교 (기본) -->
   <div id="pw-compare" class="pw-panel">
-    <div class="card" style="padding:20px;margin-bottom:16px">
-      <div style="font-size:.78rem;color:var(--accent-blue);letter-spacing:2px;margin-bottom:4px">📊 연간 총량 비교 — 1차년도 vs 2차년도</div>
-      <div style="font-size:.7rem;color:var(--muted);margin-bottom:16px">DMS별 스택 구성 · 총 538K → 678K kWh (+25.8%)</div>
-      <canvas id="chart-compare-bar" height="200"></canvas>
-    </div>
-    <div class="card" style="padding:20px">
-      <div style="font-size:.78rem;color:var(--accent-blue);letter-spacing:2px;margin-bottom:4px">📈 DMS별 1차 vs 2차 비교</div>
-      <div style="font-size:.7rem;color:var(--muted);margin-bottom:16px">DMS100: +24.8% &nbsp;·&nbsp; DMS101: +47.4% ⚠️ &nbsp;·&nbsp; DMS102: +20.5%</div>
-      <canvas id="chart-compare-dms" height="200"></canvas>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div class="card" style="padding:16px">
+        <div style="font-size:.75rem;color:var(--accent-blue);letter-spacing:2px;margin-bottom:4px">📊 연간 총량 비교</div>
+        <div style="font-size:.68rem;color:var(--muted);margin-bottom:12px">538K → 678K kWh (+25.8%)</div>
+        <canvas id="chart-compare-bar" height="120"></canvas>
+      </div>
+      <div class="card" style="padding:16px">
+        <div style="font-size:.75rem;color:var(--accent-blue);letter-spacing:2px;margin-bottom:4px">📈 DMS별 1차 vs 2차</div>
+        <div style="font-size:.68rem;color:var(--muted);margin-bottom:12px">DMS100 +24.8% · DMS101 +47.4% ⚠️ · DMS102 +20.5%</div>
+        <canvas id="chart-compare-dms" height="120"></canvas>
+      </div>
     </div>
   </div>
 
@@ -4994,7 +4993,7 @@ body {
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
       <div class="card" style="padding:20px">
         <div style="font-size:.78rem;color:var(--accent-blue);letter-spacing:2px;margin-bottom:16px">🥧 DMS별 비중 (2차년도)</div>
-        <canvas id="chart-dms-pie" height="260"></canvas>
+        <canvas id="chart-dms-pie" height="180"></canvas>
       </div>
       <div class="card" style="padding:20px">
         <div style="font-size:.78rem;color:var(--accent-blue);letter-spacing:2px;margin-bottom:16px">📊 DMS별 상세</div>
@@ -5039,7 +5038,7 @@ body {
     <div class="card" style="padding:20px">
       <div style="font-size:.78rem;color:var(--accent-blue);letter-spacing:2px;margin-bottom:4px">📈 월별 전력 사용량 추이</div>
       <div style="font-size:.7rem;color:var(--muted);margin-bottom:16px">2024.03 ~ 2026.02 (24개월)</div>
-      <canvas id="chart-monthly" height="280"></canvas>
+      <canvas id="chart-monthly" height="160"></canvas>
     </div>
   </div>
 
