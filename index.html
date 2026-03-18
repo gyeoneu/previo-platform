@@ -2976,6 +2976,7 @@ body {
 }
 
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 
 </head>
 <body>
@@ -4924,11 +4925,138 @@ body {
 </div>
 
 <div class="page" id="page-compare">
-  <div class="coming-soon">
-    <div class="icon">📊</div>
-    <h2>비교 분석</h2>
-    <p>기존 비교분석 툴 연동 예정</p>
+  <div class="dashboard-greeting">
+    <h1>⚡ 전력 분석</h1>
+    <p>1차년도(2024.03~2025.02) vs 2차년도(2025.03~2026.02) · 리드스마트스퀘어</p>
   </div>
+
+  <!-- 요약 카드 4종 -->
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px">
+    <div class="card" style="text-align:center;padding:20px 12px">
+      <div style="font-size:.65rem;color:var(--muted);letter-spacing:1px;margin-bottom:3px">1차년도</div>
+      <div style="font-size:.6rem;color:var(--muted);margin-bottom:6px">2024.03 ~ 2025.02</div>
+      <div style="font-family:'Orbitron';font-size:1.5rem;font-weight:900;color:var(--accent-blue)">538K</div>
+      <div style="font-size:.7rem;color:var(--muted);margin-top:4px">kWh</div>
+    </div>
+    <div class="card" style="text-align:center;padding:20px 12px">
+      <div style="font-size:.65rem;color:var(--muted);letter-spacing:1px;margin-bottom:3px">2차년도</div>
+      <div style="font-size:.6rem;color:var(--muted);margin-bottom:6px">2025.03 ~ 2026.02</div>
+      <div style="font-family:'Orbitron';font-size:1.5rem;font-weight:900;color:var(--accent-cyan)">678K</div>
+      <div style="font-size:.7rem;color:var(--muted);margin-top:4px">kWh</div>
+    </div>
+    <div class="card" style="text-align:center;padding:20px 12px;border-color:rgba(239,159,39,.4)">
+      <div style="font-size:.65rem;color:var(--muted);letter-spacing:1px;margin-bottom:3px">전년 대비 증감</div>
+      <div style="font-size:.6rem;color:var(--accent-yellow);margin-bottom:6px">+138,954 kWh</div>
+      <div style="font-family:'Orbitron';font-size:1.5rem;font-weight:900;color:var(--accent-yellow)">▲25.8%</div>
+      <div style="font-size:.7rem;color:var(--accent-yellow);margin-top:4px">DMS101 ⚠️ +47.4%</div>
+    </div>
+    <div class="card" style="text-align:center;padding:20px 12px;border-color:rgba(239,159,39,.4)">
+      <div style="font-size:.65rem;color:var(--muted);letter-spacing:1px;margin-bottom:3px">증가 금액</div>
+      <div style="font-size:.6rem;color:var(--muted);margin-bottom:6px">157.3원/kWh 기준</div>
+      <div style="font-family:'Orbitron';font-size:1.5rem;font-weight:900;color:var(--accent-yellow)">2,186만</div>
+      <div style="font-size:.7rem;color:var(--accent-yellow);margin-top:4px">원</div>
+    </div>
+  </div>
+
+  <!-- 탭 -->
+  <div style="display:flex;gap:0;margin-bottom:20px;border-bottom:1px solid var(--border)">
+    <div id="pw-tab-compare" onclick="pwTab('compare',this)" style="padding:10px 20px;font-size:.82rem;cursor:pointer;border-bottom:2px solid var(--accent-blue);color:var(--white)">1차 vs 2차 비교</div>
+    <div id="pw-tab-dms" onclick="pwTab('dms',this)" style="padding:10px 20px;font-size:.82rem;cursor:pointer;border-bottom:2px solid transparent;color:var(--muted)">DMS별 분석</div>
+    <div id="pw-tab-monthly" onclick="pwTab('monthly',this)" style="padding:10px 20px;font-size:.82rem;cursor:pointer;border-bottom:2px solid transparent;color:var(--muted)">월별 추이</div>
+    <div id="pw-tab-table" onclick="pwTab('table',this)" style="padding:10px 20px;font-size:.82rem;cursor:pointer;border-bottom:2px solid transparent;color:var(--muted)">월별 상세</div>
+  </div>
+
+  <!-- 1차 vs 2차 비교 (기본) -->
+  <div id="pw-compare" class="pw-panel">
+    <div class="card" style="padding:20px;margin-bottom:16px">
+      <div style="font-size:.78rem;color:var(--accent-blue);letter-spacing:2px;margin-bottom:4px">📊 연간 총량 비교 — 1차년도 vs 2차년도</div>
+      <div style="font-size:.7rem;color:var(--muted);margin-bottom:16px">DMS별 스택 구성 · 총 538K → 678K kWh (+25.8%)</div>
+      <canvas id="chart-compare-bar" height="200"></canvas>
+    </div>
+    <div class="card" style="padding:20px">
+      <div style="font-size:.78rem;color:var(--accent-blue);letter-spacing:2px;margin-bottom:4px">📈 DMS별 1차 vs 2차 비교</div>
+      <div style="font-size:.7rem;color:var(--muted);margin-bottom:16px">DMS100: +24.8% &nbsp;·&nbsp; DMS101: +47.4% ⚠️ &nbsp;·&nbsp; DMS102: +20.5%</div>
+      <canvas id="chart-compare-dms" height="200"></canvas>
+    </div>
+  </div>
+
+  <!-- DMS별 분석 -->
+  <div id="pw-dms" class="pw-panel" style="display:none">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div class="card" style="padding:20px">
+        <div style="font-size:.78rem;color:var(--accent-blue);letter-spacing:2px;margin-bottom:16px">🥧 DMS별 비중 (2차년도)</div>
+        <canvas id="chart-dms-pie" height="260"></canvas>
+      </div>
+      <div class="card" style="padding:20px">
+        <div style="font-size:.78rem;color:var(--accent-blue);letter-spacing:2px;margin-bottom:16px">📊 DMS별 상세</div>
+        <div style="display:flex;flex-direction:column;gap:16px;margin-top:8px">
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:5px">
+              <span style="font-size:.82rem;color:#3b82f6">DMS 100 · 사무실A</span>
+              <span style="font-size:.78rem;font-weight:600">185,225 kWh</span>
+            </div>
+            <div style="height:8px;background:rgba(255,255,255,.08);border-radius:4px;margin-bottom:3px">
+              <div style="height:100%;width:27.3%;background:#3b82f6;border-radius:4px"></div>
+            </div>
+            <div style="font-size:.68rem;color:var(--muted)">전체의 27.3% &nbsp;·&nbsp; 전년비 <span style="color:var(--accent-yellow)">+24.8%↑</span></div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:5px">
+              <span style="font-size:.82rem;color:#EF9F27">DMS 101 · 사무실B ⚠️</span>
+              <span style="font-size:.78rem;font-weight:600">120,999 kWh</span>
+            </div>
+            <div style="height:8px;background:rgba(255,255,255,.08);border-radius:4px;margin-bottom:3px">
+              <div style="height:100%;width:17.9%;background:#EF9F27;border-radius:4px"></div>
+            </div>
+            <div style="font-size:.68rem;color:var(--accent-yellow)">전체의 17.9% &nbsp;·&nbsp; 전년비 <span style="color:#ef4444;font-weight:700">+47.4%↑ ⚠️</span></div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:5px">
+              <span style="font-size:.82rem;color:#1D9E75">DMS 102 · 근린상가</span>
+              <span style="font-size:.78rem;font-weight:600">371,310 kWh</span>
+            </div>
+            <div style="height:8px;background:rgba(255,255,255,.08);border-radius:4px;margin-bottom:3px">
+              <div style="height:100%;width:54.8%;background:#1D9E75;border-radius:4px"></div>
+            </div>
+            <div style="font-size:.68rem;color:var(--muted)">전체의 54.8% &nbsp;·&nbsp; 전년비 <span style="color:var(--accent-yellow)">+20.5%↑</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 월별 추이 -->
+  <div id="pw-monthly" class="pw-panel" style="display:none">
+    <div class="card" style="padding:20px">
+      <div style="font-size:.78rem;color:var(--accent-blue);letter-spacing:2px;margin-bottom:4px">📈 월별 전력 사용량 추이</div>
+      <div style="font-size:.7rem;color:var(--muted);margin-bottom:16px">2024.03 ~ 2026.02 (24개월)</div>
+      <canvas id="chart-monthly" height="280"></canvas>
+    </div>
+  </div>
+
+  <!-- 월별 상세 -->
+  <div id="pw-table" class="pw-panel" style="display:none">
+    <div class="card" style="padding:0;overflow:hidden">
+      <div style="padding:16px 20px;font-size:.78rem;color:var(--accent-blue);letter-spacing:2px;border-bottom:1px solid var(--border)">📋 월별 상세 (kWh)</div>
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:.78rem">
+          <thead>
+            <tr style="border-bottom:1px solid var(--border);background:rgba(255,255,255,.03)">
+              <th style="padding:10px 16px;text-align:left;color:var(--muted);font-weight:500">연도</th>
+              <th style="padding:10px 16px;text-align:left;color:var(--muted);font-weight:500">월</th>
+              <th style="padding:10px 16px;text-align:right;color:#3b82f6;font-weight:500">DMS 100</th>
+              <th style="padding:10px 16px;text-align:right;color:#EF9F27;font-weight:500">DMS 101</th>
+              <th style="padding:10px 16px;text-align:right;color:#1D9E75;font-weight:500">DMS 102</th>
+              <th style="padding:10px 16px;text-align:right;color:var(--white);font-weight:500">합계</th>
+              <th style="padding:10px 16px;text-align:center;color:var(--muted);font-weight:500">구분</th>
+            </tr>
+          </thead>
+          <tbody id="pw-table-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
 </div>
 
     <div class="page" id="page-sites">
@@ -6603,6 +6731,7 @@ function showPage(name, skipHistory) {
   });
   if (name === 'dashboard') setTimeout(() => loadDashboard(), 50);
   if (name === 'as') renderAS();
+  if (name === 'compare') { setTimeout(function(){ renderCompareCharts(); }, 100); }
   if (name === 'score') loadSystemsFromDB();
   if (name === 'parts') loadPartsFromDB();
   if (name === 'equipment') loadEquipmentFromDB();
@@ -8178,19 +8307,21 @@ function renderEquipmentFallback() {
 }
 
 /* ══ v4 대시보드 데이터 & 함수 ══ */
-const POWER_DATA = {
-  // 분석 기간: 2024.04 ~ 2026.03 (2024년 1~3월 제외 · 신뢰도 낮음)
-  // 2026년 3월은 예상치 (2/28·3/1·3/4 데이터 기반 가중 평균)
-  labels: [
-    '2024-04','2024-05','2024-06','2024-07','2024-08','2024-09','2024-10','2024-11','2024-12',
-    '2025-01','2025-02','2025-03','2025-04','2025-05','2025-06','2025-07','2025-08','2025-09','2025-10','2025-11','2025-12',
-    '2026-01','2026-02','2026-03*'
-  ],
-  dms100: [1729,5147,7366,11302,15339,10065,2603,3584,16995, 33021,33488,11235, 3303,4505,11451,29285,28969,20722,5543,11532,23512, 21997,13171,6454],
-  dms101: [1052,1817,2299,3696,4936,3211,1212,3571,11526, 22366,21374,10571, 4500,2515,4632,13938,13141,7042,2897,11061,22626, 17346,10730,6624],
-  dms102: [3175,8956,12952,20335,26435,17886,3569,11061,36219, 68123,69312,34762, 10583,6615,19927,43991,46453,29555,7700,22912,81636, 41887,25289,20804],
-  rate: 157.30
-};
+const POWER_DATA = [
+  [2024,3,7752,5044,30062],
+  [2024,4,1729,1052,3175],[2024,5,5147,1817,8956],[2024,6,7366,2299,12952],
+  [2024,7,11302,3696,20335],[2024,8,15339,4936,26435],[2024,9,10065,3211,17886],
+  [2024,10,2603,1212,3569],[2024,11,3584,3571,11061],[2024,12,16995,11526,36219],
+  [2025,1,33021,22366,68123],[2025,2,33488,21374,69312],
+  [2025,3,11235,10571,34762],[2025,4,3303,4500,10583],[2025,5,4505,2515,6615],
+  [2025,6,11451,4632,19927],[2025,7,29285,13938,43991],[2025,8,28969,13141,46453],
+  [2025,9,20722,7042,29555],[2025,10,5543,2897,7700],[2025,11,11532,11061,22912],
+  [2025,12,23512,22626,81636],[2026,1,21997,17346,41887],[2026,2,13171,10730,25289],
+];
+const POWER_RATE = 157.30;
+const YR1 = [[2024,3],[2024,4],[2024,5],[2024,6],[2024,7],[2024,8],[2024,9],[2024,10],[2024,11],[2024,12],[2025,1],[2025,2]];
+const YR2 = [[2025,3],[2025,4],[2025,5],[2025,6],[2025,7],[2025,8],[2025,9],[2025,10],[2025,11],[2025,12],[2026,1],[2026,2]];
+function pwGet(y,m){ return POWER_DATA.find(r=>r[0]===y&&r[1]===m)||[y,m,0,0,0]; }
 
 function renderDashboard() {
   const role = window.currentRole || 'demo';
@@ -8311,12 +8442,12 @@ function renderDashboard() {
           <div style="font-size:0.72rem;color:var(--text-muted);margin-top:3px">연간 kWh</div>
         </div>
         <div style="text-align:center">
-          <div style="font-family:'Orbitron';font-size:1.4rem;font-weight:900;color:var(--accent-green)">▼20.1%</div>
-          <div style="font-size:0.72rem;color:var(--text-muted);margin-top:3px">전년 대비 절감</div>
+          <div style="font-family:'Orbitron';font-size:1.4rem;font-weight:900;color:var(--accent-green)">▲25.8%</div>
+          <div style="font-size:0.72rem;color:var(--accent-yellow);margin-top:3px">전년 대비 증가</div>
         </div>
         <div style="text-align:center">
-          <div style="font-family:'Orbitron';font-size:1.4rem;font-weight:900;color:var(--accent-cyan)">2,026만</div>
-          <div style="font-size:0.72rem;color:var(--text-muted);margin-top:3px">절감 금액(원)</div>
+          <div style="font-family:'Orbitron';font-size:1.4rem;font-weight:900;color:var(--accent-cyan)">2,186만</div>
+          <div style="font-size:0.72rem;color:var(--accent-yellow);margin-top:3px">증가 금액(원)</div>
         </div>
         <div style="text-align:center">
           <div style="font-family:'Orbitron';font-size:1.4rem;font-weight:900;color:var(--accent-yellow)">DMS101</div>
@@ -8350,6 +8481,168 @@ function renderDashboard() {
     </div>
   `;
 }
+
+// ════ 전력 분석 ════
+// Supabase power_monthly 기반 실제 데이터
+
+
+let pwCharts = {};
+
+function pwTab(name, el) {
+  document.querySelectorAll('.pw-panel').forEach(p => p.style.display='none');
+  document.querySelectorAll('[id^="pw-tab-"]').forEach(t => {
+    t.style.borderBottomColor='transparent'; t.style.color='var(--muted)';
+  });
+  document.getElementById('pw-'+name).style.display='block';
+  if(el){ el.style.borderBottomColor='var(--accent-blue)'; el.style.color='var(--white)'; }
+  setTimeout(function(){
+    if(name==='compare') renderCompareCharts();
+    else if(name==='dms') renderDmsChart();
+    else if(name==='monthly') renderMonthlyChart();
+    else if(name==='table') renderPowerTable();
+  }, 100);
+}
+
+function renderCompareCharts() {
+  function sumCol(yrArr, col) { return yrArr.reduce(function(s,ym){ return s+pwGet(ym[0],ym[1])[col]; },0); }
+  var r100 = {yr1: sumCol(YR1,2), yr2: sumCol(YR2,2)};
+  var r101 = {yr1: sumCol(YR1,3), yr2: sumCol(YR2,3)};
+  var r102 = {yr1: sumCol(YR1,4), yr2: sumCol(YR2,4)};
+
+  // 연간 총량 스택 바
+  var c1 = document.getElementById('chart-compare-bar');
+  if(c1){
+    if(pwCharts.bar) pwCharts.bar.destroy();
+    pwCharts.bar = new Chart(c1, {
+      type:'bar',
+      data:{
+        labels:['1차년도 (2024.03~2025.02)','2차년도 (2025.03~2026.02)'],
+        datasets:[
+          {label:'DMS 102 근린상가', data:[r102.yr1,r102.yr2], backgroundColor:['rgba(29,158,117,.55)','rgba(29,158,117,.9)'], borderColor:'#1D9E75', borderWidth:1},
+          {label:'DMS 101 사무실B',  data:[r101.yr1,r101.yr2], backgroundColor:['rgba(239,159,39,.55)','rgba(239,159,39,.9)'], borderColor:'#EF9F27', borderWidth:1},
+          {label:'DMS 100 사무실A',  data:[r100.yr1,r100.yr2], backgroundColor:['rgba(59,130,246,.55)','rgba(59,130,246,.9)'],  borderColor:'#3b82f6', borderWidth:1}
+        ]
+      },
+      options:{responsive:true,
+        plugins:{
+          legend:{labels:{color:'#8899BB',font:{size:11}}},
+          tooltip:{callbacks:{
+            label:function(ctx){ return ctx.dataset.label+': '+ctx.raw.toLocaleString()+' kWh'; },
+            footer:function(items){ return '합계: '+items.reduce(function(s,i){ return s+i.raw; },0).toLocaleString()+' kWh'; }
+          }}
+        },
+        scales:{
+          x:{stacked:true, ticks:{color:'#8899BB'}, grid:{color:'rgba(255,255,255,.05)'}},
+          y:{stacked:true, ticks:{color:'#8899BB', callback:function(v){ return (v/1000).toFixed(0)+'K'; }}, grid:{color:'rgba(255,255,255,.05)'}}
+        }
+      }
+    });
+  }
+
+  // DMS별 1차 vs 2차 나란히 바
+  var c2 = document.getElementById('chart-compare-dms');
+  if(c2){
+    if(pwCharts.dmsBar) pwCharts.dmsBar.destroy();
+    pwCharts.dmsBar = new Chart(c2, {
+      type:'bar',
+      data:{
+        labels:['DMS 100 사무실A','DMS 101 사무실B','DMS 102 근린상가'],
+        datasets:[
+          {label:'1차년도', data:[r100.yr1,r101.yr1,r102.yr1], backgroundColor:'rgba(136,153,187,.35)', borderColor:'#8899BB', borderWidth:1},
+          {label:'2차년도', data:[r100.yr2,r101.yr2,r102.yr2],
+            backgroundColor:['rgba(59,130,246,.85)','rgba(239,68,68,.85)','rgba(29,158,117,.85)'],
+            borderColor:['#3b82f6','#ef4444','#1D9E75'], borderWidth:1}
+        ]
+      },
+      options:{responsive:true,
+        plugins:{
+          legend:{labels:{color:'#8899BB',font:{size:11}}},
+          tooltip:{callbacks:{
+            label:function(ctx){ return ctx.dataset.label+': '+ctx.raw.toLocaleString()+' kWh'; },
+            afterBody:function(items){
+              if(items.length>=2){
+                var diff = items[1].raw - items[0].raw;
+                var rate = (diff/items[0].raw*100).toFixed(1);
+                return [
+                  '증감: '+(diff>0?'+':'')+diff.toLocaleString()+' kWh ('+(diff>0?'+':'')+rate+'%)',
+                  '증감금액: '+(Math.abs(diff*POWER_RATE)/10000).toFixed(0)+'만원'
+                ];
+              }
+            }
+          }}
+        },
+        scales:{
+          x:{ticks:{color:'#8899BB'}, grid:{color:'rgba(255,255,255,.05)'}},
+          y:{ticks:{color:'#8899BB', callback:function(v){ return (v/1000).toFixed(0)+'K'; }}, grid:{color:'rgba(255,255,255,.05)'}}
+        }
+      }
+    });
+  }
+}
+
+function renderDmsChart() {
+  var c = document.getElementById('chart-dms-pie');
+  if(!c) return;
+  if(pwCharts.pie) pwCharts.pie.destroy();
+  var yr2_100=YR2.reduce(function(s,ym){ return s+pwGet(ym[0],ym[1])[2]; },0);
+  var yr2_101=YR2.reduce(function(s,ym){ return s+pwGet(ym[0],ym[1])[3]; },0);
+  var yr2_102=YR2.reduce(function(s,ym){ return s+pwGet(ym[0],ym[1])[4]; },0);
+  var t = yr2_100+yr2_101+yr2_102;
+  pwCharts.pie = new Chart(c, {
+    type:'doughnut',
+    data:{labels:['DMS 100 사무실A','DMS 101 사무실B','DMS 102 근린상가'],
+      datasets:[{data:[yr2_100,yr2_101,yr2_102],
+        backgroundColor:['rgba(59,130,246,.8)','rgba(239,159,39,.8)','rgba(29,158,117,.8)'],
+        borderColor:['#3b82f6','#EF9F27','#1D9E75'], borderWidth:2}]},
+    options:{responsive:true, plugins:{
+      legend:{position:'bottom', labels:{color:'#8899BB', font:{size:11}, padding:12}},
+      tooltip:{callbacks:{label:function(ctx){ return ctx.label+': '+ctx.raw.toLocaleString()+' kWh ('+(ctx.raw/t*100).toFixed(1)+'%)'; }}}
+    }}
+  });
+}
+
+function renderMonthlyChart() {
+  var c = document.getElementById('chart-monthly');
+  if(!c) return;
+  if(pwCharts.monthly) pwCharts.monthly.destroy();
+  var labels = POWER_DATA.map(function(d){ return d[0]+'.'+String(d[1]).padStart(2,'0'); });
+  pwCharts.monthly = new Chart(c, {
+    type:'bar',
+    data:{labels:labels, datasets:[
+      {label:'DMS 102', data:POWER_DATA.map(function(d){ return d[4]; }), backgroundColor:'rgba(29,158,117,.7)', stack:'a'},
+      {label:'DMS 101', data:POWER_DATA.map(function(d){ return d[3]; }), backgroundColor:'rgba(239,159,39,.7)', stack:'a'},
+      {label:'DMS 100', data:POWER_DATA.map(function(d){ return d[2]; }), backgroundColor:'rgba(59,130,246,.7)', stack:'a'}
+    ]},
+    options:{responsive:true,
+      plugins:{legend:{labels:{color:'#8899BB',font:{size:11}}}},
+      scales:{
+        x:{stacked:true, ticks:{color:'#8899BB', font:{size:10}, maxRotation:45}, grid:{color:'rgba(255,255,255,.05)'}},
+        y:{stacked:true, ticks:{color:'#8899BB', callback:function(v){ return (v/1000).toFixed(0)+'K'; }}, grid:{color:'rgba(255,255,255,.05)'}}
+      }
+    }
+  });
+}
+
+function renderPowerTable() {
+  var tbody = document.getElementById('pw-table-body');
+  if(!tbody) return;
+  tbody.innerHTML = POWER_DATA.map(function(d,i){
+    var isYr1 = YR1.some(function(ym){ return ym[0]===d[0]&&ym[1]===d[1]; });
+    var isYr2 = YR2.some(function(ym){ return ym[0]===d[0]&&ym[1]===d[1]; });
+    var total = d[2]+d[3]+d[4];
+    var badge = isYr1 ? '<span style="font-size:.62rem;padding:2px 8px;border-radius:10px;background:rgba(59,130,246,.15);color:#3b82f6">1차</span>'
+              : isYr2 ? '<span style="font-size:.62rem;padding:2px 8px;border-radius:10px;background:rgba(6,182,212,.15);color:var(--accent-cyan)">2차</span>' : '';
+    return '<tr style="border-bottom:1px solid rgba(255,255,255,.04);'+(i%2===0?'background:rgba(255,255,255,.015)':'')+'">'
+      +'<td style="padding:10px 16px;color:var(--muted);font-family:JetBrains Mono,monospace;font-size:.75rem">'+d[0]+'</td>'
+      +'<td style="padding:10px 16px;color:var(--muted);font-family:JetBrains Mono,monospace;font-size:.75rem">'+String(d[1]).padStart(2,'0')+'월</td>'
+      +'<td style="padding:10px 16px;text-align:right;color:#3b82f6;font-family:JetBrains Mono,monospace">'+d[2].toLocaleString()+'</td>'
+      +'<td style="padding:10px 16px;text-align:right;color:#EF9F27;font-family:JetBrains Mono,monospace">'+d[3].toLocaleString()+'</td>'
+      +'<td style="padding:10px 16px;text-align:right;color:#1D9E75;font-family:JetBrains Mono,monospace">'+d[4].toLocaleString()+'</td>'
+      +'<td style="padding:10px 16px;text-align:right;font-weight:600;font-family:JetBrains Mono,monospace">'+total.toLocaleString()+'</td>'
+      +'<td style="padding:10px 16px;text-align:center">'+badge+'</td></tr>';
+  }).join('');
+}
+
 
 // ════ AS 관리 ════
 var asData = [
@@ -8508,12 +8801,12 @@ function renderDashboardClient() {
           <div style="font-size:0.72rem;color:var(--text-muted);margin-top:3px">연간 kWh</div>
         </div>
         <div style="text-align:center">
-          <div style="font-family:'Orbitron';font-size:1.4rem;font-weight:900;color:var(--accent-green)">▼20.1%</div>
-          <div style="font-size:0.72rem;color:var(--text-muted);margin-top:3px">전년 대비 절감</div>
+          <div style="font-family:'Orbitron';font-size:1.4rem;font-weight:900;color:var(--accent-green)">▲25.8%</div>
+          <div style="font-size:0.72rem;color:var(--accent-yellow);margin-top:3px">전년 대비 증가</div>
         </div>
         <div style="text-align:center">
-          <div style="font-family:'Orbitron';font-size:1.4rem;font-weight:900;color:var(--accent-cyan)">2,026만</div>
-          <div style="font-size:0.72rem;color:var(--text-muted);margin-top:3px">절감 금액(원)</div>
+          <div style="font-family:'Orbitron';font-size:1.4rem;font-weight:900;color:var(--accent-cyan)">2,186만</div>
+          <div style="font-size:0.72rem;color:var(--accent-yellow);margin-top:3px">증가 금액(원)</div>
         </div>
         <div style="text-align:center">
           <div style="font-family:'Orbitron';font-size:1.4rem;font-weight:900;color:var(--accent-yellow)">DMS101</div>
