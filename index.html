@@ -8939,23 +8939,23 @@ async function dmsUploadAll() {
     return;
   }
 
-  // Supabase upsert — 실제 컬럼: dms_번호, 년월, kwh, 사이트_ID
+  // Supabase upsert — 컬럼: site_id, dms_number, year_month(2024-03), kwh
   prog.textContent = '⏳ DB 저장 중...';
   let saved = 0;
-  const yearMonthStr = year + '년 ' + month + '월';
+  const yearMonthStr = year + '-' + String(month).padStart(2,'0');
   for (const id of Object.keys(results)) {
     try {
-      // 기존 행 삭제 (같은 dms_번호 + 년월)
-      await fetch(SUPABASE_URL + '/rest/v1/power_monthly?dms_번호=eq.' + id + '&년월=eq.' + encodeURIComponent(yearMonthStr), {
+      // 기존 행 삭제 (같은 dms_number + year_month)
+      await fetch(SUPABASE_URL + '/rest/v1/power_monthly?dms_number=eq.' + id + '&year_month=eq.' + yearMonthStr, {
         method: 'DELETE',
         headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
       });
       // 새 행 삽입
       const payload = {
-        'dms_번호': id,
-        '년월': yearMonthStr,
-        'kwh': results[id],
-        '사이트_ID': 1
+        site_id: 1,
+        dms_number: id,
+        year_month: yearMonthStr,
+        kwh: results[id]
       };
       await sbPost('power_monthly', payload);
       saved++;
@@ -9035,8 +9035,8 @@ async function dmsDeleteHistory(idx, year, month) {
   if (!confirm(year + '년 ' + month + '월 DMS 데이터를 삭제할까요?')) return;
   try {
     for (var id of ['100','101','102']) {
-      const ym = year + '년 ' + month + '월';
-      await fetch(SUPABASE_URL + '/rest/v1/power_monthly?dms_번호=eq.' + id + '&년월=eq.' + encodeURIComponent(ym), {
+      const ym = year + '-' + String(month).padStart(2,'0');
+      await fetch(SUPABASE_URL + '/rest/v1/power_monthly?dms_number=eq.' + id + '&year_month=eq.' + ym, {
         method: 'DELETE',
         headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
       });
