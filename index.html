@@ -2977,6 +2977,8 @@ body {
 
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 </head>
 <body>
@@ -4486,12 +4488,100 @@ body {
       </div>
     </div>
     <div class="page" id="page-dms">
-      <div class="coming-soon">
-        <div class="icon">🖥️</div>
-        <h2>DMS 관리</h2>
-        <p>DMS 2.5 관리 시스템 연동 예정</p>
+  <div class="dashboard-greeting">
+    <h1>🖥️ DMS 관리</h1>
+    <p>엑셀 업로드 → 전력량 파싱 → DB 저장 · 리드스마트스퀘어</p>
+  </div>
+
+  <!-- 업로드 현황 카드 -->
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px">
+    <div class="card" style="text-align:center;padding:20px 12px">
+      <div style="font-size:.65rem;color:var(--muted);margin-bottom:4px">DMS 100 · 사무실A</div>
+      <div style="font-family:'Orbitron';font-size:1.3rem;font-weight:900;color:#3b82f6" id="dms-stat-100">— kWh</div>
+      <div style="font-size:.68rem;color:var(--muted);margin-top:4px" id="dms-stat-100-date">업로드 대기</div>
+    </div>
+    <div class="card" style="text-align:center;padding:20px 12px">
+      <div style="font-size:.65rem;color:var(--muted);margin-bottom:4px">DMS 101 · 사무실B</div>
+      <div style="font-family:'Orbitron';font-size:1.3rem;font-weight:900;color:#EF9F27" id="dms-stat-101">— kWh</div>
+      <div style="font-size:.68rem;color:var(--muted);margin-top:4px" id="dms-stat-101-date">업로드 대기</div>
+    </div>
+    <div class="card" style="text-align:center;padding:20px 12px">
+      <div style="font-size:.65rem;color:var(--muted);margin-bottom:4px">DMS 102 · 근린상가</div>
+      <div style="font-family:'Orbitron';font-size:1.3rem;font-weight:900;color:#1D9E75" id="dms-stat-102">— kWh</div>
+      <div style="font-size:.68rem;color:var(--muted);margin-top:4px" id="dms-stat-102-date">업로드 대기</div>
+    </div>
+  </div>
+
+  <!-- 업로드 영역 -->
+  <div class="card" style="padding:24px;margin-bottom:16px">
+    <div style="font-size:.78rem;color:var(--accent-blue);letter-spacing:2px;margin-bottom:16px">📤 DMS 엑셀 파일 업로드</div>
+
+    <!-- 대상 월 선택 -->
+    <div style="display:flex;gap:12px;align-items:flex-end;margin-bottom:20px">
+      <div>
+        <div style="font-size:.68rem;color:var(--muted);margin-bottom:4px">대상 연도</div>
+        <select id="dms-year" style="background:var(--card);border:1px solid var(--border);border-radius:6px;padding:8px 12px;color:var(--white);font-size:.82rem">
+          <option value="2026">2026</option>
+          <option value="2025">2025</option>
+          <option value="2024">2024</option>
+        </select>
+      </div>
+      <div>
+        <div style="font-size:.68rem;color:var(--muted);margin-bottom:4px">대상 월</div>
+        <select id="dms-month" style="background:var(--card);border:1px solid var(--border);border-radius:6px;padding:8px 12px;color:var(--white);font-size:.82rem">
+          <option value="3">3월</option><option value="4">4월</option><option value="5">5월</option>
+          <option value="6">6월</option><option value="7">7월</option><option value="8">8월</option>
+          <option value="9">9월</option><option value="10">10월</option><option value="11">11월</option>
+          <option value="12">12월</option><option value="1">1월</option><option value="2">2월</option>
+        </select>
+      </div>
+      <div style="font-size:.72rem;color:var(--muted);padding-bottom:10px">← 업로드할 데이터의 연월을 선택하세요</div>
+    </div>
+
+    <!-- 3개 드롭존 -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px">
+      <div>
+        <div style="font-size:.72rem;color:#3b82f6;margin-bottom:6px;font-weight:600">DMS 100 · 사무실A</div>
+        <label id="drop-100" style="display:block;border:2px dashed rgba(59,130,246,.4);border-radius:10px;padding:20px;text-align:center;cursor:pointer;transition:all .2s" 
+          ondragover="dmsOnDrag(event,'100')" ondragleave="dmsOffDrag('100')" ondrop="dmsDrop(event,'100')">
+          <input type="file" id="file-100" accept=".zip,.xlsx" style="display:none" onchange="dmsFileSelect(this,'100')">
+          <div style="font-size:1.4rem;margin-bottom:6px">📁</div>
+          <div style="font-size:.72rem;color:var(--muted)" id="file-100-name">zip 또는 xlsx 선택</div>
+        </label>
+      </div>
+      <div>
+        <div style="font-size:.72rem;color:#EF9F27;margin-bottom:6px;font-weight:600">DMS 101 · 사무실B</div>
+        <label id="drop-101" style="display:block;border:2px dashed rgba(239,159,39,.4);border-radius:10px;padding:20px;text-align:center;cursor:pointer;transition:all .2s"
+          ondragover="dmsOnDrag(event,'101')" ondragleave="dmsOffDrag('101')" ondrop="dmsDrop(event,'101')">
+          <input type="file" id="file-101" accept=".zip,.xlsx" style="display:none" onchange="dmsFileSelect(this,'101')">
+          <div style="font-size:1.4rem;margin-bottom:6px">📁</div>
+          <div style="font-size:.72rem;color:var(--muted)" id="file-101-name">zip 또는 xlsx 선택</div>
+        </label>
+      </div>
+      <div>
+        <div style="font-size:.72rem;color:#1D9E75;margin-bottom:6px;font-weight:600">DMS 102 · 근린상가</div>
+        <label id="drop-102" style="display:block;border:2px dashed rgba(29,158,117,.4);border-radius:10px;padding:20px;text-align:center;cursor:pointer;transition:all .2s"
+          ondragover="dmsOnDrag(event,'102')" ondragleave="dmsOffDrag('102')" ondrop="dmsDrop(event,'102')">
+          <input type="file" id="file-102" accept=".zip,.xlsx" style="display:none" onchange="dmsFileSelect(this,'102')">
+          <div style="font-size:1.4rem;margin-bottom:6px">📁</div>
+          <div style="font-size:.72rem;color:var(--muted)" id="file-102-name">zip 또는 xlsx 선택</div>
+        </label>
       </div>
     </div>
+
+    <div style="display:flex;gap:12px;align-items:center">
+      <button onclick="dmsUploadAll()" style="background:linear-gradient(135deg,#1a6b4a,#1D9E75);border:none;border-radius:8px;padding:11px 28px;color:#fff;font-size:.85rem;font-weight:600;cursor:pointer">⚡ 파싱 & DB 저장</button>
+      <div id="dms-progress" style="font-size:.78rem;color:var(--muted)"></div>
+    </div>
+  </div>
+
+  <!-- 업로드 이력 -->
+  <div class="card" style="padding:0;overflow:hidden">
+    <div style="padding:14px 20px;font-size:.78rem;color:var(--accent-blue);letter-spacing:2px;border-bottom:1px solid var(--border)">📋 업로드 이력</div>
+    <div id="dms-history" style="padding:16px;min-height:80px;font-size:.8rem;color:var(--muted)">이력 없음</div>
+  </div>
+
+</div>
 
     <div class="page" id="page-report">
 <div class="layout">
@@ -6789,6 +6879,7 @@ function showPage(name, skipHistory) {
     if (el && html) el.innerHTML = html;
   }, 50);
   if (name === 'as') loadAS();
+  if (name === 'dms') { /* DMS 페이지 — 파일 선택 대기 */ }
   if (name === 'compare') { setTimeout(function(){ renderCompareCharts(); }, 100); }
   if (name === 'score') loadSystemsFromDB();
   if (name === 'parts') loadPartsFromDB();
@@ -8701,6 +8792,190 @@ function renderPowerTable() {
   }).join('');
 }
 
+
+// ════ DMS 엑셀 업로드 ════
+var dmsFiles = { '100': null, '101': null, '102': null };
+var dmsResults = {};
+
+// 드래그 효과
+function dmsOnDrag(e, id) {
+  e.preventDefault();
+  const el = document.getElementById('drop-' + id);
+  if (el) el.style.background = 'rgba(59,130,246,.08)';
+}
+function dmsOffDrag(id) {
+  const el = document.getElementById('drop-' + id);
+  if (el) el.style.background = '';
+}
+function dmsDrop(e, id) {
+  e.preventDefault();
+  dmsOffDrag(id);
+  const file = e.dataTransfer.files[0];
+  if (file) dmsSetFile(id, file);
+}
+function dmsFileSelect(input, id) {
+  if (input.files[0]) dmsSetFile(id, input.files[0]);
+}
+function dmsSetFile(id, file) {
+  dmsFiles[id] = file;
+  const nameEl = document.getElementById('file-' + id + '-name');
+  if (nameEl) nameEl.textContent = file.name;
+  const dropEl = document.getElementById('drop-' + id);
+  if (dropEl) dropEl.style.borderColor = id==='100'?'#3b82f6':id==='101'?'#EF9F27':'#1D9E75';
+}
+
+// 엑셀 파싱 — G열(index 6) 합산
+async function parseXlsx(arrayBuffer) {
+  const wb = XLSX.read(arrayBuffer, { type: 'array' });
+  const ws = wb.Sheets[wb.SheetNames[0]];
+  const rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: 0 });
+  let total = 0;
+  for (let i = 5; i < rows.length; i++) {
+    const val = parseFloat(rows[i][6]);
+    if (!isNaN(val) && val > 0) total += val;
+  }
+  return Math.round(total);
+}
+
+// zip 파싱 — 내부 xlsx 전부 파싱해서 합산
+async function parseZip(file) {
+  const zip = await JSZip.loadAsync(file);
+  let total = 0;
+  const xlsxFiles = Object.keys(zip.files).filter(n => n.endsWith('.xlsx') && !n.startsWith('~$'));
+  for (const name of xlsxFiles) {
+    try {
+      const buf = await zip.files[name].async('arraybuffer');
+      total += await parseXlsx(buf);
+    } catch(e) { /* 개별 파일 오류 무시 */ }
+  }
+  return total;
+}
+
+// 단일 파일 파싱
+async function parseDmsFile(file) {
+  if (file.name.endsWith('.zip')) return await parseZip(file);
+  const buf = await file.arrayBuffer();
+  return await parseXlsx(buf);
+}
+
+// 전체 업로드 & DB 저장
+async function dmsUploadAll() {
+  const year  = parseInt(document.getElementById('dms-year').value);
+  const month = parseInt(document.getElementById('dms-month').value);
+  const prog  = document.getElementById('dms-progress');
+
+  if (!dmsFiles['100'] && !dmsFiles['101'] && !dmsFiles['102']) {
+    alert('파일을 먼저 선택해주세요');
+    return;
+  }
+
+  prog.textContent = '⏳ 파싱 중...';
+  const results = {};
+
+  for (const id of ['100','101','102']) {
+    if (!dmsFiles[id]) continue;
+    try {
+      prog.textContent = '⏳ DMS ' + id + ' 파싱 중...';
+      const kwh = await parseDmsFile(dmsFiles[id]);
+      results[id] = kwh;
+
+      // 상단 카드 업데이트
+      const statEl = document.getElementById('dms-stat-' + id);
+      const dateEl = document.getElementById('dms-stat-' + id + '-date');
+      if (statEl) statEl.textContent = kwh.toLocaleString() + ' kWh';
+      if (dateEl) dateEl.textContent = year + '.' + String(month).padStart(2,'0') + ' 파싱 완료';
+
+    } catch(e) {
+      showToast('DMS ' + id + ' 파싱 실패: ' + e.message);
+    }
+  }
+
+  if (Object.keys(results).length === 0) {
+    prog.textContent = '❌ 파싱 실패';
+    return;
+  }
+
+  // Supabase upsert
+  prog.textContent = '⏳ DB 저장 중...';
+  let saved = 0;
+  for (const id of Object.keys(results)) {
+    try {
+      const sysId = id === '100' ? 1 : id === '101' ? 2 : 3;
+      const payload = {
+        site_id: 1,
+        system_id: sysId,
+        year: year,
+        month: month,
+        kwh: results[id],
+        dms_id: 'DMS-' + id,
+        created_at: new Date().toISOString()
+      };
+      // upsert — 같은 year/month/dms_id면 덮어쓰기
+      const res = await fetch(SUPABASE_URL + '/rest/v1/power_monthly?dms_id=eq.DMS-' + id + '&year=eq.' + year + '&month=eq.' + month, {
+        method: 'DELETE',
+        headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+      });
+      await sbPost('power_monthly', payload);
+      saved++;
+    } catch(e) {
+      console.warn('DB 저장 실패 (DMS' + id + '):', e.message);
+    }
+  }
+
+  // POWER_DATA 업데이트 (메모리)
+  const existing = POWER_DATA.findIndex(r => r[0] === year && r[1] === month);
+  const row = [
+    year, month,
+    results['100'] || (existing >= 0 ? POWER_DATA[existing][2] : 0),
+    results['101'] || (existing >= 0 ? POWER_DATA[existing][3] : 0),
+    results['102'] || (existing >= 0 ? POWER_DATA[existing][4] : 0),
+  ];
+  if (existing >= 0) POWER_DATA[existing] = row;
+  else {
+    POWER_DATA.push(row);
+    POWER_DATA.sort((a,b) => a[0]*100+a[1] - (b[0]*100+b[1]));
+  }
+
+  // 이력 추가
+  dmsAddHistory(year, month, results, saved > 0);
+
+  prog.textContent = saved > 0
+    ? '✅ ' + saved + '개 DMS DB 저장 완료!'
+    : '⚠️ 파싱 완료 (DB 저장 실패 — 로컬 반영됨)';
+
+  showToast('✅ ' + year + '년 ' + month + '월 DMS 업로드 완료!');
+
+  // 전력분석 차트도 자동 갱신
+  if (typeof pwCharts !== 'undefined') {
+    Object.values(pwCharts).forEach(c => { if(c) c.destroy(); });
+    pwCharts = {};
+  }
+}
+
+// 이력 렌더링
+var dmsHistory = [];
+function dmsAddHistory(year, month, results, saved) {
+  dmsHistory.unshift({
+    year, month, results, saved,
+    time: new Date().toLocaleTimeString('ko-KR')
+  });
+  const el = document.getElementById('dms-history');
+  if (!el) return;
+  el.innerHTML = dmsHistory.map(h =>
+    '<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05)">'
+    + '<div style="font-size:.78rem">'
+    +   '<span style="color:var(--accent-blue);font-family:JetBrains Mono,monospace">' + h.year + '.' + String(h.month).padStart(2,'0') + '</span>'
+    +   ' &nbsp;'
+    +   Object.entries(h.results).map(([id,kwh]) =>
+        '<span style="color:var(--muted)">DMS'+id+':</span> <span style="font-family:JetBrains Mono,monospace">'+kwh.toLocaleString()+'</span> kWh'
+      ).join(' &nbsp;|&nbsp; ')
+    + '</div>'
+    + '<div style="font-size:.68rem;color:' + (h.saved ? 'var(--accent-green)' : 'var(--accent-yellow)') + '">'
+    +   (h.saved ? '✅ DB 저장' : '⚠️ 로컬') + ' ' + h.time
+    + '</div>'
+    + '</div>'
+  ).join('');
+}
 
 // ════ AS 관리 (Supabase 연동) ════
 var asFilter = 'all';
