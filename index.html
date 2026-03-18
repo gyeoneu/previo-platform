@@ -8999,26 +8999,63 @@ async function dmsUploadAll() {
 // 이력 렌더링
 var dmsHistory = [];
 function dmsAddHistory(year, month, results, saved) {
-  dmsHistory.unshift({
-    year, month, results, saved,
-    time: new Date().toLocaleTimeString('ko-KR')
-  });
+  const existing = dmsHistory.findIndex(h => h.year === year && h.month === month);
+  const entry = { year, month, results, saved, time: new Date().toLocaleTimeString('ko-KR') };
+  if (existing >= 0) dmsHistory[existing] = entry;
+  else dmsHistory.unshift(entry);
+  renderDmsHistory();
+}
+
+function renderDmsHistory() {
   const el = document.getElementById('dms-history');
   if (!el) return;
-  el.innerHTML = dmsHistory.map(h =>
-    '<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05)">'
-    + '<div style="font-size:.78rem">'
-    +   '<span style="color:var(--accent-blue);font-family:JetBrains Mono,monospace">' + h.year + '.' + String(h.month).padStart(2,'0') + '</span>'
-    +   ' &nbsp;'
-    +   Object.entries(h.results).map(([id,kwh]) =>
-        '<span style="color:var(--muted)">DMS'+id+':</span> <span style="font-family:JetBrains Mono,monospace">'+kwh.toLocaleString()+'</span> kWh'
-      ).join(' &nbsp;|&nbsp; ')
-    + '</div>'
-    + '<div style="font-size:.68rem;color:' + (h.saved ? 'var(--accent-green)' : 'var(--accent-yellow)') + '">'
-    +   (h.saved ? '✅ DB 저장' : '⚠️ 로컬') + ' ' + h.time
-    + '</div>'
-    + '</div>'
-  ).join('');
+  if (dmsHistory.length === 0) {
+    el.innerHTML = '<div style="color:var(--muted);font-size:.78rem;padding:8px 0">이력 없음</div>';
+    return;
+  }
+  el.innerHTML = dmsHistory.map(function(h, i) {
+    return '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05)">'
+      + '<div style="font-size:.78rem">'
+      +   '<span style="color:var(--accent-blue);font-family:JetBrains Mono,monospace;font-weight:600">' + h.year + '.' + String(h.month).padStart(2,'0') + '</span>'
+      +   ' &nbsp;'
+      +   Object.entries(h.results).map(function(e2) {
+            return '<span style="color:var(--muted)">DMS'+e2[0]+':</span> <span style="font-family:JetBrains Mono,monospace">'+e2[1].toLocaleString()+'</span> kWh';
+          }).join(' &nbsp;|&nbsp; ')
+      + '</div>'
+      + '<div style="display:flex;gap:8px;align-items:center">'
+      +   '<span style="font-size:.68rem;color:' + (h.saved ? 'var(--accent-green)' : 'var(--accent-yellow)') + '">'
+      +     (h.saved ? '✅ DB저장' : '⚠️ 로컬') + ' ' + h.time
+      +   '</span>'
+      +   '<button onclick="dmsDeleteHistory(' + i + ',' + h.year + ',' + h.month + ')" '
+      +   'style="font-size:.68rem;padding:3px 10px;border:1px solid rgba(239,68,68,.4);background:transparent;color:var(--accent-red);border-radius:6px;cursor:pointer">삭제</button>'
+      + '</div>'
+      + '</div>';
+  }).join('');
+}
+
+async function dmsDeleteHistory(idx, year, month) {
+  if (!confirm(year + '년 ' + month + '월 DMS 데이터를 삭제할까요?')) return;
+  try {
+    for (var id of ['100','101','102']) {
+      await fetch(SUPABASE_URL + '/rest/v1/power_monthly?dms_id=eq.DMS-' + id + '&year=eq.' + year + '&month=eq.' + month, {
+        method: 'DELETE',
+        headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+      });
+    }
+    showToast('✅ DB에서 삭제됐어요');
+  } catch(e) {
+    showToast('⚠️ DB 삭제 실패 (로컬만 삭제)');
+  }
+  var pidx = POWER_DATA.findIndex(function(r){ return r[0]===year && r[1]===month; });
+  if (pidx >= 0) POWER_DATA.splice(pidx, 1);
+  dmsHistory.splice(idx, 1);
+  renderDmsHistory();
+  ['100','101','102'].forEach(function(id) {
+    var s = document.getElementById('dms-stat-' + id);
+    var d = document.getElementById('dms-stat-' + id + '-date');
+    if (s) s.textContent = '— kWh';
+    if (d) d.textContent = '업로드 대기';
+  });
 }
 
 // ════ AS 관리 (Supabase 연동) ════
