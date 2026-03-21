@@ -7822,10 +7822,8 @@ async function loadReportsFromDB() {
   try {
     const data = await sbFetch('inspection_reports?order=created_at.desc&limit=50');
     if (data && data.length > 0) {
-      // DB 데이터 → reports 배열에 병합 (중복 제거)
-      const dbIds = data.map(r => String(r.id));
-      const localOnly = reports.filter(r => !dbIds.includes(String(r.id)));
-      const dbReports = data.map(r => ({
+      // DB 데이터가 있으면 DB만 표시 (샘플 무시)
+      reports = data.map(r => ({
         id: r.id,
         type: r.type || 'monthly',
         title: r.title || '보고서',
@@ -7839,10 +7837,12 @@ async function loadReportsFromDB() {
         scorePrev: r.score_prev || 100,
         events: []
       }));
-      reports = [...dbReports, ...localOnly];
+      console.log('✅ 보고서 DB 로드:', reports.length + '건');
+    } else {
+      // DB 비어있으면 샘플 유지
+      console.log('보고서 DB 없음 — 샘플 표시');
     }
     renderList();
-    console.log('✅ 보고서 로드:', reports.length + '건');
   } catch(e) {
     console.warn('보고서 DB 로드 실패 (샘플 사용):', e.message);
     renderList();
