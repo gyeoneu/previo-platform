@@ -3405,9 +3405,6 @@ body {
       <div class="sidebar-item" onclick="showPage('score')">
         <span class="icon">🏥</span> 건강점수
       </div>
-      <div class="sidebar-item" onclick="showPage('as')">
-        <span class="icon">🚨</span> AS 관리
-      </div>
       <div class="sidebar-item" onclick="showPage('error')">
         <span class="icon">⚡</span> 에러코드 진단
       </div>
@@ -4764,7 +4761,7 @@ body {
                 </div>
                 <div class="form-group">
                   <div class="form-label">담당 기사</div>
-                  <input type="text" class="form-input" placeholder="이름 입력" value="아느">
+                  <input type="text" class="form-input" id="newEngineer" placeholder="이름 입력" value="강형직">
                 </div>
                 <div class="form-group full">
                   <div class="form-label">시스템 / 구역</div>
@@ -4867,7 +4864,7 @@ body {
             <div class="panel-card-hdr">점검 내용 메모</div>
             <div class="panel-card-body">
               <div class="form-group">
-                <textarea class="form-textarea" rows="5" placeholder="현장 점검 내용을 입력하세요...&#10;&#10;예) 3층 F구역 SYS-06 실외기 응축기 오염 확인, 고압세척 후 온도 정상화 확인. PCB 통신 보드 이상 감지되어 부품 발주 진행 예정.">3층 F구역 SYS-06 실외기 응축기 오염 확인, 고압세척 실시 후 컴프레서 온도 3도 하강 확인. PCB 통신 보드 오류 코드 발생하여 삼성 B2B 부품 발주 진행. 1층 B구역 SYS-02 주소 충돌 문제 설정 수정 완료. 전체 DMS 데이터 정상 수신 중.</textarea>
+                <textarea class="form-textarea" id="newNotes" rows="5" placeholder="현장 점검 내용을 입력하세요...&#10;&#10;예) 3층 F구역 SYS-06 실외기 응축기 오염 확인, 고압세척 후 온도 정상화 확인. PCB 통신 보드 이상 감지되어 부품 발주 진행 예정."></textarea>
               </div>
             </div>
           </div>
@@ -6739,56 +6736,58 @@ async function calcHealthScore(dmsNumber) {
     'power_monthly?dms_number=eq.' + dmsNumber +
     '&order=year_month.desc&limit=24'
   );
-  console.log('DMS' + dmsNumber + ' power_monthly 조회:', data ? data.length + '건' : '없음', data && data[0] ? '최신:' + data[0].year_month + ' ' + data[0].kwh + 'kWh' : '');
   if (!data || data.length < 2) return { score: 100, minus: [], neutral: ['데이터 부족 (' + (data ? data.length : 0) + '건)'], plus: [], change: null };
 
-  // 최신 월 vs 전년 동월 비교
+  // 최신 월 기준
   const latest = data[0];
   const latestYM = latest.year_month; // "2025-03"
-  const latestYear = parseInt(latestYM.split('-')[0]);
-  const latestMonth = latestYM.split('-')[1];
-  const prevYM = (latestYear - 1) + '-' + latestMonth;
+  const [latestYear, latestMonthStr] = latestYM.split('-');
+  const prevYM = (parseInt(latestYear) - 1) + '-' + latestMonthStr;
 
-  const prevData = data.find(d => d.year_month === prevYM);
+  // 전년 동월 비교 (없으면 12개월 전 데이터로 대체)
+  let prevData = data.find(d => d.year_month === prevYM);
+  if (!prevData && data.length >= 13) prevData = data[12]; // 12개월 전
 
   let score = 100;
   const minus = [], neutral = [], plus = [];
   let changeRate = null;
 
   if (prevData && prevData.kwh > 0) {
-    changeRate = ((latest.kwh - prevData.kwh) / prevData.kwh * 100);
+    changeRate = (latest.kwh - prevData.kwh) / prevData.kwh * 100;
     const cr = Math.round(changeRate * 10) / 10;
+    const label = prevData.year_month === prevYM ? '전년 동월 대비' : '12개월 전 대비';
 
-    if (changeRate > 50) {
-      score -= 40; minus.push('전력 급증 +' + cr + '% (-40)');
-    } else if (changeRate > 30) {
-      score -= 25; minus.push('전력 과다증가 +' + cr + '% (-25)');
-    } else if (changeRate > 15) {
-      score -= 15; minus.push('전력 이상증가 +' + cr + '% (-15)');
-    } else if (changeRate > 5) {
-      score -= 5; minus.push('전력 소폭증가 +' + cr + '% (-5)');
-    } else if (changeRate >= -5) {
-      neutral.push('전력 정상 ' + (cr >= 0 ? '+' : '') + cr + '%');
-    } else if (changeRate < -5) {
-      score = Math.min(100, score + 5);
-      plus.push('전력 절감 ' + cr + '% (+5)');
-    }
+    if (changeRate > 50)      { score -= 40; minus.push(label + ' 전력 급증 +' + cr + '% (-40)'); }
+    else if (changeRate > 30) { score -= 25; minus.push(label + ' 전력 과다증가 +' + cr + '% (-25)'); }
+    else if (changeRate > 15) { score -= 15; minus.push(label + ' 전력 이상증가 +' + cr + '% (-15)'); }
+    else if (changeRate > 5)  { score -= 5;  minus.push(label + ' 전력 소폭증가 +' + cr + '% (-5)'); }
+    else if (changeRate >= -5){ neutral.push(label + ' 전력 정상 ' + (cr >= 0 ? '+' : '') + cr + '%'); }
+    else { score = Math.min(100, score + 5); plus.push(label + ' 전력 절감 ' + cr + '% (+5)'); }
 
-    // 절대량 기준 추가 감점
     if (latest.kwh > 50000) { score -= 5; minus.push('고전력 구간 (-5)'); }
   } else {
-    neutral.push('전년 비교 데이터 없음');
+    // 비교 데이터 없을 때 — 최근 3개월 평균으로 추세 판단
+    if (data.length >= 3) {
+      const avg3 = data.slice(0, 3).reduce((s, d) => s + d.kwh, 0) / 3;
+      const avg3b = data.slice(3, 6).length > 0 ? data.slice(3, 6).reduce((s, d) => s + d.kwh, 0) / data.slice(3, 6).length : avg3;
+      const trend = (avg3 - avg3b) / avg3b * 100;
+      if (trend > 20)      { score -= 10; minus.push('최근 3개월 상승 추세 +' + Math.round(trend) + '% (-10)'); }
+      else if (trend > 5)  { score -= 5;  minus.push('최근 3개월 소폭 상승 (-5)'); }
+      else                 { neutral.push('3개월 추세 안정적'); }
+    } else {
+      neutral.push('비교 데이터 없음 (초기 데이터)');
+    }
   }
 
-  // 최근 3개월 평균 vs 전년 3개월 평균
-  if (data.length >= 3) {
+  // 3개월 연속 추세 추가 감점
+  if (data.length >= 6 && prevData) {
     const recent3 = data.slice(0, 3);
-    const prev3 = data.slice(12, 15);
+    const prev3   = data.slice(12, 15);
     if (prev3.length === 3) {
       const recentAvg = recent3.reduce((s, d) => s + d.kwh, 0) / 3;
       const prevAvg   = prev3.reduce((s, d) => s + d.kwh, 0) / 3;
       const trend = (recentAvg - prevAvg) / prevAvg * 100;
-      if (trend > 20) { score -= 5; minus.push('3개월 추세 상승 (+' + Math.round(trend) + '%) (-5)'); }
+      if (trend > 20) { score -= 5; minus.push('3개월 연속 상승 추세 (-5)'); }
     }
   }
 
@@ -7157,6 +7156,7 @@ function showPage(name, skipHistory) {
     if (el && html) el.innerHTML = html;
   }, 50);
   if (name === 'as') loadAS();
+  if (name === 'report') loadReportsFromDB();
   if (name === 'dms') { /* DMS 페이지 — 파일 선택 대기 */ }
   if (name === 'chat') setTimeout(() => updateApiKeyStatus(), 50);
   if (name === 'compare') { setTimeout(function(){ renderCompareCharts(); }, 100); }
@@ -7524,6 +7524,10 @@ function renderList() {
   if (!grid) return;
   let data = reports;
   if(currentFilter !== 'all') data = reports.filter(r => r.type === currentFilter || r.status === currentFilter);
+  if (data.length === 0) {
+    grid.innerHTML = '<div style="padding:40px;text-align:center;color:var(--muted)">보고서가 없어요. 새 보고서를 작성해주세요!</div>';
+    return;
+  }
   grid.innerHTML = data.map(r => `
     <div class="report-card type-${r.type} ${selectedReport?.id===r.id?'selected':''}" onclick="openReport('${r.id}')">
       <div class="report-type-icon ${r.type}">${typeIcon(r.type)}</div>
@@ -7538,12 +7542,13 @@ function renderList() {
       <div class="r-score">
         <div class="r-score-num" style="color:${scoreColor(r.scoreAvg)}">${r.scoreAvg}</div>
         <div class="r-score-label">건강점수</div>
-        <div style="font-size:.62rem;color:${r.scoreAvg>r.scorePrev?'var(--green)':'var(--red)'}">
-          ${r.scoreAvg>r.scorePrev?'▲':'▼'}${Math.abs(r.scoreAvg-r.scorePrev)}
-        </div>
       </div>
       <div class="r-status-badge ${statusClass(r.status)}">${statusLabel(r.status)}</div>
-      <button class="r-action-btn" onclick="event.stopPropagation();openReport('${r.id}')">열기 →</button>
+      <div style="display:flex;gap:4px;align-items:center" onclick="event.stopPropagation()">
+        ${r.status === 'draft' ? `<button onclick="changeReportStatus('${r.id}','review')" style="font-size:.65rem;padding:3px 8px;border:1px solid var(--accent-blue);background:transparent;color:var(--accent-blue);border-radius:5px;cursor:pointer">검토 요청</button>` : ''}
+        ${r.status === 'review' ? `<button onclick="changeReportStatus('${r.id}','approved')" style="font-size:.65rem;padding:3px 8px;border:1px solid var(--accent-green);background:transparent;color:var(--accent-green);border-radius:5px;cursor:pointer">승인 완료</button>` : ''}
+        <button onclick="openReport('${r.id}')" style="font-size:.65rem;padding:3px 8px;border:1px solid var(--border);background:transparent;color:var(--muted);border-radius:5px;cursor:pointer">열기 →</button>
+      </div>
     </div>
   `).join('');
 }
@@ -7745,8 +7750,116 @@ function filterType(type) {
 function filterStatus(s) { currentFilter = s; showView('list'); }
 
 function saveReport() {
-  alert('보고서가 저장되었습니다! ✅\n\n실제 구현 시 DB 저장 → 점수 자동 반영 → 관리사무소 발송 연동 예정');
-  showView('list');
+  const type      = document.getElementById('newType')?.value || 'monthly';
+  const date      = document.getElementById('newDate')?.value || new Date().toISOString().slice(0,10);
+  const system    = document.getElementById('newSystem')?.value || 'all';
+  const engineer  = document.getElementById('newEngineer')?.value.trim() || '강형직';
+  const notes     = document.getElementById('newNotes')?.value.trim() || '';
+
+  if (!notes) { showToast('⚠️ 점검 내용을 입력해주세요'); return; }
+
+  const typeLabels = { monthly:'월간 정기', emergency:'긴급 출동', preventive:'예방정비', complaint:'민원 처리' };
+  const yearMonth = date.slice(0,7); // 2026-03
+  const title = `${yearMonth} ${typeLabels[type]||type} 보고서`;
+
+  // 체크리스트 항목 수집
+  const checkItems = [];
+  document.querySelectorAll('#newChecklist .check-item').forEach(item => {
+    const name = item.querySelector('.check-name')?.textContent?.trim();
+    const val  = item.querySelector('select')?.value;
+    if (name) checkItems.push({ name, value: val });
+  });
+
+  const payload = {
+    site_id: 1,
+    type,
+    title,
+    date,
+    system_id: system,
+    engineer,
+    notes,
+    checklist: JSON.stringify(checkItems),
+    status: 'draft',
+    created_at: new Date().toISOString()
+  };
+
+  // Supabase 저장 시도
+  sbPost('inspection_reports', payload)
+    .then(result => {
+      const newRpt = Array.isArray(result) ? result[0] : result;
+      // 로컬 목록에도 추가
+      reports.unshift({
+        id: newRpt?.id || 'RPT-' + Date.now(),
+        type, title, date,
+        site: '리드스마트스퀘어',
+        system: system === 'all' ? '전체 현장' : system,
+        technician: engineer,
+        status: 'draft',
+        notes,
+        scoreAvg: 100, scorePrev: 100, events: []
+      });
+      showView('list');
+      showToast('✅ 보고서가 저장됐어요!');
+    })
+    .catch(e => {
+      // DB 실패 → 로컬에만 저장
+      reports.unshift({
+        id: 'RPT-' + Date.now(),
+        type, title, date,
+        site: '리드스마트스퀘어',
+        system: system === 'all' ? '전체 현장' : system,
+        technician: engineer,
+        status: 'draft',
+        notes,
+        scoreAvg: 100, scorePrev: 100, events: []
+      });
+      showView('list');
+      showToast('보고서 저장됨 (로컬 — DB 연동 실패)');
+    });
+}
+
+async function loadReportsFromDB() {
+  try {
+    const data = await sbFetch('inspection_reports?order=created_at.desc&limit=50');
+    if (data && data.length > 0) {
+      // DB 데이터 → reports 배열에 병합 (중복 제거)
+      const dbIds = data.map(r => String(r.id));
+      const localOnly = reports.filter(r => !dbIds.includes(String(r.id)));
+      const dbReports = data.map(r => ({
+        id: r.id,
+        type: r.type || 'monthly',
+        title: r.title || '보고서',
+        date: r.date || r.created_at?.slice(0,10),
+        site: '리드스마트스퀘어',
+        system: r.system_id || '전체 현장',
+        technician: r.engineer || '강형직',
+        status: r.status || 'draft',
+        notes: r.notes || '',
+        scoreAvg: r.score_avg || 100,
+        scorePrev: r.score_prev || 100,
+        events: []
+      }));
+      reports = [...dbReports, ...localOnly];
+    }
+    renderList();
+    console.log('✅ 보고서 로드:', reports.length + '건');
+  } catch(e) {
+    console.warn('보고서 DB 로드 실패 (샘플 사용):', e.message);
+    renderList();
+  }
+}
+
+async function changeReportStatus(id, newStatus) {
+  const statusLabels = { draft:'작성중', review:'검토중', approved:'완료' };
+  try {
+    await sbPatchWhere('inspection_reports', 'id=eq.' + id, { status: newStatus });
+    showToast('✅ 상태: ' + (statusLabels[newStatus] || newStatus));
+  } catch(e) {
+    showToast('상태 변경됨 (로컬)');
+  }
+  const rpt = reports.find(r => String(r.id) === String(id));
+  if (rpt) rpt.status = newStatus;
+  renderList();
 }
 
 // ─── Clock ───
