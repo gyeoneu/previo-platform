@@ -6739,7 +6739,8 @@ async function calcHealthScore(dmsNumber) {
     'power_monthly?dms_number=eq.' + dmsNumber +
     '&order=year_month.desc&limit=24'
   );
-  if (!data || data.length < 2) return { score: 100, minus: [], neutral: ['데이터 부족'], plus: [], change: null };
+  console.log('DMS' + dmsNumber + ' power_monthly 조회:', data ? data.length + '건' : '없음', data && data[0] ? '최신:' + data[0].year_month + ' ' + data[0].kwh + 'kWh' : '');
+  if (!data || data.length < 2) return { score: 100, minus: [], neutral: ['데이터 부족 (' + (data ? data.length : 0) + '건)'], plus: [], change: null };
 
   // 최신 월 vs 전년 동월 비교
   const latest = data[0];
@@ -6838,7 +6839,8 @@ async function loadSystemsFromDB() {
 
     updateScoreSummary();
     if (typeof renderScoreList === 'function') renderScoreList();
-    console.log('✅ 건강점수 자동계산 완료:', results.map(r => r.id + ':' + r.score).join(', '));
+    console.log('✅ 건강점수 자동계산 완료:', results.map(r => r.id + ':' + r.score + '(' + (r.changeRate !== null && r.changeRate !== undefined ? r.changeRate.toFixed(1)+'%' : '데이터없음') + ')').join(', '));
+    console.log('시스템 원본:', JSON.stringify(systems.map(s => ({code: s.system_code, dms: s.dms_number}))));
 
   } catch(e) {
     console.warn('⚠️ Supabase 연동 실패 (로컬 데이터 사용):', e.message);
