@@ -6715,34 +6715,180 @@ async function sbDelete(table, id) {
   if (!res.ok) throw new Error('삭제 실패');
 }
 
+async function sbPatchWhere(table, condition, data) {
+  const res = await fetch(SUPABASE_URL + '/rest/v1/' + table + '?' + condition, {
+    method: 'PATCH',
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'Authorization': 'Bearer ' + SUPABASE_KEY,
+      'Content-Type': 'application/json',
+      'Prefer': 'return=representation'
+    },
+    body: JSON.stringify(data)
+  });
+  if (!res.ok) throw new Error('수정 실패');
+  return res.json();
+}
+
+// ════ 건강점수 자동 계산 엔진 ════
+// power_monthly 데이터 기반 전년 동월 대비 전력 변화율 → 점수 자동 산출
+
+async function calcHealthScore(dmsNumber) {
+  // 최근 24개월 데이터 가져오기
+  const data = await sbFetch(
+    'power_monthly?dms_number=eq.' + dmsNumber +
+    '&order=year_month.desc&limit=24'
+  );
+  if (!data || data.length < 2) return { score: 100, minus: [], neutral: ['데이터 부족'], plus: [], change: null };
+
+  // 최신 월 vs 전년 동월 비교
+  const latest = data[0];
+  const latestYM = latest.year_month; // "2025-03"
+  const latestYear = parseInt(latestYM.split('-')[0]);
+  const latestMonth = latestYM.split('-')[1];
+  const prevYM = (latestYear - 1) + '-' + latestMonth;
+
+  const prevData = data.find(d => d.year_month === prevYM);
+
+  let score = 100;
+  const minus = [], neutral = [], plus = [];
+  let changeRate = null;
+
+  if (prevData && prevData.kwh > 0) {
+    changeRate = ((latest.kwh - prevData.kwh) / prevData.kwh * 100);
+    const cr = Math.round(changeRate * 10) / 10;
+
+    if (changeRate > 50) {
+      score -= 40; minus.push('전력 급증 +' + cr + '% (-40)');
+    } else if (changeRate > 30) {
+      score -= 25; minus.push('전력 과다증가 +' + cr + '% (-25)');
+    } else if (changeRate > 15) {
+      score -= 15; minus.push('전력 이상증가 +' + cr + '% (-15)');
+    } else if (changeRate > 5) {
+      score -= 5; minus.push('전력 소폭증가 +' + cr + '% (-5)');
+    } else if (changeRate >= -5) {
+      neutral.push('전력 정상 ' + (cr >= 0 ? '+' : '') + cr + '%');
+    } else if (changeRate < -5) {
+      score = Math.min(100, score + 5);
+      plus.push('전력 절감 ' + cr + '% (+5)');
+    }
+
+    // 절대량 기준 추가 감점
+    if (latest.kwh > 50000) { score -= 5; minus.push('고전력 구간 (-5)'); }
+  } else {
+    neutral.push('전년 비교 데이터 없음');
+  }
+
+  // 최근 3개월 평균 vs 전년 3개월 평균
+  if (data.length >= 3) {
+    const recent3 = data.slice(0, 3);
+    const prev3 = data.slice(12, 15);
+    if (prev3.length === 3) {
+      const recentAvg = recent3.reduce((s, d) => s + d.kwh, 0) / 3;
+      const prevAvg   = prev3.reduce((s, d) => s + d.kwh, 0) / 3;
+      const trend = (recentAvg - prevAvg) / prevAvg * 100;
+      if (trend > 20) { score -= 5; minus.push('3개월 추세 상승 (+' + Math.round(trend) + '%) (-5)'); }
+    }
+  }
+
+  score = Math.max(0, Math.min(100, score));
+  return { score, minus, neutral, plus, changeRate, latestKwh: latest.kwh, latestYM };
+}
+
 async function loadSystemsFromDB() {
   try {
-    const data = await sbFetch('hvac_systems?select=system_id,system_code,system_name,dms_number,current_score,score_grade&order=current_score.asc');
-    scoreSystems = data.map(s => ({
-      id: s.system_code,
-      name: s.system_name,
-      sub: 'DMS-' + s.dms_number + ' · 건강점수 ' + s.current_score,
-      score: parseFloat(s.current_score),
-      com: true,
-      ref: true,
-      risks: parseFloat(s.current_score) < 75 ? ['opr'] : [],
-      minus: [],
-      neutral: ['DB 연동됨'],
-      plus: []
+    const systems = await sbFetch('hvac_systems?select=system_id,system_code,system_name,dms_number&order=dms_number.asc');
+    if (!systems || systems.length === 0) throw new Error('시스템 없음');
+
+    const dmsNames = { '100': 'DMS 100 · 사무실A', '101': 'DMS 101 · 사무실B', '102': 'DMS 102 · 근린상가' };
+    const dmsSubs  = { '100': '실외기 19대 · 실내기 114대', '101': '실외기 16대 · 실내기 59대', '102': '실외기 21대 · 실내기 108대' };
+
+    // 각 DMS 건강점수 자동 계산
+    const results = await Promise.all(systems.map(async s => {
+      const dmsNum = s.dms_number || '100';
+      const calc = await calcHealthScore(dmsNum);
+      return {
+        id: 'DMS-' + dmsNum,
+        name: dmsNames[dmsNum] || s.system_name,
+        sub: dmsSubs[dmsNum] || ('DMS-' + dmsNum),
+        score: calc.score,
+        com: true, ref: true,
+        risks: calc.score < 60 ? ['opr'] : calc.score < 75 ? ['mnt'] : [],
+        minus: calc.minus,
+        neutral: calc.neutral,
+        plus: calc.plus,
+        changeRate: calc.changeRate,
+        latestKwh: calc.latestKwh,
+        latestYM: calc.latestYM,
+        dmsNum
+      };
     }));
+
+    scoreSystems = results;
+
+    // hvac_systems 테이블 점수 업데이트
+    for (const r of results) {
+      try {
+        await sbPatchWhere('hvac_systems',
+          'dms_number=eq.' + r.dmsNum,
+          { current_score: r.score, score_grade: scGrade(r.score) }
+        );
+      } catch(e) { /* 업데이트 실패 무시 */ }
+    }
+
     updateScoreSummary();
     if (typeof renderScoreList === 'function') renderScoreList();
-    console.log('✅ 시스템 로드 완료:', scoreSystems.length + '개');
+    console.log('✅ 건강점수 자동계산 완료:', results.map(r => r.id + ':' + r.score).join(', '));
+
   } catch(e) {
-    console.warn('⚠️ Supabase 연동 실패:', e.message);
-    scoreSystems = [
-      { id:'DMS-100', name:'DMS 100 · 사무실 A구역', sub:'실외기 19대 · 실내기 114대', score:100, com:true, ref:true, risks:[], minus:[], neutral:['정상 운전 중'], plus:[] },
-      { id:'DMS-101', name:'DMS 101 · 사무실 B구역', sub:'실외기 16대 · 실내기 59대', score:85, com:true, ref:true, risks:[], minus:['전력 이상 감지(-15)'], neutral:[], plus:[] },
-      { id:'DMS-102', name:'DMS 102 · 근린상가(2F 식당)', sub:'실외기 21대 · 실내기 108대', score:100, com:true, ref:true, risks:[], minus:[], neutral:['정상 운전 중'], plus:[] }
-    ];
+    console.warn('⚠️ Supabase 연동 실패 (로컬 데이터 사용):', e.message);
+    // 전력 데이터 기반 로컬 계산 (POWER_DATA 활용)
+    scoreSystems = calcScoreFromLocalData();
     updateScoreSummary();
     if (typeof renderScoreList === 'function') renderScoreList();
   }
+}
+
+// 로컬 POWER_DATA 기반 점수 계산 (Supabase 실패 시 fallback)
+function calcScoreFromLocalData() {
+  const dmsMap = [
+    { id:'DMS-100', name:'DMS 100 · 사무실A', sub:'실외기 19대 · 실내기 114대', col:2 },
+    { id:'DMS-101', name:'DMS 101 · 사무실B', sub:'실외기 16대 · 실내기 59대',  col:3 },
+    { id:'DMS-102', name:'DMS 102 · 근린상가', sub:'실외기 21대 · 실내기 108대', col:4 },
+  ];
+
+  return dmsMap.map(dms => {
+    // 최근 월 찾기
+    const sorted = [...POWER_DATA].sort((a,b) => (b[0]*100+b[1]) - (a[0]*100+a[1]));
+    const latest = sorted[0];
+    if (!latest) return { ...dms, score:100, minus:[], neutral:['데이터 없음'], plus:[], risks:[] };
+
+    const latestKwh = latest[dms.col];
+    // 전년 동월
+    const prevRow = POWER_DATA.find(r => r[0] === latest[0]-1 && r[1] === latest[1]);
+    const prevKwh = prevRow ? prevRow[dms.col] : null;
+
+    let score = 100;
+    const minus = [], neutral = [], plus = [];
+
+    if (prevKwh && prevKwh > 0) {
+      const cr = Math.round((latestKwh - prevKwh) / prevKwh * 1000) / 10;
+      if (cr > 50)      { score -= 40; minus.push('전력 급증 +' + cr + '% (-40)'); }
+      else if (cr > 30) { score -= 25; minus.push('전력 과다증가 +' + cr + '% (-25)'); }
+      else if (cr > 15) { score -= 15; minus.push('전력 이상증가 +' + cr + '% (-15)'); }
+      else if (cr > 5)  { score -= 5;  minus.push('전력 소폭증가 +' + cr + '% (-5)'); }
+      else if (cr >= -5){ neutral.push('전력 정상 ' + (cr>=0?'+':'') + cr + '%'); }
+      else              { score = Math.min(100, score+5); plus.push('전력 절감 ' + cr + '% (+5)'); }
+    } else {
+      neutral.push('전년 비교 데이터 없음');
+    }
+
+    score = Math.max(0, Math.min(100, score));
+    return {
+      ...dms, score, minus, neutral, plus,
+      risks: score < 60 ? ['opr'] : score < 75 ? ['mnt'] : [],
+    };
+  });
 }
 
 function updateScoreSummary() {
