@@ -7565,8 +7565,13 @@ function openReport(id) {
 function renderDetail(r) {
   document.getElementById('detailTitle').textContent = r.title;
 
-  // Timeline
-  document.getElementById('detailTimeline').innerHTML = r.timeline.map(t=>`
+  // Timeline — 없으면 기본값
+  const timeline = r.timeline || [
+    { title: '보고서 작성', date: r.date || '-', color: '#378ADD', note: r.technician + ' 작성' },
+    { title: r.status === 'approved' ? '승인 완료' : r.status === 'review' ? '검토 중' : '작성 중',
+      date: r.date || '-', color: r.status === 'approved' ? '#1D9E75' : r.status === 'review' ? '#EF9F27' : '#8899BB', note: '' }
+  ];
+  document.getElementById('detailTimeline').innerHTML = timeline.map(t=>`
     <div class="tl-item">
       <div class="tl-dot" style="border-color:${t.color};background:${t.color}22"></div>
       <div class="tl-content">
@@ -7632,7 +7637,7 @@ function renderDetail(r) {
         </div>
       </div>
       <div>
-        ${r.events.map(e=>`
+        ${(r.events||[]).map(e=>`
           <div class="score-change-row">
             <span class="score-change-label"><span style="font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--muted)">${e.code}</span> · ${e.name}</span>
             <div class="score-change-bar"><div class="score-change-fill" style="width:${Math.min(Math.abs(e.delta)*5,100)}%;background:${e.type==='m'?'var(--red)':e.type==='p'?'var(--green)':'var(--cyan)'}"></div></div>
@@ -7645,7 +7650,7 @@ function renderDetail(r) {
     <div class="doc-section">
       <div class="doc-sec-title">점검 체크리스트</div>
       <div class="check-grid">
-        ${r.checklist.map(c=>`
+        ${(r.checklist||[]).map(c=>`
           <div class="check-item">
             <span class="check-icon">${c.result==='ok'?'✅':c.result==='ng'?'❌':'—'}</span>
             <span class="check-name">${c.name}${c.note?` <span style="color:var(--muted);font-size:.65rem">(${c.note})</span>`:''}
@@ -7658,7 +7663,7 @@ function renderDetail(r) {
 
     <div class="doc-section">
       <div class="doc-sec-title">작업 내역</div>
-      ${r.works.map(w=>`
+      ${(r.works||[]).map(w=>`
         <div class="work-item">
           <div class="work-date">03-${w.date.split('-')[1]||w.date}</div>
           <div class="work-body">
@@ -7670,10 +7675,10 @@ function renderDetail(r) {
       `).join('')}
     </div>
 
-    ${r.parts.length?`
+    ${(r.parts&&r.parts.length)?`
     <div class="doc-section">
       <div class="doc-sec-title">사용 부품</div>
-      ${r.parts.map(p=>`
+      ${(r.parts||[]).map(p=>`
         <div class="part-row">
           <span class="part-name">${p.name}</span>
           <span class="part-qty">${p.qty}</span>
@@ -7685,9 +7690,9 @@ function renderDetail(r) {
     <div class="doc-section">
       <div class="doc-sec-title">종합 의견 및 권고</div>
       <div style="background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:14px;font-size:.78rem;line-height:1.8;color:var(--muted)">
-        ${r.note}
+        ${r.note||""}
       </div>
-      ${r.recommendations.map(rec=>`
+      ${(r.recommendations||[]).map(rec=>`
         <div class="rec-item">
           <div class="rec-priority" style="color:${rec.priority===1?'var(--red)':rec.priority===2?'var(--orange)':'var(--blue)'}">${rec.priority}</div>
           <div class="rec-content">
