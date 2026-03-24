@@ -5180,10 +5180,109 @@ body {
     </div>
 
     <div class="page" id="page-users">
-      <div class="coming-soon">
-        <div class="icon">👥</div>
-        <h2>담당자 관리</h2>
-        <p>담당자 계정 관리 시스템 개발 예정</p>
+      <div style="padding:24px">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px">
+          <h1 style="font-size:1.4rem;font-weight:700">👥 사용자 관리</h1>
+          <span style="font-size:.75rem;color:var(--text2)">계정 관리 · 비밀번호 초기화 · 권한 설정</span>
+        </div>
+
+        <!-- 탭 -->
+        <div style="display:flex;gap:4px;margin-bottom:20px;border-bottom:1px solid var(--border)">
+          <button onclick="usersTab('field')" id="utab-field" style="padding:10px 20px;font-size:.85rem;font-weight:600;border:none;background:rgba(59,130,246,.15);color:#60a5fa;border-radius:8px 8px 0 0;cursor:pointer">🔧 현장기사</button>
+          <button onclick="usersTab('manager')" id="utab-manager" style="padding:10px 20px;font-size:.85rem;font-weight:600;border:none;background:transparent;color:var(--text2);border-radius:8px 8px 0 0;cursor:pointer">⚙️ 관리자</button>
+          <button onclick="usersTab('client')" id="utab-client" style="padding:10px 20px;font-size:.85rem;font-weight:600;border:none;background:transparent;color:var(--text2);border-radius:8px 8px 0 0;cursor:pointer">🏢 고객사</button>
+        </div>
+
+        <!-- 현장기사 탭 -->
+        <div id="upanel-field">
+          <table style="width:100%;border-collapse:collapse;font-size:.85rem">
+            <thead>
+              <tr style="border-bottom:1px solid var(--border)">
+                <th style="padding:10px 12px;text-align:left;color:var(--text2);font-weight:600">아이디</th>
+                <th style="padding:10px 12px;text-align:left;color:var(--text2);font-weight:600">이름</th>
+                <th style="padding:10px 12px;text-align:left;color:var(--text2);font-weight:600">연락처</th>
+                <th style="padding:10px 12px;text-align:left;color:var(--text2);font-weight:600">담당구역</th>
+                <th style="padding:10px 12px;text-align:left;color:var(--text2);font-weight:600">상태</th>
+                <th style="padding:10px 12px;text-align:left;color:var(--text2);font-weight:600">비밀번호</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom:1px solid rgba(255,255,255,.05)">
+                <td style="padding:12px">field01</td>
+                <td style="padding:12px">김현장</td>
+                <td style="padding:12px">010-1234-5678</td>
+                <td style="padding:12px">DMS 100·101</td>
+                <td style="padding:12px"><span style="background:rgba(34,197,94,.15);color:#4ade80;padding:3px 10px;border-radius:20px;font-size:.75rem">활성</span></td>
+                <td style="padding:12px"><button onclick="resetPw(this,'field01')" style="padding:4px 12px;font-size:.75rem;border:1px solid rgba(239,68,68,.4);color:#f87171;background:rgba(239,68,68,.1);border-radius:6px;cursor:pointer">초기화</button></td>
+              </tr>
+              <tr style="border-bottom:1px solid rgba(255,255,255,.05)">
+                <td style="padding:12px">field02</td>
+                <td style="padding:12px">이기사</td>
+                <td style="padding:12px">010-2345-6789</td>
+                <td style="padding:12px">DMS 102</td>
+                <td style="padding:12px"><span style="background:rgba(34,197,94,.15);color:#4ade80;padding:3px 10px;border-radius:20px;font-size:.75rem">활성</span></td>
+                <td style="padding:12px"><button onclick="resetPw(this,'field02')" style="padding:4px 12px;font-size:.75rem;border:1px solid rgba(239,68,68,.4);color:#f87171;background:rgba(239,68,68,.1);border-radius:6px;cursor:pointer">초기화</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 관리자 탭 -->
+        <div id="upanel-manager" style="display:none">
+          <table style="width:100%;border-collapse:collapse;font-size:.85rem">
+            <thead>
+              <tr style="border-bottom:1px solid var(--border)">
+                <th style="padding:10px 12px;text-align:left;color:var(--text2);font-weight:600">아이디</th>
+                <th style="padding:10px 12px;text-align:left;color:var(--text2);font-weight:600">이름</th>
+                <th style="padding:10px 12px;text-align:left;color:var(--text2);font-weight:600">연락처</th>
+                <th style="padding:10px 12px;text-align:left;color:var(--text2);font-weight:600">권한</th>
+                <th style="padding:10px 12px;text-align:left;color:var(--text2);font-weight:600">상태</th>
+                <th style="padding:10px 12px;text-align:left;color:var(--text2);font-weight:600">비밀번호</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom:1px solid rgba(255,255,255,.05)">
+                <td style="padding:12px">manager01</td>
+                <td style="padding:12px">박관리</td>
+                <td style="padding:12px">010-3456-7890</td>
+                <td style="padding:12px"><span style="background:rgba(16,185,129,.15);color:#34d399;padding:3px 10px;border-radius:20px;font-size:.75rem">L2 관리자</span></td>
+                <td style="padding:12px"><span style="background:rgba(34,197,94,.15);color:#4ade80;padding:3px 10px;border-radius:20px;font-size:.75rem">활성</span></td>
+                <td style="padding:12px"><button onclick="resetPw(this,'manager01')" style="padding:4px 12px;font-size:.75rem;border:1px solid rgba(239,68,68,.4);color:#f87171;background:rgba(239,68,68,.1);border-radius:6px;cursor:pointer">초기화</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 고객사 탭 -->
+        <div id="upanel-client" style="display:none">
+          <table style="width:100%;border-collapse:collapse;font-size:.85rem">
+            <thead>
+              <tr style="border-bottom:1px solid var(--border)">
+                <th style="padding:10px 12px;text-align:left;color:var(--text2);font-weight:600">아이디</th>
+                <th style="padding:10px 12px;text-align:left;color:var(--text2);font-weight:600">회사명</th>
+                <th style="padding:10px 12px;text-align:left;color:var(--text2);font-weight:600">담당자</th>
+                <th style="padding:10px 12px;text-align:left;color:var(--text2);font-weight:600">연락처</th>
+                <th style="padding:10px 12px;text-align:left;color:var(--text2);font-weight:600">계약현장</th>
+                <th style="padding:10px 12px;text-align:left;color:var(--text2);font-weight:600">비밀번호</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom:1px solid rgba(255,255,255,.05)">
+                <td style="padding:12px">client01</td>
+                <td style="padding:12px">리드스마트스퀘어</td>
+                <td style="padding:12px">최담당</td>
+                <td style="padding:12px">010-4567-8901</td>
+                <td style="padding:12px">안산 단원구 산단로 325</td>
+                <td style="padding:12px"><button onclick="resetPw(this,'client01')" style="padding:4px 12px;font-size:.75rem;border:1px solid rgba(239,68,68,.4);color:#f87171;background:rgba(239,68,68,.1);border-radius:6px;cursor:pointer">초기화</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 초기화 안내 -->
+        <div style="margin-top:24px;padding:14px 18px;background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.3);border-radius:10px;font-size:.8rem;color:#e8c46a">
+          💡 비밀번호 초기화 시 마스터 비밀번호로 설정됩니다. 초기화 후 담당자에게 새 비밀번호 설정을 안내하세요.
+        </div>
       </div>
     </div>
 
@@ -7146,6 +7245,46 @@ function skipOnboarding() {
   }, 100);
 }
 
+
+// ════ 사용자 관리 ════
+function usersTab(type) {
+  ['field','manager','client'].forEach(t => {
+    document.getElementById('upanel-' + t).style.display = t === type ? '' : 'none';
+    const btn = document.getElementById('utab-' + t);
+    if (t === type) {
+      btn.style.background = 'rgba(59,130,246,.15)';
+      btn.style.color = '#60a5fa';
+    } else {
+      btn.style.background = 'transparent';
+      btn.style.color = 'var(--text2)';
+    }
+  });
+}
+
+function resetPw(btn, userId) {
+  if (!confirm(userId + ' 의 비밀번호를 마스터 비밀번호로 초기화하시겠습니까?')) return;
+  // ACCOUNTS 객체에서 해당 유저 비번 초기화
+  const roleMap = { field01:'field', field02:'field', manager01:'manager', client01:'client' };
+  const role = roleMap[userId];
+  if (role && typeof ACCOUNTS !== 'undefined') {
+    // 마스터 비번으로 초기화 (운영자 비번)
+    const masterPw = ACCOUNTS['celsius']?.password || 'Cel2026!';
+    if (ACCOUNTS[userId]) {
+      ACCOUNTS[userId].password = masterPw;
+      btn.textContent = '완료 ✓';
+      btn.style.color = '#4ade80';
+      btn.style.borderColor = 'rgba(34,197,94,.4)';
+      btn.style.background = 'rgba(34,197,94,.1)';
+      setTimeout(() => {
+        btn.textContent = '초기화';
+        btn.style.color = '#f87171';
+        btn.style.borderColor = 'rgba(239,68,68,.4)';
+        btn.style.background = 'rgba(239,68,68,.1)';
+      }, 2000);
+    }
+  }
+  showToast('✅ ' + userId + ' 비밀번호가 마스터 비밀번호로 초기화되었습니다.');
+}
 
 function showPage(name, skipHistory) {
   const role = window.currentRole || 'demo';
