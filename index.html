@@ -1182,16 +1182,16 @@ body {
   display:flex; align-items:center; justify-content:center;
   font-size:16px; flex-shrink:0;
 }
-#page-checklist .c1 { background:#fff4ee; }
-#page-checklist .c2 { background:#eff6ff; }
-#page-checklist .c3 { background:#f0fdf4; }
-#page-checklist .c4 { background:#fefce8; }
-#page-checklist .c5 { background:#fdf4ff; }
-#page-checklist .c6 { background:#fff1f2; }
+#page-checklist .c1 { background:rgba(251,146,60,.08); border-left:3px solid rgba(251,146,60,.5); }
+#page-checklist .c2 { background:rgba(59,130,246,.08); border-left:3px solid rgba(59,130,246,.5); }
+#page-checklist .c3 { background:rgba(34,197,94,.08); border-left:3px solid rgba(34,197,94,.5); }
+#page-checklist .c4 { background:rgba(234,179,8,.08); border-left:3px solid rgba(234,179,8,.5); }
+#page-checklist .c5 { background:rgba(168,85,247,.08); border-left:3px solid rgba(168,85,247,.5); }
+#page-checklist .c6 { background:rgba(239,68,68,.08); border-left:3px solid rgba(239,68,68,.5); }
 
 #page-checklist .sec-hd-text { flex:1; }
-#page-checklist .sec-hd-title { font-size:14px; font-weight:700; color:var(--t1); }
-#page-checklist .sec-hd-sub { font-size:11px; color:var(--t3); margin-top:1px; }
+#page-checklist .sec-hd-title { font-size:14px; font-weight:700; color:var(--text); }
+#page-checklist .sec-hd-sub { font-size:11px; color:var(--text2); margin-top:1px; }
 #page-checklist .sec-counter {
   font-family:'JetBrains Mono',monospace;
   font-size:11px; font-weight:700;
@@ -5097,7 +5097,7 @@ body {
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
       <div class="card" style="padding:20px">
         <div style="font-size:.78rem;color:var(--accent-blue);letter-spacing:2px;margin-bottom:16px">🥧 DMS별 비중 (2차년도)</div>
-        <canvas id="chart-dms-pie" height="180"></canvas>
+        <canvas id="chart-dms-pie" height="120"></canvas>
       </div>
       <div class="card" style="padding:20px">
         <div style="font-size:.78rem;color:var(--accent-blue);letter-spacing:2px;margin-bottom:16px">📊 DMS별 상세</div>
@@ -5142,7 +5142,7 @@ body {
     <div class="card" style="padding:20px">
       <div style="font-size:.78rem;color:var(--accent-blue);letter-spacing:2px;margin-bottom:4px">📈 월별 전력 사용량 추이</div>
       <div style="font-size:.7rem;color:var(--muted);margin-bottom:16px">2024.03 ~ 2026.02 (24개월)</div>
-      <canvas id="chart-monthly" height="160"></canvas>
+      <canvas id="chart-monthly" height="100"></canvas>
     </div>
   </div>
 
@@ -6909,7 +6909,7 @@ function selectUser(type) {
     field:   'field01',
     manager: 'manager01',
     client:  'client01',
-    admin:   'admin'
+    admin:   'celsius'
   };
   document.getElementById('login-id').value = ids[type] || '';
   document.getElementById('login-pw').value = '';
