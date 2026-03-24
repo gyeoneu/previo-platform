@@ -5186,24 +5186,24 @@ body {
         </div>
         <div style="background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:12px;padding:16px">
           <div style="font-size:.68rem;color:var(--muted);letter-spacing:1px;margin-bottom:8px;display:flex;justify-content:space-between">
-            월 전기요금 (평균) <span style="font-size:.65rem;color:var(--accent-blue);background:rgba(59,130,246,.1);padding:2px 8px;border-radius:6px">만원</span>
+            kW당 월 기본료 단가 <span style="font-size:.65rem;color:var(--accent-blue);background:rgba(59,130,246,.1);padding:2px 8px;border-radius:6px">원/kW</span>
           </div>
-          <input id="roi-monthly-bill" type="number" placeholder="예) 2500" style="width:100%;background:transparent;border:none;color:var(--text);font-size:1.3rem;font-weight:700;outline:none">
-          <div style="font-size:.62rem;color:var(--muted);margin-top:6px">최근 12개월 평균 전기요금</div>
+          <input id="roi-monthly-bill" type="number" placeholder="예) 8320" value="8320" style="width:100%;background:transparent;border:none;color:var(--text);font-size:1.3rem;font-weight:700;outline:none">
+          <div style="font-size:.62rem;color:var(--muted);margin-top:6px">전기요금 고지서 기본료 항목에서 확인</div>
         </div>
         <div style="background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:12px;padding:16px">
           <div style="font-size:.68rem;color:var(--muted);letter-spacing:1px;margin-bottom:8px;display:flex;justify-content:space-between">
-            시스템에어컨 실내기 수 <span style="font-size:.65rem;color:var(--accent-blue);background:rgba(59,130,246,.1);padding:2px 8px;border-radius:6px">대</span>
+            연간 전력 사용량 <span style="font-size:.65rem;color:var(--accent-blue);background:rgba(59,130,246,.1);padding:2px 8px;border-radius:6px">kWh</span>
           </div>
-          <input id="roi-indoor-units" type="number" placeholder="예) 300" style="width:100%;background:transparent;border:none;color:var(--text);font-size:1.3rem;font-weight:700;outline:none">
-          <div style="font-size:.62rem;color:var(--muted);margin-top:6px">건물 전체 시스템에어컨 실내기 총 수량</div>
+          <input id="roi-annual-kwh" type="number" placeholder="예) 677534" style="width:100%;background:transparent;border:none;color:var(--text);font-size:1.3rem;font-weight:700;outline:none">
+          <div style="font-size:.62rem;color:var(--muted);margin-top:6px">최근 1년 전력 사용량 합계 (고지서 참조)</div>
         </div>
         <div style="background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:12px;padding:16px">
           <div style="font-size:.68rem;color:var(--muted);letter-spacing:1px;margin-bottom:8px;display:flex;justify-content:space-between">
-            건물 규모 <span style="font-size:.65rem;color:var(--accent-blue);background:rgba(59,130,246,.1);padding:2px 8px;border-radius:6px">평</span>
+            kWh당 전력량 요금 단가 <span style="font-size:.65rem;color:var(--accent-blue);background:rgba(59,130,246,.1);padding:2px 8px;border-radius:6px">원/kWh</span>
           </div>
-          <input id="roi-building-size" type="number" placeholder="예) 15000" style="width:100%;background:transparent;border:none;color:var(--text);font-size:1.3rem;font-weight:700;outline:none">
-          <div style="font-size:.62rem;color:var(--muted);margin-top:6px">연면적 기준 (전용 + 공용)</div>
+          <input id="roi-kwh-rate" type="number" placeholder="예) 157" value="157" style="width:100%;background:transparent;border:none;color:var(--text);font-size:1.3rem;font-weight:700;outline:none">
+          <div style="font-size:.62rem;color:var(--muted);margin-top:6px">전기요금 고지서 전력량 요금 단가</div>
         </div>
       </div>
 
@@ -5255,7 +5255,7 @@ body {
           <div style="font-size:.72rem;color:var(--muted);letter-spacing:2px;margin-bottom:16px">📈 비용 대비 절감 효과</div>
           <div style="margin-bottom:14px">
             <div style="display:flex;justify-content:space-between;font-size:.75rem;margin-bottom:6px">
-              <span style="color:var(--muted)">현재 연간 전기요금</span>
+              <span style="color:var(--muted)">현재 연간 전기 기본료</span>
               <span id="roi-bar-current" style="font-family:monospace;color:var(--text)">—</span>
             </div>
             <div style="height:8px;background:rgba(255,255,255,.05);border-radius:4px"><div style="height:100%;width:100%;background:rgba(239,68,68,.5);border-radius:4px"></div></div>
@@ -9475,24 +9475,37 @@ function roiComma(n) {
 
 function roiCalculate() {
   const contractKw = parseFloat(document.getElementById('roi-contract-kw').value);
-  const monthlyBill = parseFloat(document.getElementById('roi-monthly-bill').value);
+  const baseRatePerKw = parseFloat(document.getElementById('roi-monthly-bill').value);
+  const annualKwh = parseFloat(document.getElementById('roi-annual-kwh').value) || 0;
+  const kwhRate = parseFloat(document.getElementById('roi-kwh-rate').value) || 0;
   const peakPct = parseFloat(document.getElementById('roi-peak-slider').value) / 100;
 
-  if (!contractKw || !monthlyBill) {
-    showToast('⚠️ 계약전력과 월 전기요금을 입력해주세요!');
+  if (!contractKw || !baseRatePerKw) {
+    showToast('⚠️ 계약전력과 kW당 기본료 단가를 입력해주세요!');
     return;
   }
 
+  // 기본료 절감
   const peakReduction = contractKw * peakPct;
-  const monthlyBaseSaving = (peakReduction * ROI_BASE_RATE) / 10000;
-  const annualSaving = monthlyBaseSaving * 12;
-  const annualBill = monthlyBill * 12;
-  const afterBill = annualBill - annualSaving;
-  const paybackMonths = Math.ceil(ROI_CELSIUS_ANNUAL / monthlyBaseSaving);
+  const monthlyBaseSaving = (peakReduction * baseRatePerKw) / 10000;
+  const annualBaseSaving = monthlyBaseSaving * 12;
+
+  // 전력량 요금 절감 (연간 사용량 입력 시)
+  const annualEnergySaving = (annualKwh && kwhRate)
+    ? (annualKwh * peakPct * kwhRate) / 10000
+    : 0;
+
+  // 총 절감액
+  const annualSaving = annualBaseSaving + annualEnergySaving;
+  const annualBill = (contractKw * baseRatePerKw * 12) / 10000;
+  const afterBill = Math.max(0, annualBill - annualBaseSaving);
+  const paybackMonths = Math.ceil(ROI_CELSIUS_ANNUAL / (monthlyBaseSaving + annualEnergySaving / 12));
   const roi = Math.round(annualSaving / ROI_CELSIUS_ANNUAL * 100);
 
   document.getElementById('roi-annual-saving').textContent = roiComma(annualSaving) + '만원';
-  document.getElementById('roi-annual-sub').textContent = `월 ${roiComma(monthlyBaseSaving)}만원 × 12개월 절감 효과`;
+  document.getElementById('roi-annual-sub').textContent = annualEnergySaving > 0
+    ? `기본료 절감 ${roiComma(annualBaseSaving)}만원 + 전력량 절감 ${roiComma(annualEnergySaving)}만원`
+    : `월 ${roiComma(monthlyBaseSaving)}만원 × 12개월 기본료 절감`;
   document.getElementById('roi-peak-reduction').textContent = roiComma(peakReduction);
   document.getElementById('roi-monthly-saving').textContent = roiComma(monthlyBaseSaving);
   document.getElementById('roi-payback').textContent = paybackMonths + '개월';
@@ -9505,14 +9518,16 @@ function roiCalculate() {
     document.getElementById('roi-fill-cost').style.width = (ROI_CELSIUS_ANNUAL / annualBill * 100) + '%';
   }, 100);
 
-  document.getElementById('roi-pitch').innerHTML = `
-    "현재 연간 전기요금 <strong style="color:#10b981">${roiComma(annualBill)}만원</strong> 중<br>
-    냉난방 피크전력만 ${Math.round(peakPct*100)}% 절감해도<br>
-    연간 <strong style="color:#10b981">${roiComma(annualSaving)}만원</strong>을 아낄 수 있습니다.<br><br>
-    셀시우스 플랫폼 연간 이용료는 <strong style="color:#C9A84C">${roiComma(ROI_CELSIUS_ANNUAL)}만원</strong>이며<br>
-    절감액 대비 ROI는 <strong style="color:#10b981">${roi}%</strong> — 약 <strong style="color:#10b981">${paybackMonths}개월</strong> 안에 투자금액을 회수합니다.<br><br>
-    전기요금이 줄어드는 만큼 셀시우스가 직접 돈을 버는 것입니다."
-  `;
+  const energyLine = annualEnergySaving > 0
+    ? '기본료 절감 <strong style="color:#10b981">' + roiComma(annualBaseSaving) + '만원</strong> + 전력량 요금 절감 <strong style="color:#10b981">' + roiComma(annualEnergySaving) + '만원</strong><br>'
+    : '';
+  document.getElementById('roi-pitch').innerHTML =
+    '"냉난방 피크전력을 ' + Math.round(peakPct*100) + '% 절감하면<br>' +
+    energyLine +
+    '연간 총 <strong style="color:#10b981">' + roiComma(annualSaving) + '만원</strong>을 아낄 수 있습니다.<br><br>' +
+    '셀시우스 플랫폼 연간 이용료는 <strong style="color:#C9A84C">' + roiComma(ROI_CELSIUS_ANNUAL) + '만원</strong>이며<br>' +
+    '절감액 대비 ROI는 <strong style="color:#10b981">' + roi + '%</strong> — 약 <strong style="color:#10b981">' + paybackMonths + '개월</strong> 안에 투자금액을 회수합니다.<br><br>' +
+    '피크전력이 줄어드는 만큼 기본료와 사용요금이 모두 줄어듭니다."';
 
   document.getElementById('roi-result').style.display = 'block';
 }
