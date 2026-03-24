@@ -5310,9 +5310,12 @@ body {
 
     <div class="page" id="page-users">
       <div style="padding:24px">
-        <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px">
-          <h1 style="font-size:1.4rem;font-weight:700">👥 사용자 관리</h1>
-          <span style="font-size:.75rem;color:var(--text2)">계정 관리 · 비밀번호 초기화 · 권한 설정</span>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px">
+          <div>
+            <h1 style="font-size:1.4rem;font-weight:700">👥 사용자 관리</h1>
+            <span style="font-size:.75rem;color:var(--text2)">계정 관리 · 비밀번호 초기화 · 권한 설정</span>
+          </div>
+          <button onclick="showToast('📋 사용자 등록 기능 준비 중입니다.')" style="padding:8px 16px;font-size:.82rem;font-weight:600;border:1px solid rgba(201,168,76,.4);color:#e8c46a;background:rgba(201,168,76,.1);border-radius:8px;cursor:pointer">+ 사용자 등록</button>
         </div>
 
         <!-- 탭 -->
@@ -8158,12 +8161,6 @@ async function changeReportStatus(id, newStatus) {
   renderList();
 }
 
-// ─── Clock ───
-setInterval(()=>{
-  const clk = document.getElementById('clock') || document.getElementById('header-time');
-  if (clk) clk.textContent = new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
-},1000);
-
 // ─── Init ───
 document.addEventListener('DOMContentLoaded', function() {
   renderList();
@@ -8619,13 +8616,6 @@ function switchTab(name) {
     c.classList.toggle('active', c.id==='tab-'+name);
   });
 }
-
-// ---- Clock ----
-function updateClock() {
-  const el = document.getElementById('clock') || document.getElementById('header-time');
-  if (el) el.textContent = new Date().toLocaleTimeString('ko-KR', {hour12:false});
-}
-setInterval(updateClock, 1000);;
 
 // ---- Init ----
 document.addEventListener('DOMContentLoaded', function() {
