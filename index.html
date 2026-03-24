@@ -7008,6 +7008,16 @@ function doLogin() {
   // 체험판 페이지 접근 제한 설정
   window.currentRole = currentUser;
 
+  // 체험판/고객사는 API 키 입력창 숨기기
+  const apiKeyCard = document.getElementById('api-key-card');
+  if (apiKeyCard) {
+    if (currentUser === 'demo' || currentUser === 'client') {
+      apiKeyCard.style.display = 'none';
+    } else {
+      apiKeyCard.style.display = '';
+    }
+  }
+
   // 체험판은 온보딩 먼저 표시
   if (currentUser === 'demo') {
     document.getElementById('platform-screen').style.display = 'block';
@@ -9085,9 +9095,9 @@ function renderCompareCharts() {
       data:{
         labels:['1차년도 (2024.03~2025.02)','2차년도 (2025.03~2026.02)'],
         datasets:[
-          {label:'DMS 102 근린상가', data:[r102.yr1,r102.yr2], backgroundColor:['rgba(29,158,117,.75)','rgba(29,158,117,.95)'], borderColor:'#1D9E75', borderWidth:1},
-          {label:'DMS 101 사무실B',  data:[r101.yr1,r101.yr2], backgroundColor:['rgba(239,159,39,.75)','rgba(239,159,39,.95)'], borderColor:'#EF9F27', borderWidth:1},
-          {label:'DMS 100 사무실A',  data:[r100.yr1,r100.yr2], backgroundColor:['rgba(59,130,246,.75)','rgba(59,130,246,.95)'],  borderColor:'#3b82f6', borderWidth:1}
+          {label:'DMS 102 근린상가', data:[r102.yr1,r102.yr2], backgroundColor:['rgba(29,158,117,.75)','rgba(29,158,117,.95)'], borderColor:'#1D9E75', borderWidth:1, barPercentage:0.5, categoryPercentage:0.5},
+          {label:'DMS 101 사무실B',  data:[r101.yr1,r101.yr2], backgroundColor:['rgba(239,159,39,.75)','rgba(239,159,39,.95)'], borderColor:'#EF9F27', borderWidth:1, barPercentage:0.5, categoryPercentage:0.5},
+          {label:'DMS 100 사무실A',  data:[r100.yr1,r100.yr2], backgroundColor:['rgba(59,130,246,.75)','rgba(59,130,246,.95)'],  borderColor:'#3b82f6', borderWidth:1, barPercentage:0.5, categoryPercentage:0.5}
         ]
       },
       options:{responsive:true,
@@ -9115,10 +9125,10 @@ function renderCompareCharts() {
       data:{
         labels:['DMS 100 사무실A','DMS 101 사무실B','DMS 102 근린상가'],
         datasets:[
-          {label:'1차년도', data:[r100.yr1,r101.yr1,r102.yr1], backgroundColor:'rgba(136,153,187,.35)', borderColor:'#8899BB', borderWidth:1},
+          {label:'1차년도', data:[r100.yr1,r101.yr1,r102.yr1], backgroundColor:'rgba(136,153,187,.35)', borderColor:'#8899BB', borderWidth:1, barPercentage:0.5, categoryPercentage:0.6},
           {label:'2차년도', data:[r100.yr2,r101.yr2,r102.yr2],
             backgroundColor:['rgba(59,130,246,.85)','rgba(239,68,68,.85)','rgba(29,158,117,.85)'],
-            borderColor:['#3b82f6','#ef4444','#1D9E75'], borderWidth:1}
+            borderColor:['#3b82f6','#ef4444','#1D9E75'], borderWidth:1, barPercentage:0.5, categoryPercentage:0.6}
         ]
       },
       options:{responsive:true,
