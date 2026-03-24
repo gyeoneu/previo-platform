@@ -5172,10 +5172,139 @@ body {
 </div>
 
     <div class="page" id="page-sites">
-      <div class="coming-soon">
-        <div class="icon">🏢</div>
-        <h2>건물 관리</h2>
-        <p>다중 건물 관리 시스템 개발 예정</p>
+      <div style="padding:24px">
+        <!-- 헤더 -->
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px">
+          <div>
+            <h1 style="font-size:1.4rem;font-weight:700">🏢 건물 관리</h1>
+            <div style="font-size:.75rem;color:var(--text2);margin-top:4px">계약 현장 관리 · 장비 현황 · 담당자 정보</div>
+          </div>
+          <button onclick="showToast('📋 현장 추가 기능 준비 중입니다.')" style="padding:8px 16px;font-size:.82rem;font-weight:600;border:1px solid rgba(201,168,76,.4);color:#e8c46a;background:rgba(201,168,76,.1);border-radius:8px;cursor:pointer">+ 현장 추가</button>
+        </div>
+
+        <!-- 요약 카드 -->
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px">
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px">
+            <div style="font-size:.72rem;color:var(--text2);letter-spacing:1px;margin-bottom:8px">계약 현장</div>
+            <div style="font-size:1.8rem;font-weight:700;color:var(--accent)">1</div>
+            <div style="font-size:.72rem;color:var(--text2);margin-top:4px">리드스마트스퀘어</div>
+          </div>
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px">
+            <div style="font-size:.72rem;color:var(--text2);letter-spacing:1px;margin-bottom:8px">실외기 총계</div>
+            <div style="font-size:1.8rem;font-weight:700;color:#60a5fa">150</div>
+            <div style="font-size:.72rem;color:var(--text2);margin-top:4px">Samsung 중형·대형</div>
+          </div>
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px">
+            <div style="font-size:.72rem;color:var(--text2);letter-spacing:1px;margin-bottom:8px">실내기 총계</div>
+            <div style="font-size:1.8rem;font-weight:700;color:#4ade80">660</div>
+            <div style="font-size:.72rem;color:var(--text2);margin-top:4px">887호 입주사 서비스</div>
+          </div>
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px">
+            <div style="font-size:.72rem;color:var(--text2);letter-spacing:1px;margin-bottom:8px">DMS 시스템</div>
+            <div style="font-size:1.8rem;font-weight:700;color:#c084fc">3</div>
+            <div style="font-size:.72rem;color:var(--text2);margin-top:4px">통합 중앙 제어</div>
+          </div>
+        </div>
+
+        <!-- 현장 카드 -->
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden">
+          <!-- 카드 헤더 -->
+          <div style="padding:20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+            <div style="display:flex;align-items:center;gap:12px">
+              <div style="width:10px;height:10px;border-radius:50%;background:#4ade80;box-shadow:0 0 6px #4ade80"></div>
+              <div>
+                <div style="font-size:1rem;font-weight:700">리드스마트스퀘어 지식산업센터</div>
+                <div style="font-size:.75rem;color:var(--text2);margin-top:2px">경기도 안산시 단원구 산단로 325</div>
+              </div>
+            </div>
+            <span style="background:rgba(34,197,94,.15);color:#4ade80;padding:4px 14px;border-radius:20px;font-size:.75rem;font-weight:600">● 정상 운영</span>
+          </div>
+
+          <!-- 카드 내용 -->
+          <div style="padding:20px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px">
+            <!-- 계약 정보 -->
+            <div>
+              <div style="font-size:.72rem;color:var(--accent);letter-spacing:1.5px;font-weight:600;margin-bottom:12px">📋 계약 정보</div>
+              <div style="display:flex;flex-direction:column;gap:8px;font-size:.82rem">
+                <div style="display:flex;justify-content:space-between">
+                  <span style="color:var(--text2)">계약 유형</span>
+                  <span style="color:var(--text);font-weight:600">TYPE 3 · 통합관리</span>
+                </div>
+                <div style="display:flex;justify-content:space-between">
+                  <span style="color:var(--text2)">계약 시작</span>
+                  <span>2024년 4월</span>
+                </div>
+                <div style="display:flex;justify-content:space-between">
+                  <span style="color:var(--text2)">계약 만료</span>
+                  <span style="color:#e8c46a">2026년 3월</span>
+                </div>
+                <div style="display:flex;justify-content:space-between">
+                  <span style="color:var(--text2)">월 유지보수비</span>
+                  <span style="font-weight:600">협의</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 장비 현황 -->
+            <div>
+              <div style="font-size:.72rem;color:var(--accent);letter-spacing:1.5px;font-weight:600;margin-bottom:12px">⚙️ 장비 현황</div>
+              <div style="display:flex;flex-direction:column;gap:8px;font-size:.82rem">
+                <div style="display:flex;justify-content:space-between">
+                  <span style="color:var(--text2)">DMS 100 · 사무실A</span>
+                  <span style="color:#4ade80">✓ 정상</span>
+                </div>
+                <div style="display:flex;justify-content:space-between">
+                  <span style="color:var(--text2)">DMS 101 · 사무실B</span>
+                  <span style="color:#facc15">⚠ 주의</span>
+                </div>
+                <div style="display:flex;justify-content:space-between">
+                  <span style="color:var(--text2)">DMS 102 · 근린상가</span>
+                  <span style="color:#4ade80">✓ 정상</span>
+                </div>
+                <div style="display:flex;justify-content:space-between">
+                  <span style="color:var(--text2)">실외기 / 실내기</span>
+                  <span>150대 / 660대</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 담당자 정보 -->
+            <div>
+              <div style="font-size:.72rem;color:var(--accent);letter-spacing:1.5px;font-weight:600;margin-bottom:12px">👤 담당자 정보</div>
+              <div style="display:flex;flex-direction:column;gap:8px;font-size:.82rem">
+                <div style="display:flex;justify-content:space-between">
+                  <span style="color:var(--text2)">셀시우스 담당</span>
+                  <span style="font-weight:600">강형직 대표</span>
+                </div>
+                <div style="display:flex;justify-content:space-between">
+                  <span style="color:var(--text2)">연락처</span>
+                  <span>010-3966-9691</span>
+                </div>
+                <div style="display:flex;justify-content:space-between">
+                  <span style="color:var(--text2)">고객사 담당</span>
+                  <span>최담당</span>
+                </div>
+                <div style="display:flex;justify-content:space-between">
+                  <span style="color:var(--text2)">고객사 연락처</span>
+                  <span>010-4567-8901</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 카드 푸터 -->
+          <div style="padding:14px 20px;border-top:1px solid var(--border);background:rgba(255,255,255,.02);display:flex;gap:8px">
+            <button onclick="showPage('equipment')" style="padding:6px 14px;font-size:.78rem;border:1px solid var(--border);color:var(--text2);background:transparent;border-radius:6px;cursor:pointer">⚙️ 장비 관리</button>
+            <button onclick="showPage('score')" style="padding:6px 14px;font-size:.78rem;border:1px solid var(--border);color:var(--text2);background:transparent;border-radius:6px;cursor:pointer">🏥 건강점수</button>
+            <button onclick="showPage('report')" style="padding:6px 14px;font-size:.78rem;border:1px solid var(--border);color:var(--text2);background:transparent;border-radius:6px;cursor:pointer">📋 점검보고서</button>
+            <button onclick="showPage('dms')" style="padding:6px 14px;font-size:.78rem;border:1px solid var(--border);color:var(--text2);background:transparent;border-radius:6px;cursor:pointer">🖥️ DMS 관리</button>
+          </div>
+        </div>
+
+        <!-- 추가 예정 안내 -->
+        <div style="margin-top:16px;padding:14px 18px;background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.2);border-radius:10px;font-size:.8rem;color:#60a5fa">
+          💡 신규 계약 현장 추가 시 현장 카드가 자동으로 생성됩니다. 현재 1개 현장 운영 중.
+        </div>
       </div>
     </div>
 
