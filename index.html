@@ -3350,10 +3350,10 @@ body {
     </div>
 
     <span class="login-label">아이디</span>
-    <input class="login-input" type="text" id="login-id" placeholder="아이디 입력" value="demo">
+    <input class="login-input" type="text" id="login-id" placeholder="아이디 입력">
 
     <span class="login-label">비밀번호</span>
-    <input class="login-input" type="password" id="login-pw" placeholder="비밀번호 입력" value="1234" onkeydown="if(event.key==='Enter')doLogin()">
+    <input class="login-input" type="password" id="login-pw" placeholder="비밀번호 입력" onkeydown="if(event.key==='Enter')doLogin()">
 
     <button class="login-btn" onclick="doLogin()">접속하기</button>
   </div>
@@ -3375,16 +3375,6 @@ body {
 
   <!-- 사이드바 -->
   <div class="sidebar">
-
-    <div class="sidebar-section">
-      <div class="sidebar-label">메인</div>
-      <div class="sidebar-item active" onclick="showPage('dashboard')">
-        <span class="icon">🏠</span> 대시보드
-      </div>
-      <div class="sidebar-item" onclick="showPage('chat')">
-        <span class="icon">🤖</span> AI 어시스턴트
-      </div>
-    </div>
 
     <div class="sidebar-section" id="menu-common">
       <div class="sidebar-label">공통</div>
@@ -3461,9 +3451,6 @@ body {
     <!-- 레퍼런스 (L1 이상) -->
     <div class="sidebar-section" id="menu-ref">
       <div class="sidebar-label">레퍼런스</div>
-      <div class="sidebar-item" onclick="showPage('events')">
-        <span class="icon">📡</span> 이벤트코드 룰
-      </div>
       <div class="sidebar-item" onclick="showPage('scoring-guide')">
         <span class="icon">📐</span> 점수제 가이드
       </div>
@@ -6924,10 +6911,34 @@ function selectUser(type) {
     admin:   'admin'
   };
   document.getElementById('login-id').value = ids[type] || '';
+  document.getElementById('login-pw').value = '';
 }
+
+// 계정 정보
+const ACCOUNTS = {
+  'demo':       { password: 'demo1234',  role: 'demo'    },
+  'field01':    { password: 'field1234', role: 'field'   },
+  'manager01':  { password: 'mgr1234',   role: 'manager' },
+  'client01':   { password: 'cli1234',   role: 'client'  },
+  'celsius':    { password: 'Cel2026!',  role: 'admin'   },
+};
 
 // 로그인
 function doLogin() {
+  const inputId = document.getElementById('login-id').value.trim();
+  const inputPw = document.getElementById('login-pw').value.trim();
+  const account = ACCOUNTS[inputId];
+
+  if (!account || account.password !== inputPw) {
+    document.getElementById('login-pw').style.borderColor = 'var(--red)';
+    setTimeout(() => {
+      document.getElementById('login-pw').style.borderColor = '';
+    }, 1500);
+    showToast('⚠️ 아이디 또는 비밀번호가 올바르지 않습니다.');
+    return;
+  }
+
+  currentUser = account.role;
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('platform-screen').style.display = 'block';
 
@@ -6962,8 +6973,9 @@ function doLogin() {
   showMenu('menu-common');
 
   if (currentUser === 'demo') {
-    // 체험: 전력분석만 추가
+    // 체험: 전력분석 + 레퍼런스(점수제 가이드)
     showMenu('menu-power');
+    showMenu('menu-ref');
 
   } else if (currentUser === 'field') {
     // L1 현장기사: 현장관리 + 레퍼런스
@@ -6978,9 +6990,10 @@ function doLogin() {
     showMenu('menu-power');
 
   } else if (currentUser === 'client') {
-    // L2-B 고객사 담당자: 고객서비스 + 전력
+    // L2-B 고객사 담당자: 고객서비스 + 전력 + 레퍼런스(점수제 가이드)
     showMenu('menu-client');
     showMenu('menu-power');
+    showMenu('menu-ref');
 
   } else if (currentUser === 'admin') {
     // L3 운영자: 전체
@@ -7024,7 +7037,7 @@ const PAGE_PERMISSIONS = {
   demo:    ['dashboard','chat','compare','scoring-guide'],
   field:   ['dashboard','chat','equipment','score','as','error','checklist','compare','events','scoring-guide'],
   manager: ['dashboard','chat','equipment','score','as','error','checklist','schedule','report','parts','dms','compare','events','scoring-guide'],
-  client:  ['dashboard','chat','score','report','compare'],
+  client:  ['dashboard','chat','score','report','compare','scoring-guide'],
   admin:   ['dashboard','chat','equipment','score','as','error','checklist','schedule','report','parts','dms','compare','events','scoring-guide','sites','users'],
 };
 
@@ -7258,7 +7271,7 @@ async function sendMsg() {
       method: 'POST',
       headers: {
           'Content-Type': 'application/json',
-         
+          'x-api-key': getClaudeApiKey(),
           'anthropic-version': '2023-06-01',
          
         },
