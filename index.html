@@ -5269,7 +5269,7 @@ body {
           </div>
           <div>
             <div style="display:flex;justify-content:space-between;font-size:.75rem;margin-bottom:6px">
-              <span style="color:var(--muted)">셀시우스 연간 이용료 (다이아몬드 기준)</span>
+              <span style="color:var(--muted)">셀시우스 연간 유지보수 관리비 (현장 방문 + 관리 포함)</span>
               <span id="roi-bar-cost" style="font-family:monospace;color:var(--text)">—</span>
             </div>
             <div style="height:8px;background:rgba(255,255,255,.05);border-radius:4px"><div id="roi-fill-cost" style="height:100%;width:0%;background:#C9A84C;border-radius:4px;transition:width 1s"></div></div>
@@ -9456,7 +9456,8 @@ function pwTab(name, el) {
 
 // ════ ROI 계산기 ════
 const ROI_BASE_RATE = 8320; // 전기 기본료 원/kW
-const ROI_CELSIUS_ANNUAL = 1200; // 셀시우스 연간 이용료 만원
+const ROI_CELSIUS_ANNUAL = 3300; // 셀시우스 유지보수 관리비 연간 만원 (인건비 포함)
+const ROI_PLATFORM_FEE = 0; // 플랫폼 사용료 (추후 확정)
 
 function roiUpdateSliderDisplay(val) {
   document.getElementById('roi-slider-display').textContent = val + '%';
@@ -9525,11 +9526,11 @@ function roiCalculate() {
     '"냉난방 피크전력을 ' + Math.round(peakPct*100) + '% 절감하면<br>' +
     energyLine +
     '연간 총 <strong style="color:#10b981">' + roiComma(annualSaving) + '만원</strong>을 아낄 수 있습니다.<br><br>' +
-    '셀시우스 플랫폼 연간 이용료는 <strong style="color:#C9A84C">' + roiComma(ROI_CELSIUS_ANNUAL) + '만원</strong>이며<br>' +
-    '절감액 대비 ROI는 <strong style="color:#10b981">' + roi + '%</strong> — 약 <strong style="color:#10b981">' + paybackMonths + '개월</strong> 안에 투자금액을 회수합니다.<br><br>' +
+    '셀시우스 도입 비용:<br>' +
+    '&nbsp;&nbsp;• 유지보수 관리비 (현장 방문 + 관리): <strong style="color:#C9A84C">연간 ' + roiComma(ROI_CELSIUS_ANNUAL) + '만원</strong><br>' +
+    '&nbsp;&nbsp;• 플랫폼 사용료: <strong style="color:#C9A84C">추후 확정</strong><br><br>' +
+    '절감액 대비 ROI는 <strong style="color:#10b981">' + roi + '%</strong> — 약 <strong style="color:#10b981">' + paybackMonths + '개월</strong> 안에 관리비를 회수합니다.<br><br>' +
     '피크전력이 줄어드는 만큼 기본료와 사용요금이 모두 줄어듭니다."';
-
-  document.getElementById('roi-result').style.display = 'block';
 }
 
 function roiReset() {
