@@ -3768,7 +3768,8 @@ body {
       <div class="coming-soon">
         <div class="icon">⚡</div>
         <h2>에러코드 진단</h2>
-        <p>기존 에러코드 진단 툴 연동 예정</p>
+        <p>삼성 DVM 에러코드 검색 및 원인/조치 안내</p>
+        <p style="font-size:0.8rem;color:var(--text-muted);margin-top:8px">현장 전용 에러코드 DB 연동 중 — Previ AI에게 에러코드를 질문하세요</p>
       </div>
     </div>
 
@@ -6996,10 +6997,9 @@ function doLogin() {
     showMenu('menu-ref');
 
   } else if (currentUser === 'admin') {
-    // L3 운영자: 전체
+    // L3 운영자: 전체 (고객서비스는 현장관리/운영관리에 포함되므로 제외)
     showMenu('menu-field');
     showMenu('menu-manager');
-    showMenu('menu-client');
     showMenu('menu-admin');
     showMenu('menu-ref');
     showMenu('menu-power');
@@ -7008,10 +7008,10 @@ function doLogin() {
   // 체험판 페이지 접근 제한 설정
   window.currentRole = currentUser;
 
-  // 체험판/고객사는 API 키 입력창 숨기기
+  // 체험판/고객사/현장기사는 API 키 입력창 숨기기 (관리자/운영자만 표시)
   const apiKeyCard = document.getElementById('api-key-card');
   if (apiKeyCard) {
-    if (currentUser === 'demo' || currentUser === 'client') {
+    if (currentUser === 'demo' || currentUser === 'client' || currentUser === 'field') {
       apiKeyCard.style.display = 'none';
     } else {
       apiKeyCard.style.display = '';
@@ -8903,9 +8903,6 @@ function pwGet(y,m){ return POWER_DATA.find(r=>r[0]===y&&r[1]===m)||[y,m,0,0,0];
 function renderDashboard() {
   const role = window.currentRole || 'demo';
 
-  // 고객사(L2-B)는 별도 대시보드
-  if (role === 'client') return renderDashboardClient();
-
   // 공통 데이터 계산
   // db.equipment가 비어있으면 실제 현장 기본값 사용
   const outdoor  = db.equipment.filter(e => e.type==='outdoor').length || 56;
@@ -8928,6 +8925,7 @@ function renderDashboard() {
     'demo':    '<div style="background:rgba(201,168,76,.15);border:1px solid rgba(201,168,76,.5);border-radius:10px;padding:12px 18px;margin-bottom:20px;font-size:.82rem;color:#e8c46a;font-weight:600">👀 체험 모드 — 실제 현장 데이터를 조회 중입니다. &nbsp;|&nbsp; 도입 문의: celsius.anue@gmail.com &nbsp; 📞 010.3966.9691</div>',
     'field':   '<div style="background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.4);border-radius:10px;padding:12px 18px;margin-bottom:20px;font-size:.82rem;color:#60a5fa;font-weight:600">🔧 현장기사 모드 — 오늘 할 일을 확인하세요.</div>',
     'manager': '<div style="background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.4);border-radius:10px;padding:12px 18px;margin-bottom:20px;font-size:.82rem;color:#34d399;font-weight:600">⚙️ 관리자 모드 — 전체 현황을 관리합니다.</div>',
+    'client':  '<div style="background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.4);border-radius:10px;padding:12px 18px;margin-bottom:20px;font-size:.82rem;color:#60a5fa;font-weight:600">🏢 고객사 모드 — 장비 현황을 확인하세요.</div>',
     'admin':   '<div style="background:rgba(168,85,247,.12);border:1px solid rgba(168,85,247,.4);border-radius:10px;padding:12px 18px;margin-bottom:20px;font-size:.82rem;color:#c084fc;font-weight:600">👑 운영자 모드 — 전체 시스템을 관리합니다.</div>',
   }[role] || '';
 
