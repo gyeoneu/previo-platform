@@ -4432,76 +4432,99 @@ body {
 
     <!-- AS 관리 -->
     <div class="page" id="page-as">
-      <div class="dashboard-greeting">
-        <h1>🚨 AS 관리</h1>
-        <p>긴급 AS 접수 · 처리 현황 · 완료 이력 · 리드스마트스퀘어</p>
-      </div>
+  <div class="dashboard-greeting">
+    <h1>🚨 AS 관리</h1>
+    <p>긴급 AS 접수 · 처리 현황 · 완료 이력 · 리드스마트스퀘어</p>
+  </div>
 
-      <!-- 요약 카드 -->
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px">
-        <div class="stat-card"><div class="stat-icon">🚨</div><div class="stat-val" id="as-urgent" style="color:var(--red)">0</div><div class="stat-label">긴급 접수</div></div>
-        <div class="stat-card"><div class="stat-icon">🔧</div><div class="stat-val" id="as-progress" style="color:var(--orange)">0</div><div class="stat-label">처리 중</div></div>
-        <div class="stat-card"><div class="stat-icon">✅</div><div class="stat-val" id="as-done" style="color:var(--green)">0</div><div class="stat-label">완료</div></div>
-        <div class="stat-card"><div class="stat-icon">📊</div><div class="stat-val" id="as-total" style="color:var(--cyan)">0</div><div class="stat-label">전체</div></div>
-      </div>
+  <!-- 요약 카드 -->
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px">
+    <div class="stat-card"><div class="stat-icon">🚨</div><div class="stat-val" id="as-urgent" style="color:var(--red)">0</div><div class="stat-label">긴급 접수</div></div>
+    <div class="stat-card"><div class="stat-icon">🔧</div><div class="stat-val" id="as-progress" style="color:var(--orange)">0</div><div class="stat-label">처리 중</div></div>
+    <div class="stat-card"><div class="stat-icon">✅</div><div class="stat-val" id="as-done" style="color:var(--green)">0</div><div class="stat-label">완료</div></div>
+    <div class="stat-card"><div class="stat-icon">📊</div><div class="stat-val" id="as-total" style="color:var(--cyan)">0</div><div class="stat-label">전체</div></div>
+  </div>
 
-      <!-- 새 AS 접수 폼 -->
-      <div style="background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:20px">
-        <div style="font-size:.78rem;color:var(--red);letter-spacing:2px;margin-bottom:14px;font-weight:600">🚨 새 AS 접수</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px">
-          <div>
-            <div style="font-size:.68rem;color:var(--muted);margin-bottom:4px">접수 유형</div>
-            <select id="as-type" style="width:100%;background:var(--card);border:1px solid var(--border);border-radius:6px;padding:8px 10px;color:var(--white);font-size:.82rem">
-              <option value="emergency">🚨 긴급 출동</option>
-              <option value="complaint">📢 민원 처리</option>
-              <option value="repair">🔧 수리 요청</option>
-              <option value="consult">💬 기술 문의</option>
-            </select>
-          </div>
-          <div>
-            <div style="font-size:.68rem;color:var(--muted);margin-bottom:4px">대상 시스템</div>
-            <select id="as-system" style="width:100%;background:var(--card);border:1px solid var(--border);border-radius:6px;padding:8px 10px;color:var(--white);font-size:.82rem">
-              <option value="">전체</option>
-              <option value="DMS-100">DMS 100 · 사무실A</option>
-              <option value="DMS-101">DMS 101 · 사무실B</option>
-              <option value="DMS-102">DMS 102 · 근린상가</option>
-            </select>
-          </div>
-          <div>
-            <div style="font-size:.68rem;color:var(--muted);margin-bottom:4px">담당 기사</div>
-            <input id="as-engineer" style="width:100%;background:var(--card);border:1px solid var(--border);border-radius:6px;padding:8px 10px;color:var(--white);font-size:.82rem" placeholder="담당자명">
-          </div>
+  <!-- 새 AS 접수 폼 (권한별 노출) -->
+  <div id="as-form-wrap" style="background:var(--panel);border:1px solid var(--border);border-radius:12px;margin-bottom:20px;overflow:hidden">
+    <!-- 헤더 (토글) -->
+    <div onclick="asToggleForm()" style="padding:14px 20px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border)">
+      <span style="font-size:.78rem;color:var(--red);letter-spacing:2px;font-weight:600">🚨 새 AS 접수</span>
+      <span id="as-form-arrow" style="font-size:.72rem;color:var(--muted)">▼ 펼치기</span>
+    </div>
+    <!-- 폼 본체 -->
+    <div id="as-form-body" style="display:none;padding:20px">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px">
+        <div>
+          <div style="font-size:.68rem;color:var(--muted);margin-bottom:4px">접수 유형</div>
+          <select id="as-type" style="width:100%;background:var(--card);border:1px solid var(--border);border-radius:6px;padding:8px 10px;color:var(--white);font-size:.82rem">
+            <option value="emergency">🚨 긴급 출동</option>
+            <option value="complaint">📢 민원 처리</option>
+            <option value="repair">🔧 수리 요청</option>
+            <option value="consult">💬 기술 문의</option>
+          </select>
         </div>
-        <div style="margin-bottom:12px">
-          <div style="font-size:.68rem;color:var(--muted);margin-bottom:4px">접수 내용</div>
-          <textarea id="as-content" style="width:100%;background:var(--card);border:1px solid var(--border);border-radius:6px;padding:8px 10px;color:var(--white);font-size:.82rem;resize:vertical;min-height:80px" placeholder="증상 및 요청 내용을 입력하세요..."></textarea>
+        <div>
+          <div style="font-size:.68rem;color:var(--muted);margin-bottom:4px">대상 시스템</div>
+          <select id="as-system" style="width:100%;background:var(--card);border:1px solid var(--border);border-radius:6px;padding:8px 10px;color:var(--white);font-size:.82rem">
+            <option value="">전체</option>
+            <option value="DMS-100">DMS 100 · 사무실A</option>
+            <option value="DMS-101">DMS 101 · 사무실B</option>
+            <option value="DMS-102">DMS 102 · 근린상가</option>
+          </select>
         </div>
-        <div style="display:flex;gap:12px;align-items:center">
-          <div>
-            <div style="font-size:.68rem;color:var(--muted);margin-bottom:4px">우선순위</div>
-            <select id="as-priority" style="background:var(--card);border:1px solid var(--border);border-radius:6px;padding:8px 10px;color:var(--white);font-size:.82rem">
-              <option value="normal">일반</option>
-              <option value="high">🔴 긴급</option>
-            </select>
-          </div>
-          <button onclick="asSubmit()" style="margin-top:18px;background:linear-gradient(135deg,#e24b4a,#c0392b);border:none;border-radius:8px;padding:10px 28px;color:#fff;font-size:.82rem;cursor:pointer;font-weight:600">🚨 접수하기</button>
+        <div id="as-engineer-wrap">
+          <div style="font-size:.68rem;color:var(--muted);margin-bottom:4px">담당 기사</div>
+          <input id="as-engineer" style="width:100%;background:var(--card);border:1px solid var(--border);border-radius:6px;padding:8px 10px;color:var(--white);font-size:.82rem" placeholder="담당자명">
         </div>
       </div>
-
-      <!-- AS 목록 -->
-      <div style="background:var(--panel);border:1px solid var(--border);border-radius:12px;overflow:hidden">
-        <!-- 필터 탭 -->
-        <div style="display:flex;border-bottom:1px solid var(--border)">
-          <div class="as-filter-btn" onclick="asSetFilter('all',this)" style="padding:12px 20px;font-size:.78rem;cursor:pointer;border-bottom:2px solid var(--accent-red);color:var(--white);background:transparent">전체</div>
-          <div class="as-filter-btn" onclick="asSetFilter('emergency',this)" style="padding:12px 20px;font-size:.78rem;cursor:pointer;border-bottom:2px solid transparent;color:var(--muted);background:transparent">🚨 긴급</div>
-          <div class="as-filter-btn" onclick="asSetFilter('progress',this)" style="padding:12px 20px;font-size:.78rem;cursor:pointer;border-bottom:2px solid transparent;color:var(--muted);background:transparent">🔧 처리중</div>
-          <div class="as-filter-btn" onclick="asSetFilter('done',this)" style="padding:12px 20px;font-size:.78rem;cursor:pointer;border-bottom:2px solid transparent;color:var(--muted);background:transparent">✅ 완료</div>
-          <div style="margin-left:auto;display:flex;align-items:center;padding:0 16px;font-size:.68rem;color:var(--muted)" id="as-count"></div>
+      <div style="margin-bottom:12px">
+        <div style="font-size:.68rem;color:var(--muted);margin-bottom:4px">접수 내용 <span style="color:var(--red)">*</span></div>
+        <textarea id="as-content" style="width:100%;background:var(--card);border:1px solid var(--border);border-radius:6px;padding:8px 10px;color:var(--white);font-size:.82rem;resize:vertical;min-height:80px" placeholder="증상 및 요청 내용을 입력하세요..."></textarea>
+      </div>
+      <div style="display:flex;gap:12px;align-items:center">
+        <div id="as-priority-wrap">
+          <div style="font-size:.68rem;color:var(--muted);margin-bottom:4px">우선순위</div>
+          <select id="as-priority" style="background:var(--card);border:1px solid var(--border);border-radius:6px;padding:8px 10px;color:var(--white);font-size:.82rem">
+            <option value="normal">일반</option>
+            <option value="high">🔴 긴급</option>
+          </select>
         </div>
-        <div id="as-list" style="min-height:200px;padding:12px"></div>
+        <button onclick="asSubmit()" style="margin-top:18px;background:linear-gradient(135deg,#e24b4a,#c0392b);border:none;border-radius:8px;padding:10px 28px;color:#fff;font-size:.82rem;cursor:pointer;font-weight:600">🚨 접수하기</button>
       </div>
     </div>
-    <div class="page" id="page-dms">
+  </div>
+
+  <!-- AS 목록 -->
+  <div style="background:var(--panel);border:1px solid var(--border);border-radius:12px;overflow:hidden">
+    <div style="display:flex;border-bottom:1px solid var(--border);align-items:center">
+      <div class="as-filter-btn" onclick="asSetFilter('all',this)" style="padding:12px 20px;font-size:.78rem;cursor:pointer;border-bottom:2px solid var(--red);color:var(--white);background:transparent">전체</div>
+      <div class="as-filter-btn" onclick="asSetFilter('emergency',this)" style="padding:12px 20px;font-size:.78rem;cursor:pointer;border-bottom:2px solid transparent;color:var(--muted);background:transparent">🚨 긴급</div>
+      <div class="as-filter-btn" onclick="asSetFilter('progress',this)" style="padding:12px 20px;font-size:.78rem;cursor:pointer;border-bottom:2px solid transparent;color:var(--muted);background:transparent">🔧 처리중</div>
+      <div class="as-filter-btn" onclick="asSetFilter('done',this)" style="padding:12px 20px;font-size:.78rem;cursor:pointer;border-bottom:2px solid transparent;color:var(--muted);background:transparent">✅ 완료</div>
+      <div style="margin-left:auto;padding:0 16px;font-size:.68rem;color:var(--muted)" id="as-count"></div>
+    </div>
+    <div id="as-list" style="min-height:200px;padding:12px"></div>
+  </div>
+
+  <!-- 담당기사 배정 / 완료처리 모달 -->
+  <div id="as-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;align-items:center;justify-content:center">
+    <div style="background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:28px;width:460px;max-width:95vw">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+        <h3 id="as-modal-title" style="font-size:1rem;font-weight:700"></h3>
+        <button onclick="asCloseModal()" style="background:transparent;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer">✕</button>
+      </div>
+      <div id="as-modal-body" style="display:grid;gap:14px"></div>
+      <div style="display:flex;gap:10px;margin-top:20px;justify-content:flex-end">
+        <button onclick="asCloseModal()" style="padding:8px 20px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:.82rem;cursor:pointer">취소</button>
+        <button onclick="asSaveModal()" id="as-modal-save-btn" style="padding:8px 20px;border-radius:8px;border:none;background:linear-gradient(135deg,var(--blue),var(--cyan));color:#fff;font-size:.82rem;cursor:pointer;font-weight:600">저장</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="page" id="page-dms">
   <div class="dashboard-greeting">
     <h1>🖥️ DMS 관리</h1>
     <p>엑셀 업로드 → 전력량 파싱 → DB 저장 · 리드스마트스퀘어</p>
@@ -10553,6 +10576,22 @@ function renderAS() {
   const list = document.getElementById('as-list');
   if (!list) return;
 
+  const role      = currentUser || 'demo';
+  const canAccept = ['field','manager','client','admin'].includes(role);
+  const canAssign = ['manager','admin'].includes(role);
+  const canStatus = ['field','manager','admin'].includes(role);
+  const canDelete = role === 'admin';
+
+  // 접수 폼 노출 제어
+  const formWrap = document.getElementById('as-form-wrap');
+  if (formWrap) formWrap.style.display = canAccept ? '' : 'none';
+
+  // L2-B 고객사: 담당기사/우선순위 입력란 숨김
+  const engWrap  = document.getElementById('as-engineer-wrap');
+  const priWrap  = document.getElementById('as-priority-wrap');
+  if (engWrap) engWrap.style.display = (role === 'client') ? 'none' : '';
+  if (priWrap) priWrap.style.display = (role === 'client') ? 'none' : '';
+
   let filtered = asData;
   if (asFilter === 'pending')   filtered = asData.filter(a => a.status === 'pending');
   else if (asFilter === 'progress') filtered = asData.filter(a => a.status === 'progress');
@@ -10564,6 +10603,7 @@ function renderAS() {
   setEl('as-progress', asData.filter(a => a.status === 'progress').length);
   setEl('as-done',     asData.filter(a => a.status === 'done').length);
   setEl('as-total',    asData.length);
+  setEl('as-count',    filtered.length + '건');
 
   if (filtered.length === 0) {
     list.innerHTML = '<div style="padding:40px;text-align:center;color:var(--muted)">해당 항목 없음</div>';
@@ -10571,31 +10611,46 @@ function renderAS() {
   }
 
   list.innerHTML = filtered.map(a => {
-    const dateStr = (a.created_at || '').substring(0, 10);
-    const isHigh = a.priority === 'high';
-    return '<div class="card" style="padding:16px 20px;margin-bottom:10px;border-left:3px solid '+(isHigh?'var(--accent-red)':'var(--border)')+';">'
-      + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">'
-      +   '<div style="display:flex;gap:8px;align-items:center">'
-      +     '<span style="font-size:.72rem;padding:3px 10px;border-radius:12px;background:rgba(255,255,255,.08)">'+asTypeLabel(a.type)+'</span>'
-      +     '<span style="font-size:.72rem;color:var(--muted)">'+a.system+'</span>'
-      +     (isHigh ? '<span style="font-size:.68rem;color:var(--accent-red)">● 긴급</span>' : '')
-      +   '</div>'
-      +   '<div style="display:flex;gap:8px;align-items:center">'
-      +     '<span style="font-size:.72rem;color:'+asStatusColor(a.status)+'">'+asStatusLabel(a.status)+'</span>'
-      +     '<span style="font-size:.68rem;color:var(--muted)">'+dateStr+'</span>'
-      +   '</div>'
-      + '</div>'
-      + '<div style="font-size:.85rem;margin-bottom:8px">'+a.content+'</div>'
-      + '<div style="display:flex;justify-content:space-between;align-items:center">'
-      +   '<span style="font-size:.72rem;color:var(--muted)">'+(a.engineer ? '👷 '+a.engineer : '담당자 미배정')+'</span>'
-      +   '<div style="display:flex;gap:6px">'
-      +     (a.status === 'pending'   ? '<button onclick="asChangeStatus(' + a.id + ', \'progress\')" style="font-size:.7rem;padding:4px 12px;border:1px solid var(--accent-blue);background:transparent;color:var(--accent-blue);border-radius:6px;cursor:pointer">처리 시작</button>' : '')
-      +     (a.status === 'progress'  ? '<button onclick="asChangeStatus(' + a.id + ', \'done\')" style="font-size:.7rem;padding:4px 12px;border:1px solid var(--accent-green);background:transparent;color:var(--accent-green);border-radius:6px;cursor:pointer">완료 처리</button>' : '')
-      +     (a.status === 'done'      ? '<button onclick="asChangeStatus(' + a.id + ', \'pending\')" style="font-size:.7rem;padding:4px 12px;border:1px solid var(--muted);background:transparent;color:var(--muted);border-radius:6px;cursor:pointer">재접수</button>' : '')
-      +     '<button onclick="asDelete(' + a.id + ')" style="font-size:.7rem;padding:4px 10px;border:1px solid rgba(239,68,68,.4);background:transparent;color:var(--accent-red);border-radius:6px;cursor:pointer">삭제</button>'
-      +   '</div>'
-      + '</div>'
-      + '</div>';
+    const dateStr  = (a.created_at||'').substring(0,10);
+    const isHigh   = a.priority === 'high';
+    const borderClr = isHigh ? 'var(--red)' : 'var(--border)';
+
+    // 상태 버튼 (권한별)
+    let statusBtns = '';
+    if (canStatus) {
+      if (a.status === 'pending')
+        statusBtns += `<button onclick="asChangeStatus(${a.id},'progress')" style="font-size:.7rem;padding:4px 12px;border:1px solid var(--blue);background:transparent;color:var(--blue);border-radius:6px;cursor:pointer">🔧 처리 시작</button>`;
+      if (a.status === 'progress')
+        statusBtns += `<button onclick="asOpenModal('done',${a.id})" style="font-size:.7rem;padding:4px 12px;border:1px solid var(--green);background:transparent;color:var(--green);border-radius:6px;cursor:pointer">✅ 완료 처리</button>`;
+      if (a.status === 'done')
+        statusBtns += `<button onclick="asChangeStatus(${a.id},'pending')" style="font-size:.7rem;padding:4px 12px;border:1px solid var(--muted);background:transparent;color:var(--muted);border-radius:6px;cursor:pointer">🔄 재접수</button>`;
+    }
+    // 담당기사 배정 버튼 (L2-A, L3)
+    if (canAssign && a.status !== 'done')
+      statusBtns += `<button onclick="asOpenModal('assign',${a.id})" style="font-size:.7rem;padding:4px 12px;border:1px solid var(--gold);background:transparent;color:var(--gold);border-radius:6px;cursor:pointer">👷 배정</button>`;
+    // 삭제 (L3만)
+    if (canDelete)
+      statusBtns += `<button onclick="asDelete(${a.id})" style="font-size:.7rem;padding:4px 10px;border:1px solid rgba(239,68,68,.4);background:transparent;color:var(--red);border-radius:6px;cursor:pointer">삭제</button>`;
+
+    return `<div style="padding:16px 20px;margin-bottom:10px;background:var(--card);border:1px solid var(--border);border-left:3px solid ${borderClr};border-radius:10px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:6px">
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <span style="font-size:.72rem;padding:3px 10px;border-radius:12px;background:rgba(255,255,255,.08)">${asTypeLabel(a.type)}</span>
+          <span style="font-size:.72rem;color:var(--muted)">${a.system||'-'}</span>
+          ${isHigh ? '<span style="font-size:.68rem;color:var(--red);font-weight:600">● 긴급</span>' : ''}
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <span style="font-size:.72rem;color:${asStatusColor(a.status)};padding:2px 10px;border-radius:10px;border:1px solid ${asStatusColor(a.status)}44">${asStatusLabel(a.status)}</span>
+          <span style="font-size:.65rem;color:var(--muted)">${dateStr}</span>
+        </div>
+      </div>
+      <div style="font-size:.85rem;margin-bottom:8px;line-height:1.5">${a.content}</div>
+      ${a.result ? `<div style="font-size:.75rem;color:var(--green);background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);border-radius:6px;padding:6px 10px;margin-bottom:8px">📋 조치내용: ${a.result}</div>` : ''}
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
+        <span style="font-size:.72rem;color:var(--muted)">${a.engineer ? '👷 '+a.engineer : '<span style="color:var(--orange)">담당자 미배정</span>'}</span>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">${statusBtns}</div>
+      </div>
+    </div>`;
   }).join('');
 }
 
@@ -10626,6 +10681,104 @@ async function asChangeStatus(id, newStatus) {
     showToast('로컬 상태 변경 (DB 미연동)');
   }
 }
+
+// ── AS 접수폼 토글 ──
+function asToggleForm() {
+  const body  = document.getElementById('as-form-body');
+  const arrow = document.getElementById('as-form-arrow');
+  if (!body) return;
+  const isOpen = body.style.display !== 'none';
+  body.style.display  = isOpen ? 'none' : '';
+  arrow.textContent   = isOpen ? '▼ 펼치기' : '▲ 접기';
+}
+
+// ── AS 모달 열기 ──
+function asOpenModal(mode, asId) {
+  const modal  = document.getElementById('as-modal');
+  const titleEl= document.getElementById('as-modal-title');
+  const bodyEl = document.getElementById('as-modal-body');
+  const item   = asData.find(a => a.id === asId);
+  modal._mode  = mode;
+  modal._asId  = asId;
+
+  if (mode === 'assign') {
+    titleEl.textContent = '👷 담당기사 배정';
+    bodyEl.innerHTML = `
+      <div><label style="font-size:.72rem;color:var(--muted);display:block;margin-bottom:6px">AS 내용</label>
+        <div style="padding:8px 12px;background:var(--card);border-radius:8px;font-size:.82rem;color:var(--muted);line-height:1.5">${item ? item.content : ''}</div></div>
+      <div><label style="font-size:.72rem;color:var(--muted);display:block;margin-bottom:6px">담당 기사 <span style="color:var(--red)">*</span></label>
+        <input id="am-engineer" type="text" value="${item ? (item.engineer||'') : ''}" placeholder="담당자명 입력"
+          style="width:100%;padding:8px 12px;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--white);font-size:.85rem"></div>`;
+    document.getElementById('as-modal-save-btn').style.background = 'linear-gradient(135deg,var(--gold),#b8860b)';
+
+  } else if (mode === 'done') {
+    titleEl.textContent = '✅ 완료 처리';
+    bodyEl.innerHTML = `
+      <div><label style="font-size:.72rem;color:var(--muted);display:block;margin-bottom:6px">AS 내용</label>
+        <div style="padding:8px 12px;background:var(--card);border-radius:8px;font-size:.82rem;color:var(--muted);line-height:1.5">${item ? item.content : ''}</div></div>
+      <div><label style="font-size:.72rem;color:var(--muted);display:block;margin-bottom:6px">조치 내용 <span style="color:var(--red)">*</span></label>
+        <textarea id="am-result" rows="4" placeholder="수행한 작업, 교체 부품, 처리 결과 등을 입력하세요"
+          style="width:100%;padding:8px 12px;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--white);font-size:.85rem;resize:vertical">${item ? (item.result||'') : ''}</textarea></div>
+      <div><label style="font-size:.72rem;color:var(--muted);display:block;margin-bottom:6px">완료 일시</label>
+        <div style="padding:8px 12px;background:var(--card);border-radius:8px;font-size:.82rem;color:var(--muted)">${new Date().toLocaleString('ko-KR')}</div></div>`;
+    document.getElementById('as-modal-save-btn').style.background = 'linear-gradient(135deg,var(--green),#059669)';
+  }
+
+  modal.style.display = 'flex';
+}
+
+// ── AS 모달 닫기 ──
+function asCloseModal() {
+  document.getElementById('as-modal').style.display = 'none';
+}
+
+// ── AS 모달 저장 ──
+async function asSaveModal() {
+  const modal = document.getElementById('as-modal');
+  const mode  = modal._mode;
+  const asId  = modal._asId;
+  const item  = asData.find(a => a.id === asId);
+  const getVal = id => { const el = document.getElementById(id); return el ? el.value.trim() : ''; };
+
+  if (mode === 'assign') {
+    const engineer = getVal('am-engineer');
+    if (!engineer) { alert('담당 기사를 입력해주세요'); return; }
+    if (item) item.engineer = engineer;
+    renderAS();
+    try {
+      await sbPatch('complaints', asId, { engineer, updated_at: new Date().toISOString() });
+      showToast('👷 담당기사 배정됐어요');
+    } catch(e) { showToast('배정됨 (로컬)'); }
+
+  } else if (mode === 'done') {
+    const result = getVal('am-result');
+    if (!result) { alert('조치 내용을 입력해주세요'); return; }
+    if (item) { item.status = 'done'; item.result = result; }
+    renderAS();
+    try {
+      await sbPatch('complaints', asId, {
+        status: 'done', result,
+        completed_at: new Date().toISOString(),
+        updated_at:   new Date().toISOString()
+      });
+      showToast('✅ 완료 처리됐어요');
+    } catch(e) { showToast('완료 처리됨 (로컬)'); }
+  }
+  asCloseModal();
+}
+
+// ── AS 삭제 (L3만) ──
+async function asDelete(id) {
+  if (!confirm('정말 삭제할까요?')) return;
+  const idx = asData.findIndex(a => a.id === id);
+  if (idx >= 0) asData.splice(idx, 1);
+  renderAS();
+  try {
+    await sbDelete('complaints', id);
+    showToast('🗑️ 삭제됐어요');
+  } catch(e) { showToast('삭제됨 (로컬)'); }
+}
+
 
 // ── 삭제 (Supabase) ──
 async function asDelete(id) {
