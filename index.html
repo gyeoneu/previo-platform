@@ -4974,18 +4974,73 @@ body {
     <div class="stat-card"><div class="stat-icon">✅</div><div class="stat-val" id="eq-normal-count" style="color:var(--green)">-</div><div class="stat-label">정상 운전</div></div>
   </div>
 
-  <!-- DMS 필터 -->
-  <div style="display:flex;gap:8px;margin-bottom:16px">
+  <!-- DMS 필터 + 장비 등록 버튼 (L2-A, L3) -->
+  <div style="display:flex;gap:8px;margin-bottom:16px;align-items:center;flex-wrap:wrap">
     <button onclick="filterEquipment('all')" id="ef-all" style="padding:6px 16px;border-radius:20px;border:1px solid var(--blue);background:rgba(59,130,246,.15);color:var(--blue);font-size:.72rem;cursor:pointer">전체</button>
     <button onclick="filterEquipment('100')" id="ef-100" style="padding:6px 16px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:.72rem;cursor:pointer">DMS 100 · 사무실A</button>
     <button onclick="filterEquipment('101')" id="ef-101" style="padding:6px 16px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:.72rem;cursor:pointer">DMS 101 · 사무실B</button>
     <button onclick="filterEquipment('102')" id="ef-102" style="padding:6px 16px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:.72rem;cursor:pointer">DMS 102 · 근린상가</button>
+    <div style="margin-left:auto;display:flex;gap:8px" id="eq-admin-btns">
+      <button onclick="eqOpenRegModal('outdoor')" style="padding:6px 16px;border-radius:8px;border:1px solid rgba(201,168,76,.4);background:rgba(201,168,76,.1);color:var(--gold);font-size:.72rem;cursor:pointer">+ 실외기 등록</button>
+      <button onclick="eqOpenRegModal('indoor')" style="padding:6px 16px;border-radius:8px;border:1px solid rgba(59,130,246,.4);background:rgba(59,130,246,.1);color:var(--blue);font-size:.72rem;cursor:pointer">+ 실내기 등록</button>
+    </div>
   </div>
 
   <!-- 장비 목록 -->
   <div id="equipment-list"></div>
-</div>
 
+  <!-- 장비 등록/편집 모달 -->
+  <div id="eq-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;align-items:center;justify-content:center">
+    <div style="background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:28px;width:480px;max-width:95vw;max-height:90vh;overflow-y:auto">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+        <h3 id="eq-modal-title" style="font-size:1rem;font-weight:700">장비 등록</h3>
+        <button onclick="eqCloseModal()" style="background:transparent;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer">✕</button>
+      </div>
+      <div style="display:grid;gap:14px">
+        <input type="hidden" id="eq-modal-id">
+        <input type="hidden" id="eq-modal-utype">
+        <div>
+          <label style="font-size:.72rem;color:var(--muted);display:block;margin-bottom:6px">DMS 시스템 <span style="color:var(--red)">*</span></label>
+          <select id="eq-modal-system" style="width:100%;padding:8px 12px;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--white);font-size:.85rem">
+            <option value="1">DMS 100 · 사무실A</option>
+            <option value="2">DMS 101 · 사무실B</option>
+            <option value="3">DMS 102 · 근린상가</option>
+          </select>
+        </div>
+        <div id="eq-modal-parent-wrap" style="display:none">
+          <label style="font-size:.72rem;color:var(--muted);display:block;margin-bottom:6px">상위 실외기 주소 <span style="color:var(--red)">*</span></label>
+          <select id="eq-modal-parent" style="width:100%;padding:8px 12px;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--white);font-size:.85rem"></select>
+        </div>
+        <div>
+          <label style="font-size:.72rem;color:var(--muted);display:block;margin-bottom:6px">주소 (예: 11.03) <span style="color:var(--red)">*</span></label>
+          <input id="eq-modal-addr" type="text" placeholder="XX.XX 또는 XX.XX.XX" style="width:100%;padding:8px 12px;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--white);font-size:.85rem">
+        </div>
+        <div>
+          <label style="font-size:.72rem;color:var(--muted);display:block;margin-bottom:6px">장비 코드</label>
+          <input id="eq-modal-code" type="text" placeholder="자동 생성 (직접 입력 가능)" style="width:100%;padding:8px 12px;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--white);font-size:.85rem">
+        </div>
+        <div>
+          <label style="font-size:.72rem;color:var(--muted);display:block;margin-bottom:6px">상태</label>
+          <select id="eq-modal-status" style="width:100%;padding:8px 12px;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--white);font-size:.85rem">
+            <option value="정상">✅ 정상</option>
+            <option value="점검중">🔍 점검중</option>
+            <option value="불량">❌ 불량</option>
+            <option value="미설치">⬜ 미설치</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:.72rem;color:var(--muted);display:block;margin-bottom:6px">메모</label>
+          <textarea id="eq-modal-memo" rows="3" placeholder="특이사항, 설치일, 모델명 등" style="width:100%;padding:8px 12px;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--white);font-size:.85rem;resize:vertical"></textarea>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:20px;justify-content:flex-end">
+        <button onclick="eqCloseModal()" style="padding:8px 20px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:.82rem;cursor:pointer">취소</button>
+        <button onclick="eqSaveModal()" style="padding:8px 20px;border-radius:8px;border:none;background:linear-gradient(135deg,var(--blue),var(--cyan));color:#fff;font-size:.82rem;cursor:pointer;font-weight:600">저장</button>
+      </div>
+    </div>
+  </div>
+
+</div>
 <div class="page" id="page-parts">
   <div class="dashboard-greeting">
     <h1>📦 부품 관리</h1>
@@ -9107,58 +9162,266 @@ function toggleEqExpand(systemId) {
   renderEquipment();
 }
 
+// ── 장비관리 상태변경 ──
+async function eqChangeStatus(utype, uid, newStatus) {
+  const table = utype === 'outdoor' ? 'outdoor_units' : 'indoor_units';
+  const arr   = utype === 'outdoor' ? equipmentData.outdoor : equipmentData.indoor;
+  const item  = arr.find(u => u.unit_id === uid);
+  if (item) item.status = newStatus;
+  // 정상 카운트 업데이트
+  const setEl = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
+  setEl('eq-normal-count', equipmentData.outdoor.filter(u => u.status === '정상').length);
+  try {
+    await sbPatchWhere(table, 'unit_id=eq.' + uid, { status: newStatus, updated_at: new Date().toISOString() });
+    showToast('✅ 상태 변경됐어요');
+  } catch(e) {
+    showToast('상태 변경됨 (로컬)');
+  }
+}
+
+// ── 장비관리 메모 편집 ──
+async function eqEditMemo(utype, uid, currentMemo) {
+  const newMemo = prompt('메모를 입력하세요:', currentMemo || '');
+  if (newMemo === null) return;
+  const table = utype === 'outdoor' ? 'outdoor_units' : 'indoor_units';
+  const arr   = utype === 'outdoor' ? equipmentData.outdoor : equipmentData.indoor;
+  const item  = arr.find(u => u.unit_id === uid);
+  if (item) item.memo = newMemo;
+  renderEquipment();
+  try {
+    await sbPatchWhere(table, 'unit_id=eq.' + uid, { memo: newMemo, updated_at: new Date().toISOString() });
+    showToast('✅ 메모 저장됐어요');
+  } catch(e) {
+    showToast('메모 저장됨 (로컬)');
+  }
+}
+
+// ── 장비 등록 모달 열기 (신규) ──
+function eqOpenRegModal(utype) {
+  document.getElementById('eq-modal-id').value    = '';
+  document.getElementById('eq-modal-utype').value = utype;
+  document.getElementById('eq-modal-addr').value  = '';
+  document.getElementById('eq-modal-code').value  = '';
+  document.getElementById('eq-modal-memo').value  = '';
+  document.getElementById('eq-modal-status').value = '정상';
+  document.getElementById('eq-modal-title').textContent = utype === 'outdoor' ? '🌀 실외기 등록' : '❄️ 실내기 등록';
+
+  // 실내기면 상위 실외기 선택 표시
+  const parentWrap = document.getElementById('eq-modal-parent-wrap');
+  if (utype === 'indoor') {
+    const sid = document.getElementById('eq-modal-system').value;
+    eqUpdateParentSelect(sid);
+    parentWrap.style.display = 'block';
+  } else {
+    parentWrap.style.display = 'none';
+  }
+  document.getElementById('eq-modal-system').onchange = function() {
+    if (utype === 'indoor') eqUpdateParentSelect(this.value);
+  };
+  const modal = document.getElementById('eq-modal');
+  modal.style.display = 'flex';
+}
+
+// ── 장비 편집 모달 열기 (기존) ──
+function eqOpenEditModal(utype, uid) {
+  const arr  = utype === 'outdoor' ? equipmentData.outdoor : equipmentData.indoor;
+  const item = arr.find(u => u.unit_id === uid);
+  if (!item) return;
+  document.getElementById('eq-modal-id').value     = uid;
+  document.getElementById('eq-modal-utype').value  = utype;
+  document.getElementById('eq-modal-addr').value   = item.unit_addr || '';
+  document.getElementById('eq-modal-code').value   = item.unit_code || '';
+  document.getElementById('eq-modal-memo').value   = item.memo || '';
+  document.getElementById('eq-modal-status').value = item.status || '정상';
+  document.getElementById('eq-modal-system').value = String(item.system_id);
+  document.getElementById('eq-modal-title').textContent = utype === 'outdoor' ? '🌀 실외기 편집' : '❄️ 실내기 편집';
+
+  const parentWrap = document.getElementById('eq-modal-parent-wrap');
+  if (utype === 'indoor') {
+    eqUpdateParentSelect(String(item.system_id));
+    // 상위 실외기 선택
+    const parentAddr = item.unit_addr ? item.unit_addr.split('.').slice(0,2).join('.') : '';
+    setTimeout(() => {
+      const sel = document.getElementById('eq-modal-parent');
+      if (sel) sel.value = parentAddr;
+    }, 50);
+    parentWrap.style.display = 'block';
+  } else {
+    parentWrap.style.display = 'none';
+  }
+  document.getElementById('eq-modal-system').onchange = function() {
+    if (utype === 'indoor') eqUpdateParentSelect(this.value);
+  };
+  document.getElementById('eq-modal').style.display = 'flex';
+}
+
+// ── 실내기 등록 시 상위 실외기 목록 갱신 ──
+function eqUpdateParentSelect(sid) {
+  const sel = document.getElementById('eq-modal-parent');
+  if (!sel) return;
+  const outdoors = equipmentData.outdoor.filter(u => String(u.system_id) === sid);
+  sel.innerHTML = outdoors.map(ou =>
+    `<option value="${ou.unit_addr}">${ou.unit_addr} (${ou.unit_code||''})</option>`
+  ).join('');
+}
+
+// ── 모달 닫기 ──
+function eqCloseModal() {
+  document.getElementById('eq-modal').style.display = 'none';
+}
+
+// ── 모달 저장 (등록/편집) ──
+async function eqSaveModal() {
+  const uid    = document.getElementById('eq-modal-id').value;
+  const utype  = document.getElementById('eq-modal-utype').value;
+  const sid    = document.getElementById('eq-modal-system').value;
+  const addr   = document.getElementById('eq-modal-addr').value.trim();
+  const code   = document.getElementById('eq-modal-code').value.trim();
+  const status = document.getElementById('eq-modal-status').value;
+  const memo   = document.getElementById('eq-modal-memo').value.trim();
+
+  if (!addr) { alert('주소를 입력해주세요'); return; }
+
+  const table = utype === 'outdoor' ? 'outdoor_units' : 'indoor_units';
+  const arr   = utype === 'outdoor' ? equipmentData.outdoor : equipmentData.indoor;
+
+  // 코드 자동 생성
+  const info    = DMS_INFO[sid];
+  const autoCode = code || ('DMS' + (info ? info.num : sid) + '-' + addr.replace(/\./g,''));
+
+  const payload = {
+    system_id: parseInt(sid),
+    unit_addr: addr,
+    unit_code: autoCode,
+    status,
+    memo,
+    updated_at: new Date().toISOString()
+  };
+
+  if (uid) {
+    // 편집
+    const item = arr.find(u => u.unit_id === parseInt(uid));
+    if (item) Object.assign(item, payload);
+    try {
+      await sbPatchWhere(table, 'unit_id=eq.' + uid, payload);
+      showToast('✅ 장비 정보 수정됐어요');
+    } catch(e) { showToast('수정됨 (로컬)'); }
+  } else {
+    // 신규 등록
+    payload.created_at = new Date().toISOString();
+    try {
+      const result = await sbPost(table, payload);
+      const newItem = Array.isArray(result) ? result[0] : result;
+      arr.push(newItem || { ...payload, unit_id: Date.now() });
+      showToast('✅ 장비 등록됐어요');
+    } catch(e) {
+      arr.push({ ...payload, unit_id: Date.now() });
+      showToast('등록됨 (로컬)');
+    }
+  }
+  eqCloseModal();
+  // 요약 카운트 갱신
+  const setEl = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
+  setEl('eq-outdoor-count', equipmentData.outdoor.length);
+  setEl('eq-indoor-count',  equipmentData.indoor.length);
+  setEl('eq-normal-count',  equipmentData.outdoor.filter(u => u.status === '정상').length);
+  renderEquipment();
+}
+
+// ── 장비 삭제 (L3만) ──
+async function eqDelete(utype, uid) {
+  if (!confirm('정말 삭제할까요? 이 작업은 되돌릴 수 없어요.')) return;
+  const table = utype === 'outdoor' ? 'outdoor_units' : 'indoor_units';
+  const arr   = utype === 'outdoor' ? equipmentData.outdoor : equipmentData.indoor;
+  const idx   = arr.findIndex(u => u.unit_id === uid);
+  if (idx >= 0) arr.splice(idx, 1);
+  try {
+    await sbDelete(table, uid);
+    showToast('🗑️ 삭제됐어요');
+  } catch(e) { showToast('삭제됨 (로컬)'); }
+  renderEquipment();
+}
+
+
 function renderEquipment() {
   const container = document.getElementById('equipment-list');
   if (!container) return;
+  const role = currentUser || 'demo';
+  const canEdit   = ['field','manager','admin'].includes(role);
+  const canManage = ['manager','admin'].includes(role);
+  const canDelete = role === 'admin';
 
-  // system_id 기준으로 그룹핑
   const systems = ['1','2','3'];
   const filtered = eqFilter === 'all' ? systems : systems.filter(sid => {
     const info = DMS_INFO[sid];
     return info && info.num === eqFilter;
   });
 
+  // 등록 버튼 노출 제어
+  const adminBtns = document.getElementById('eq-admin-btns');
+  if (adminBtns) adminBtns.style.display = canManage ? 'flex' : 'none';
+
   container.innerHTML = filtered.map(sid => {
     const info = DMS_INFO[sid];
     if (!info) return '';
-
-    const outdoors = equipmentData.outdoor.filter(u => String(u.system_id) === sid);
-    const indoors  = equipmentData.indoor.filter(u => String(u.system_id) === sid);
+    const outdoors   = equipmentData.outdoor.filter(u => String(u.system_id) === sid);
+    const indoors    = equipmentData.indoor.filter(u => String(u.system_id) === sid);
     const isExpanded = eqExpanded[sid];
-    const isWarn = info.num === '101';
+    const isWarn     = info.num === '101';
+
+    const statusColor = s => s === '정상' ? 'var(--green)' : s === '점검중' ? 'var(--gold)' : s === '불량' ? 'var(--red)' : 'var(--muted)';
+    const statusIcon  = s => s === '정상' ? '✅' : s === '점검중' ? '🔍' : s === '불량' ? '❌' : '⬜';
 
     const unitRows = isExpanded ? outdoors.map(ou => {
       const myIndoors = indoors.filter(iu =>
-        iu.unit_addr && ou.unit_addr &&
-        iu.unit_addr.startsWith(ou.unit_addr + '.')
+        iu.unit_addr && ou.unit_addr && iu.unit_addr.startsWith(ou.unit_addr + '.')
       );
-      const statusColor = ou.status === '정상' ? 'var(--green)' : ou.status === '주의' ? 'var(--yellow)' : 'var(--red)';
 
-      return `<div style="margin-left:1.5rem;padding:12px 16px;border-left:2px solid ${info.color}44;margin-bottom:6px;background:rgba(255,255,255,.02);border-radius:0 8px 8px 0">
-        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-          <span style="font-family:'JetBrains Mono',monospace;font-size:.8rem;color:${info.color};min-width:60px;font-weight:600">${ou.unit_addr || ou.unit_code}</span>
-          <span style="font-size:.82rem;flex:1;color:var(--white)">${ou.unit_code}</span>
-          <span style="font-size:.68rem;color:var(--muted)">실내기 ${myIndoors.length}대</span>
-          <span style="font-size:.72rem;color:${statusColor};padding:2px 8px;border-radius:12px;border:1px solid ${statusColor}44;background:${statusColor}11">${ou.status || '정상'}</span>
-          ${ou.last_check ? `<span style="font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--muted)">점검: ${ou.last_check}</span>` : ''}
+      // 실내기 행
+      const indoorRows = myIndoors.map(iu => `
+        <div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:rgba(255,255,255,.02);border-radius:6px;margin-bottom:3px;flex-wrap:wrap">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--muted);min-width:80px">${iu.unit_addr||iu.unit_code}</span>
+          <span style="font-size:.68rem;color:var(--muted);flex:1">${iu.memo||'실내기'}</span>
+          ${canEdit ? `
+          <select onchange="eqChangeStatus('indoor',${iu.unit_id},this.value)"
+            style="padding:2px 6px;font-size:.65rem;background:var(--card);border:1px solid ${statusColor(iu.status||'정상')}44;border-radius:6px;color:${statusColor(iu.status||'정상')};cursor:pointer">
+            ${['정상','점검중','불량','미설치'].map(s=>`<option value="${s}" ${(iu.status||'정상')===s?'selected':''}>${statusIcon(s)} ${s}</option>`).join('')}
+          </select>` : `<span style="font-size:.68rem;color:${statusColor(iu.status||'정상')};padding:2px 8px;border-radius:10px;border:1px solid ${statusColor(iu.status||'정상')}44">${statusIcon(iu.status||'정상')} ${iu.status||'정상'}</span>`}
+          ${canEdit ? `<button onclick="eqEditMemo('indoor',${iu.unit_id},'${(iu.memo||'').replace(/'/g,"\'")}')" style="padding:2px 8px;font-size:.62rem;background:transparent;border:1px solid var(--border);border-radius:5px;color:var(--muted);cursor:pointer">✏️ 메모</button>` : ''}
+          ${canManage ? `<button onclick="eqOpenEditModal('indoor',${iu.unit_id})" style="padding:2px 8px;font-size:.62rem;background:transparent;border:1px solid var(--border);border-radius:5px;color:var(--muted);cursor:pointer">편집</button>` : ''}
+          ${canDelete ? `<button onclick="eqDelete('indoor',${iu.unit_id})" style="padding:2px 8px;font-size:.62rem;background:transparent;border:1px solid rgba(239,68,68,.3);border-radius:5px;color:var(--red);cursor:pointer">삭제</button>` : ''}
+        </div>`).join('');
+
+      return `<div style="margin-left:1.5rem;padding:12px 16px;border-left:2px solid ${info.color}44;margin-bottom:8px;background:rgba(255,255,255,.02);border-radius:0 8px 8px 0">
+        <!-- 실외기 행 -->
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:${myIndoors.length>0?'8px':'0'}">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:.82rem;color:${info.color};min-width:60px;font-weight:700">${ou.unit_addr||ou.unit_code}</span>
+          <span style="font-size:.78rem;flex:1;color:var(--white)">${ou.unit_code||''}</span>
+          <span style="font-size:.65rem;color:var(--muted)">실내기 ${myIndoors.length}대</span>
+          ${ou.last_check ? `<span style="font-family:'JetBrains Mono',monospace;font-size:.62rem;color:var(--muted)">점검: ${ou.last_check}</span>` : ''}
+          ${canEdit ? `
+          <select onchange="eqChangeStatus('outdoor',${ou.unit_id},this.value)"
+            style="padding:3px 8px;font-size:.68rem;background:var(--card);border:1px solid ${statusColor(ou.status||'정상')}44;border-radius:6px;color:${statusColor(ou.status||'정상')};cursor:pointer">
+            ${['정상','점검중','불량','미설치'].map(s=>`<option value="${s}" ${(ou.status||'정상')===s?'selected':''}>${statusIcon(s)} ${s}</option>`).join('')}
+          </select>` : `<span style="font-size:.7rem;color:${statusColor(ou.status||'정상')};padding:3px 10px;border-radius:12px;border:1px solid ${statusColor(ou.status||'정상')}44;background:${statusColor(ou.status||'정상')}11">${statusIcon(ou.status||'정상')} ${ou.status||'정상'}</span>`}
+          ${canEdit ? `<button onclick="eqEditMemo('outdoor',${ou.unit_id},'${(ou.memo||'').replace(/'/g,"\'")}')" style="padding:3px 10px;font-size:.65rem;background:transparent;border:1px solid var(--border);border-radius:6px;color:var(--muted);cursor:pointer">✏️ 메모</button>` : ''}
+          ${canManage ? `<button onclick="eqOpenEditModal('outdoor',${ou.unit_id})" style="padding:3px 10px;font-size:.65rem;background:transparent;border:1px solid var(--border);border-radius:6px;color:var(--muted);cursor:pointer">편집</button>` : ''}
+          ${canDelete ? `<button onclick="eqDelete('outdoor',${ou.unit_id})" style="padding:3px 10px;font-size:.65rem;background:transparent;border:1px solid rgba(239,68,68,.3);border-radius:6px;color:var(--red);cursor:pointer">삭제</button>` : ''}
         </div>
-        ${myIndoors.length > 0 ? `
-        <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:4px">
-          ${myIndoors.map(iu => `
-            <span style="font-family:'JetBrains Mono',monospace;font-size:.62rem;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:3px;padding:2px 6px;color:var(--muted)">${iu.unit_addr || iu.unit_code}</span>
-          `).join('')}
-        </div>` : ''}
+        ${ou.memo ? `<div style="font-size:.68rem;color:var(--muted);margin-bottom:6px;padding:4px 8px;background:rgba(255,255,255,.03);border-radius:4px">📝 ${ou.memo}</div>` : ''}
+        <!-- 실내기 목록 -->
+        ${indoorRows}
       </div>`;
     }).join('') : '';
 
-    return `<div style="background:var(--panel);border:1px solid var(--border);border-left:3px solid ${info.color};border-radius:10px;margin-bottom:12px;overflow:hidden${isWarn ? ';border-top:1px solid rgba(245,158,11,.3)' : ''}">
+    return `<div style="background:var(--panel);border:1px solid var(--border);border-left:3px solid ${info.color};border-radius:10px;margin-bottom:12px;overflow:hidden${isWarn?';border-top:1px solid rgba(245,158,11,.3)':''}">
       <div style="padding:16px 20px;cursor:pointer;display:flex;align-items:center;gap:14px" onclick="toggleEqExpand('${sid}')">
         <div style="font-family:'Bebas Neue',sans-serif;font-size:1.6rem;font-weight:900;color:${info.color};min-width:50px">${info.num}</div>
         <div style="flex:1">
-          <div style="font-size:.95rem;font-weight:700">${info.label} <span style="font-size:.72rem;color:var(--muted)">— ${info.zone}</span>${isWarn ? ' <span style="font-size:.68rem;color:var(--yellow)">⚠️ 전력이상</span>' : ''}</div>
-          <div style="font-size:.72rem;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-top:3px">실외기 ${outdoors.length}대 · 실내기 ${indoors.length}대 · ${outdoors.length}개 계통</div>
+          <div style="font-size:.95rem;font-weight:700">${info.label} <span style="font-size:.72rem;color:var(--muted)">— ${info.zone}</span>${isWarn?' <span style="font-size:.68rem;color:var(--yellow)">⚠️ 전력이상</span>':''}</div>
+          <div style="font-size:.72rem;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-top:3px">실외기 ${outdoors.length}대 · 실내기 ${indoors.length}대</div>
         </div>
-        <span style="font-size:.72rem;color:var(--muted)">${isExpanded ? '▲ 접기' : '▼ 펼치기'}</span>
+        <span style="font-size:.72rem;color:var(--muted)">${isExpanded?'▲ 접기':'▼ 펼치기'}</span>
       </div>
       ${unitRows}
     </div>`;
