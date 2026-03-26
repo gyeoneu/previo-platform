@@ -5431,253 +5431,283 @@ body {
 </div>
 
     <div class="page" id="page-sites">
-      <div style="padding:24px">
-        <!-- 헤더 -->
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px">
-          <div>
-            <h1 style="font-size:1.4rem;font-weight:700">🏢 건물 관리</h1>
-            <div style="font-size:.75rem;color:var(--text2);margin-top:4px">계약 현장 관리 · 장비 현황 · 담당자 정보</div>
-          </div>
-          <button onclick="showToast('📋 현장 추가 기능 준비 중입니다.')" style="padding:8px 16px;font-size:.82rem;font-weight:600;border:1px solid rgba(201,168,76,.4);color:#e8c46a;background:rgba(201,168,76,.1);border-radius:8px;cursor:pointer">+ 현장 추가</button>
-        </div>
-
-        <!-- 요약 카드 -->
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px">
-          <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px">
-            <div style="font-size:.72rem;color:var(--text2);letter-spacing:1px;margin-bottom:8px">계약 현장</div>
-            <div style="font-size:1.8rem;font-weight:700;color:var(--accent)">1</div>
-            <div style="font-size:.72rem;color:var(--text2);margin-top:4px">리드스마트스퀘어</div>
-          </div>
-          <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px">
-            <div style="font-size:.72rem;color:var(--text2);letter-spacing:1px;margin-bottom:8px">실외기 총계</div>
-            <div style="font-size:1.8rem;font-weight:700;color:#60a5fa">150</div>
-            <div style="font-size:.72rem;color:var(--text2);margin-top:4px">Samsung 중형·대형</div>
-          </div>
-          <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px">
-            <div style="font-size:.72rem;color:var(--text2);letter-spacing:1px;margin-bottom:8px">실내기 총계</div>
-            <div style="font-size:1.8rem;font-weight:700;color:#4ade80">660</div>
-            <div style="font-size:.72rem;color:var(--text2);margin-top:4px">887호 입주사 서비스</div>
-          </div>
-          <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px">
-            <div style="font-size:.72rem;color:var(--text2);letter-spacing:1px;margin-bottom:8px">DMS 시스템</div>
-            <div style="font-size:1.8rem;font-weight:700;color:#c084fc">3</div>
-            <div style="font-size:.72rem;color:var(--text2);margin-top:4px">통합 중앙 제어</div>
-          </div>
-        </div>
-
-        <!-- 현장 카드 -->
-        <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden">
-          <!-- 카드 헤더 -->
-          <div style="padding:20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
-            <div style="display:flex;align-items:center;gap:12px">
-              <div style="width:10px;height:10px;border-radius:50%;background:#4ade80;box-shadow:0 0 6px #4ade80"></div>
-              <div>
-                <div style="font-size:1rem;font-weight:700">리드스마트스퀘어 지식산업센터</div>
-                <div style="font-size:.75rem;color:var(--text2);margin-top:2px">경기도 안산시 단원구 산단로 325</div>
-              </div>
-            </div>
-            <span style="background:rgba(34,197,94,.15);color:#4ade80;padding:4px 14px;border-radius:20px;font-size:.75rem;font-weight:600">● 정상 운영</span>
-          </div>
-
-          <!-- 카드 내용 -->
-          <div style="padding:20px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px">
-            <!-- 계약 정보 -->
-            <div>
-              <div style="font-size:.72rem;color:var(--accent);letter-spacing:1.5px;font-weight:600;margin-bottom:12px">📋 계약 정보</div>
-              <div style="display:flex;flex-direction:column;gap:8px;font-size:.82rem">
-                <div style="display:flex;justify-content:space-between">
-                  <span style="color:var(--text2)">계약 유형</span>
-                  <span style="color:var(--text);font-weight:600">TYPE 3 · 통합관리</span>
-                </div>
-                <div style="display:flex;justify-content:space-between">
-                  <span style="color:var(--text2)">계약 시작</span>
-                  <span>2024년 4월</span>
-                </div>
-                <div style="display:flex;justify-content:space-between">
-                  <span style="color:var(--text2)">계약 만료</span>
-                  <span style="color:#e8c46a">2026년 3월</span>
-                </div>
-                <div style="display:flex;justify-content:space-between">
-                  <span style="color:var(--text2)">월 유지보수비</span>
-                  <span style="font-weight:600">협의</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- 장비 현황 -->
-            <div>
-              <div style="font-size:.72rem;color:var(--accent);letter-spacing:1.5px;font-weight:600;margin-bottom:12px">⚙️ 장비 현황</div>
-              <div style="display:flex;flex-direction:column;gap:8px;font-size:.82rem">
-                <div style="display:flex;justify-content:space-between">
-                  <span style="color:var(--text2)">DMS 100 · 사무실A</span>
-                  <span style="color:#4ade80">✓ 정상</span>
-                </div>
-                <div style="display:flex;justify-content:space-between">
-                  <span style="color:var(--text2)">DMS 101 · 사무실B</span>
-                  <span style="color:#facc15">⚠ 주의</span>
-                </div>
-                <div style="display:flex;justify-content:space-between">
-                  <span style="color:var(--text2)">DMS 102 · 근린상가</span>
-                  <span style="color:#4ade80">✓ 정상</span>
-                </div>
-                <div style="display:flex;justify-content:space-between">
-                  <span style="color:var(--text2)">실외기 / 실내기</span>
-                  <span>150대 / 660대</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- 담당자 정보 -->
-            <div>
-              <div style="font-size:.72rem;color:var(--accent);letter-spacing:1.5px;font-weight:600;margin-bottom:12px">👤 담당자 정보</div>
-              <div style="display:flex;flex-direction:column;gap:8px;font-size:.82rem">
-                <div style="display:flex;justify-content:space-between">
-                  <span style="color:var(--text2)">셀시우스 담당</span>
-                  <span style="font-weight:600">강형직 대표</span>
-                </div>
-                <div style="display:flex;justify-content:space-between">
-                  <span style="color:var(--text2)">연락처</span>
-                  <span>010-3966-9691</span>
-                </div>
-                <div style="display:flex;justify-content:space-between">
-                  <span style="color:var(--text2)">고객사 담당</span>
-                  <span>최담당</span>
-                </div>
-                <div style="display:flex;justify-content:space-between">
-                  <span style="color:var(--text2)">고객사 연락처</span>
-                  <span>010-4567-8901</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- 카드 푸터 -->
-          <div style="padding:14px 20px;border-top:1px solid var(--border);background:rgba(255,255,255,.02);display:flex;gap:8px">
-            <button onclick="showPage('equipment')" style="padding:6px 14px;font-size:.78rem;border:1px solid var(--border);color:var(--text2);background:transparent;border-radius:6px;cursor:pointer">⚙️ 장비 관리</button>
-            <button onclick="showPage('score')" style="padding:6px 14px;font-size:.78rem;border:1px solid var(--border);color:var(--text2);background:transparent;border-radius:6px;cursor:pointer">🏥 건강점수</button>
-            <button onclick="showPage('report')" style="padding:6px 14px;font-size:.78rem;border:1px solid var(--border);color:var(--text2);background:transparent;border-radius:6px;cursor:pointer">📋 점검보고서</button>
-            <button onclick="showPage('dms')" style="padding:6px 14px;font-size:.78rem;border:1px solid var(--border);color:var(--text2);background:transparent;border-radius:6px;cursor:pointer">🖥️ DMS 관리</button>
-          </div>
-        </div>
-
-        <!-- 추가 예정 안내 -->
-        <div style="margin-top:16px;padding:14px 18px;background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.2);border-radius:10px;font-size:.8rem;color:#60a5fa">
-          💡 신규 계약 현장 추가 시 현장 카드가 자동으로 생성됩니다. 현재 1개 현장 운영 중.
-        </div>
+  <div style="padding:24px">
+    <!-- 헤더 -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px">
+      <div>
+        <h1 style="font-size:1.4rem;font-weight:700">🏢 건물 관리</h1>
+        <div style="font-size:.75rem;color:var(--muted);margin-top:4px">계약 현장 관리 · 장비 현황 · 담당자 정보</div>
       </div>
+      <button onclick="siteOpenModal('add')" id="site-add-btn"
+        style="padding:8px 16px;font-size:.82rem;font-weight:600;border:1px solid rgba(201,168,76,.4);color:var(--gold);background:rgba(201,168,76,.1);border-radius:8px;cursor:pointer">
+        + 현장 추가</button>
     </div>
 
-    <div class="page" id="page-users">
-      <div style="padding:24px">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px">
-          <div>
-            <h1 style="font-size:1.4rem;font-weight:700">👥 사용자 관리</h1>
-            <span style="font-size:.75rem;color:var(--text2)">계정 관리 · 비밀번호 초기화 · 권한 설정</span>
-          </div>
-          <button onclick="showToast('📋 사용자 등록 기능 준비 중입니다.')" style="padding:8px 16px;font-size:.82rem;font-weight:600;border:1px solid rgba(201,168,76,.4);color:#e8c46a;background:rgba(201,168,76,.1);border-radius:8px;cursor:pointer">+ 사용자 등록</button>
-        </div>
-
-        <!-- 탭 -->
-        <div style="display:flex;gap:4px;margin-bottom:20px;border-bottom:1px solid var(--border)">
-          <button onclick="usersTab('field')" id="utab-field" style="padding:10px 20px;font-size:.85rem;font-weight:600;border:none;background:rgba(59,130,246,.15);color:#60a5fa;border-radius:8px 8px 0 0;cursor:pointer">🔧 현장기사</button>
-          <button onclick="usersTab('manager')" id="utab-manager" style="padding:10px 20px;font-size:.85rem;font-weight:600;border:none;background:transparent;color:var(--text2);border-radius:8px 8px 0 0;cursor:pointer">⚙️ 관리자</button>
-          <button onclick="usersTab('client')" id="utab-client" style="padding:10px 20px;font-size:.85rem;font-weight:600;border:none;background:transparent;color:var(--text2);border-radius:8px 8px 0 0;cursor:pointer">🏢 고객사</button>
-        </div>
-
-        <!-- 현장기사 탭 -->
-        <div id="upanel-field">
-          <table style="width:100%;border-collapse:collapse;font-size:.85rem">
-            <thead>
-              <tr style="border-bottom:1px solid var(--border)">
-                <th style="padding:10px 12px;text-align:left;color:var(--text2);font-weight:600">아이디</th>
-                <th style="padding:10px 12px;text-align:left;color:var(--text2);font-weight:600">이름</th>
-                <th style="padding:10px 12px;text-align:left;color:var(--text2);font-weight:600">연락처</th>
-                <th style="padding:10px 12px;text-align:left;color:var(--text2);font-weight:600">담당구역</th>
-                <th style="padding:10px 12px;text-align:left;color:var(--text2);font-weight:600">상태</th>
-                <th style="padding:10px 12px;text-align:left;color:var(--text2);font-weight:600">비밀번호</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr style="border-bottom:1px solid rgba(255,255,255,.05)">
-                <td style="padding:12px">field01</td>
-                <td style="padding:12px">김현장</td>
-                <td style="padding:12px">010-1234-5678</td>
-                <td style="padding:12px">DMS 100·101</td>
-                <td style="padding:12px"><span style="background:rgba(34,197,94,.15);color:#4ade80;padding:3px 10px;border-radius:20px;font-size:.75rem">활성</span></td>
-                <td style="padding:12px"><button onclick="resetPw(this,'field01')" style="padding:4px 12px;font-size:.75rem;border:1px solid rgba(239,68,68,.4);color:#f87171;background:rgba(239,68,68,.1);border-radius:6px;cursor:pointer">초기화</button></td>
-              </tr>
-              <tr style="border-bottom:1px solid rgba(255,255,255,.05)">
-                <td style="padding:12px">field02</td>
-                <td style="padding:12px">이기사</td>
-                <td style="padding:12px">010-2345-6789</td>
-                <td style="padding:12px">DMS 102</td>
-                <td style="padding:12px"><span style="background:rgba(34,197,94,.15);color:#4ade80;padding:3px 10px;border-radius:20px;font-size:.75rem">활성</span></td>
-                <td style="padding:12px"><button onclick="resetPw(this,'field02')" style="padding:4px 12px;font-size:.75rem;border:1px solid rgba(239,68,68,.4);color:#f87171;background:rgba(239,68,68,.1);border-radius:6px;cursor:pointer">초기화</button></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <!-- 관리자 탭 -->
-        <div id="upanel-manager" style="display:none">
-          <table style="width:100%;border-collapse:collapse;font-size:.85rem">
-            <thead>
-              <tr style="border-bottom:1px solid var(--border)">
-                <th style="padding:10px 12px;text-align:left;color:var(--text2);font-weight:600">아이디</th>
-                <th style="padding:10px 12px;text-align:left;color:var(--text2);font-weight:600">이름</th>
-                <th style="padding:10px 12px;text-align:left;color:var(--text2);font-weight:600">연락처</th>
-                <th style="padding:10px 12px;text-align:left;color:var(--text2);font-weight:600">권한</th>
-                <th style="padding:10px 12px;text-align:left;color:var(--text2);font-weight:600">상태</th>
-                <th style="padding:10px 12px;text-align:left;color:var(--text2);font-weight:600">비밀번호</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr style="border-bottom:1px solid rgba(255,255,255,.05)">
-                <td style="padding:12px">manager01</td>
-                <td style="padding:12px">박관리</td>
-                <td style="padding:12px">010-3456-7890</td>
-                <td style="padding:12px"><span style="background:rgba(16,185,129,.15);color:#34d399;padding:3px 10px;border-radius:20px;font-size:.75rem">L2 관리자</span></td>
-                <td style="padding:12px"><span style="background:rgba(34,197,94,.15);color:#4ade80;padding:3px 10px;border-radius:20px;font-size:.75rem">활성</span></td>
-                <td style="padding:12px"><button onclick="resetPw(this,'manager01')" style="padding:4px 12px;font-size:.75rem;border:1px solid rgba(239,68,68,.4);color:#f87171;background:rgba(239,68,68,.1);border-radius:6px;cursor:pointer">초기화</button></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <!-- 고객사 탭 -->
-        <div id="upanel-client" style="display:none">
-          <table style="width:100%;border-collapse:collapse;font-size:.85rem">
-            <thead>
-              <tr style="border-bottom:1px solid var(--border)">
-                <th style="padding:10px 12px;text-align:left;color:var(--text2);font-weight:600">아이디</th>
-                <th style="padding:10px 12px;text-align:left;color:var(--text2);font-weight:600">회사명</th>
-                <th style="padding:10px 12px;text-align:left;color:var(--text2);font-weight:600">담당자</th>
-                <th style="padding:10px 12px;text-align:left;color:var(--text2);font-weight:600">연락처</th>
-                <th style="padding:10px 12px;text-align:left;color:var(--text2);font-weight:600">계약현장</th>
-                <th style="padding:10px 12px;text-align:left;color:var(--text2);font-weight:600">비밀번호</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr style="border-bottom:1px solid rgba(255,255,255,.05)">
-                <td style="padding:12px">client01</td>
-                <td style="padding:12px">리드스마트스퀘어</td>
-                <td style="padding:12px">최담당</td>
-                <td style="padding:12px">010-4567-8901</td>
-                <td style="padding:12px">안산 단원구 산단로 325</td>
-                <td style="padding:12px"><button onclick="resetPw(this,'client01')" style="padding:4px 12px;font-size:.75rem;border:1px solid rgba(239,68,68,.4);color:#f87171;background:rgba(239,68,68,.1);border-radius:6px;cursor:pointer">초기화</button></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <!-- 초기화 안내 -->
-        <div style="margin-top:24px;padding:14px 18px;background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.3);border-radius:10px;font-size:.8rem;color:#e8c46a">
-          💡 비밀번호 초기화 시 마스터 비밀번호로 설정됩니다. 초기화 후 담당자에게 새 비밀번호 설정을 안내하세요.
-        </div>
-      </div>
+    <!-- 요약 카드 -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px">
+      <div class="stat-card"><div class="stat-icon">🏢</div><div class="stat-val" id="site-count" style="color:var(--cyan)">-</div><div class="stat-label">계약 현장</div></div>
+      <div class="stat-card"><div class="stat-icon">🌀</div><div class="stat-val" id="site-outdoor" style="color:var(--orange)">-</div><div class="stat-label">실외기 총계</div></div>
+      <div class="stat-card"><div class="stat-icon">❄️</div><div class="stat-val" id="site-indoor" style="color:var(--blue)">-</div><div class="stat-label">실내기 총계</div></div>
+      <div class="stat-card"><div class="stat-icon">🖥️</div><div class="stat-val" id="site-dms" style="color:var(--green)">-</div><div class="stat-label">DMS 시스템</div></div>
     </div>
 
-    <div class="page" id="page-events">
+    <!-- 현장 카드 목록 -->
+    <div id="sites-list"></div>
+
+    <!-- 안내 -->
+    <div style="margin-top:16px;padding:14px 18px;background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.2);border-radius:10px;font-size:.8rem;color:#60a5fa">
+      💡 신규 계약 현장 추가 시 현장 카드가 자동으로 생성됩니다.
+    </div>
+  </div>
+
+  <!-- 현장 등록/편집 모달 -->
+  <div id="site-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;align-items:center;justify-content:center">
+    <div style="background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:28px;width:500px;max-width:95vw;max-height:90vh;overflow-y:auto">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+        <h3 id="site-modal-title" style="font-size:1rem;font-weight:700">현장 등록</h3>
+        <button onclick="siteCloseModal()" style="background:transparent;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer">✕</button>
+      </div>
+      <div style="display:grid;gap:14px">
+        <div>
+          <label style="font-size:.72rem;color:var(--muted);display:block;margin-bottom:6px">현장명 <span style="color:var(--red)">*</span></label>
+          <input id="sm-name" type="text" placeholder="예: 리드스마트스퀘어 지식산업센터"
+            style="width:100%;padding:8px 12px;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--white);font-size:.85rem">
+        </div>
+        <div>
+          <label style="font-size:.72rem;color:var(--muted);display:block;margin-bottom:6px">주소</label>
+          <input id="sm-address" type="text" placeholder="도로명 주소"
+            style="width:100%;padding:8px 12px;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--white);font-size:.85rem">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div>
+            <label style="font-size:.72rem;color:var(--muted);display:block;margin-bottom:6px">실외기 수</label>
+            <input id="sm-outdoor" type="number" value="0"
+              style="width:100%;padding:8px 12px;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--white);font-size:.85rem">
+          </div>
+          <div>
+            <label style="font-size:.72rem;color:var(--muted);display:block;margin-bottom:6px">실내기 수</label>
+            <input id="sm-indoor" type="number" value="0"
+              style="width:100%;padding:8px 12px;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--white);font-size:.85rem">
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div>
+            <label style="font-size:.72rem;color:var(--muted);display:block;margin-bottom:6px">계약 유형</label>
+            <select id="sm-contract-type"
+              style="width:100%;padding:8px 12px;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--white);font-size:.85rem">
+              <option>TYPE 1 · 기본관리</option>
+              <option>TYPE 2 · 정기관리</option>
+              <option selected>TYPE 3 · 통합관리</option>
+              <option>TYPE 4 · 프리미엄</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:.72rem;color:var(--muted);display:block;margin-bottom:6px">운영 상태</label>
+            <select id="sm-status"
+              style="width:100%;padding:8px 12px;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--white);font-size:.85rem">
+              <option value="active">● 정상 운영</option>
+              <option value="warning">⚠️ 주의</option>
+              <option value="inactive">⬜ 비활성</option>
+            </select>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div>
+            <label style="font-size:.72rem;color:var(--muted);display:block;margin-bottom:6px">계약 시작</label>
+            <input id="sm-contract-start" type="text" placeholder="예: 2024년 4월"
+              style="width:100%;padding:8px 12px;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--white);font-size:.85rem">
+          </div>
+          <div>
+            <label style="font-size:.72rem;color:var(--muted);display:block;margin-bottom:6px">계약 만료</label>
+            <input id="sm-contract-end" type="text" placeholder="예: 2026년 3월"
+              style="width:100%;padding:8px 12px;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--white);font-size:.85rem">
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div>
+            <label style="font-size:.72rem;color:var(--muted);display:block;margin-bottom:6px">셀시우스 담당자</label>
+            <input id="sm-manager-celsius" type="text" placeholder="담당자명"
+              style="width:100%;padding:8px 12px;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--white);font-size:.85rem">
+          </div>
+          <div>
+            <label style="font-size:.72rem;color:var(--muted);display:block;margin-bottom:6px">셀시우스 연락처</label>
+            <input id="sm-manager-phone" type="text" placeholder="010-0000-0000"
+              style="width:100%;padding:8px 12px;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--white);font-size:.85rem">
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div>
+            <label style="font-size:.72rem;color:var(--muted);display:block;margin-bottom:6px">고객사 담당자</label>
+            <input id="sm-client-name" type="text" placeholder="담당자명"
+              style="width:100%;padding:8px 12px;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--white);font-size:.85rem">
+          </div>
+          <div>
+            <label style="font-size:.72rem;color:var(--muted);display:block;margin-bottom:6px">고객사 연락처</label>
+            <input id="sm-client-phone" type="text" placeholder="010-0000-0000"
+              style="width:100%;padding:8px 12px;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--white);font-size:.85rem">
+          </div>
+        </div>
+        <div>
+          <label style="font-size:.72rem;color:var(--muted);display:block;margin-bottom:6px">메모</label>
+          <textarea id="sm-memo" rows="2" placeholder="특이사항, 접근 방법 등"
+            style="width:100%;padding:8px 12px;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--white);font-size:.85rem;resize:vertical"></textarea>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:20px;justify-content:flex-end">
+        <button onclick="siteCloseModal()"
+          style="padding:8px 20px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:.82rem;cursor:pointer">취소</button>
+        <button onclick="siteSaveModal()"
+          style="padding:8px 20px;border-radius:8px;border:none;background:linear-gradient(135deg,var(--blue),var(--cyan));color:#fff;font-size:.82rem;cursor:pointer;font-weight:600">저장</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="page" id="page-users">
+  <div style="padding:24px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px">
+      <div>
+        <h1 style="font-size:1.4rem;font-weight:700">👥 사용자 관리</h1>
+        <span style="font-size:.75rem;color:var(--muted)">계정 관리 · 비밀번호 초기화 · 권한 설정</span>
+      </div>
+      <button onclick="userOpenModal('add','field')"
+        style="padding:8px 16px;font-size:.82rem;font-weight:600;border:1px solid rgba(201,168,76,.4);color:var(--gold);background:rgba(201,168,76,.1);border-radius:8px;cursor:pointer"
+        id="user-add-btn">+ 사용자 등록</button>
+    </div>
+
+    <!-- 탭 -->
+    <div style="display:flex;gap:4px;margin-bottom:20px;border-bottom:1px solid var(--border)">
+      <button onclick="usersTab('field')" id="utab-field"
+        style="padding:10px 20px;font-size:.85rem;font-weight:600;border:none;background:rgba(59,130,246,.15);color:#60a5fa;border-radius:8px 8px 0 0;cursor:pointer">🔧 현장기사</button>
+      <button onclick="usersTab('manager')" id="utab-manager"
+        style="padding:10px 20px;font-size:.85rem;font-weight:600;border:none;background:transparent;color:var(--muted);border-radius:8px 8px 0 0;cursor:pointer">⚙️ 관리자</button>
+      <button onclick="usersTab('client')" id="utab-client"
+        style="padding:10px 20px;font-size:.85rem;font-weight:600;border:none;background:transparent;color:var(--muted);border-radius:8px 8px 0 0;cursor:pointer">🏢 고객사</button>
+    </div>
+
+    <!-- 현장기사 탭 -->
+    <div id="upanel-field">
+      <table style="width:100%;border-collapse:collapse;font-size:.85rem">
+        <thead>
+          <tr style="border-bottom:1px solid var(--border)">
+            <th style="padding:10px 12px;text-align:left;color:var(--muted);font-weight:600">아이디</th>
+            <th style="padding:10px 12px;text-align:left;color:var(--muted);font-weight:600">이름</th>
+            <th style="padding:10px 12px;text-align:left;color:var(--muted);font-weight:600">연락처</th>
+            <th style="padding:10px 12px;text-align:left;color:var(--muted);font-weight:600">담당구역</th>
+            <th style="padding:10px 12px;text-align:left;color:var(--muted);font-weight:600">상태</th>
+            <th style="padding:10px 12px;text-align:left;color:var(--muted);font-weight:600">관리</th>
+          </tr>
+        </thead>
+        <tbody id="users-field-tbody">
+          <tr><td colspan="6" style="padding:20px;text-align:center;color:var(--muted)">로드 중...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 관리자 탭 -->
+    <div id="upanel-manager" style="display:none">
+      <table style="width:100%;border-collapse:collapse;font-size:.85rem">
+        <thead>
+          <tr style="border-bottom:1px solid var(--border)">
+            <th style="padding:10px 12px;text-align:left;color:var(--muted);font-weight:600">아이디</th>
+            <th style="padding:10px 12px;text-align:left;color:var(--muted);font-weight:600">이름</th>
+            <th style="padding:10px 12px;text-align:left;color:var(--muted);font-weight:600">연락처</th>
+            <th style="padding:10px 12px;text-align:left;color:var(--muted);font-weight:600">권한</th>
+            <th style="padding:10px 12px;text-align:left;color:var(--muted);font-weight:600">상태</th>
+            <th style="padding:10px 12px;text-align:left;color:var(--muted);font-weight:600">관리</th>
+          </tr>
+        </thead>
+        <tbody id="users-manager-tbody">
+          <tr><td colspan="6" style="padding:20px;text-align:center;color:var(--muted)">로드 중...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 고객사 탭 -->
+    <div id="upanel-client" style="display:none">
+      <table style="width:100%;border-collapse:collapse;font-size:.85rem">
+        <thead>
+          <tr style="border-bottom:1px solid var(--border)">
+            <th style="padding:10px 12px;text-align:left;color:var(--muted);font-weight:600">아이디</th>
+            <th style="padding:10px 12px;text-align:left;color:var(--muted);font-weight:600">회사명</th>
+            <th style="padding:10px 12px;text-align:left;color:var(--muted);font-weight:600">담당자</th>
+            <th style="padding:10px 12px;text-align:left;color:var(--muted);font-weight:600">연락처</th>
+            <th style="padding:10px 12px;text-align:left;color:var(--muted);font-weight:600">계약현장</th>
+            <th style="padding:10px 12px;text-align:left;color:var(--muted);font-weight:600">관리</th>
+          </tr>
+        </thead>
+        <tbody id="users-client-tbody">
+          <tr><td colspan="6" style="padding:20px;text-align:center;color:var(--muted)">로드 중...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 안내 -->
+    <div style="margin-top:24px;padding:14px 18px;background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.3);border-radius:10px;font-size:.8rem;color:var(--gold)">
+      💡 비밀번호 초기화 시 마스터 비밀번호(Cel2026!)로 설정됩니다. 초기화 후 담당자에게 새 비밀번호 설정을 안내하세요.
+    </div>
+  </div>
+
+  <!-- 사용자 등록/편집 모달 -->
+  <div id="user-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:1000;align-items:center;justify-content:center">
+    <div style="background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:28px;width:460px;max-width:95vw;max-height:90vh;overflow-y:auto">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+        <h3 id="user-modal-title" style="font-size:1rem;font-weight:700">사용자 등록</h3>
+        <button onclick="userCloseModal()" style="background:transparent;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer">✕</button>
+      </div>
+      <div style="display:grid;gap:14px">
+        <div>
+          <label style="font-size:.72rem;color:var(--muted);display:block;margin-bottom:6px">권한</label>
+          <select id="um-role" onchange="userModalRoleChange()"
+            style="width:100%;padding:8px 12px;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--white);font-size:.85rem">
+            <option value="field">🔧 현장기사 (L1)</option>
+            <option value="manager">⚙️ 관리자 (L2-A)</option>
+            <option value="client">🏢 고객사 담당자 (L2-B)</option>
+            <option value="admin">👑 운영자 (L3)</option>
+          </select>
+        </div>
+        <div>
+          <label style="font-size:.72rem;color:var(--muted);display:block;margin-bottom:6px">아이디 <span style="color:var(--red)">*</span></label>
+          <input id="um-username" type="text" placeholder="로그인 아이디"
+            style="width:100%;padding:8px 12px;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--white);font-size:.85rem">
+        </div>
+        <div>
+          <label style="font-size:.72rem;color:var(--muted);display:block;margin-bottom:6px">이름 <span style="color:var(--red)">*</span></label>
+          <input id="um-name" type="text" placeholder="실명 입력"
+            style="width:100%;padding:8px 12px;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--white);font-size:.85rem">
+        </div>
+        <div>
+          <label style="font-size:.72rem;color:var(--muted);display:block;margin-bottom:6px">연락처</label>
+          <input id="um-phone" type="text" placeholder="010-0000-0000"
+            style="width:100%;padding:8px 12px;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--white);font-size:.85rem">
+        </div>
+        <div id="um-area-wrap">
+          <label style="font-size:.72rem;color:var(--muted);display:block;margin-bottom:6px">담당구역</label>
+          <input id="um-area" type="text" placeholder="예: DMS 100·101"
+            style="width:100%;padding:8px 12px;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--white);font-size:.85rem">
+        </div>
+        <div id="um-company-wrap" style="display:none">
+          <label style="font-size:.72rem;color:var(--muted);display:block;margin-bottom:6px">회사명</label>
+          <input id="um-company" type="text" placeholder="고객사 회사명"
+            style="width:100%;padding:8px 12px;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--white);font-size:.85rem">
+        </div>
+        <div style="padding:10px 14px;background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.2);border-radius:8px;font-size:.75rem;color:var(--gold)">
+          💡 신규 등록 시 초기 비밀번호는 마스터 비밀번호(Cel2026!)로 설정됩니다.
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:20px;justify-content:flex-end">
+        <button onclick="userCloseModal()"
+          style="padding:8px 20px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:.82rem;cursor:pointer">취소</button>
+        <button onclick="userSaveModal()"
+          style="padding:8px 20px;border-radius:8px;border:none;background:linear-gradient(135deg,var(--blue),var(--cyan));color:#fff;font-size:.82rem;cursor:pointer;font-weight:600">저장</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="page" id="page-events">
 <div class="layout">
 
   <div class="sidenav">
@@ -7406,109 +7436,115 @@ function selectUser(type) {
 }
 
 // 계정 정보
-const ACCOUNTS = {
-  'demo':       { password: 'demo1234',  role: 'demo'    },
-  'field01':    { password: 'field1234', role: 'field'   },
-  'manager01':  { password: 'mgr1234',   role: 'manager' },
-  'client01':   { password: 'cli1234',   role: 'client'  },
-  'celsius':    { password: 'Cel2026!',  role: 'admin'   },
-};
+// ════ 계정 캐시 (Supabase 로그인 후 저장) ════
+let accountsCache = null; // DB에서 로드한 계정 목록 캐시
+let currentUserInfo = null; // 현재 로그인한 사용자 전체 정보
 
-// 로그인
-function doLogin() {
+// 간단 해시 (SHA-256 없을 때 대체용)
+async function hashPw(pw) {
+  if (!crypto.subtle) return pw; // 로컬 파일 환경 폴백
+  const enc = new TextEncoder();
+  const buf = await crypto.subtle.digest('SHA-256', enc.encode(pw));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+// ════ 로그인 ════
+async function doLogin() {
   const inputId = document.getElementById('login-id').value.trim();
   const inputPw = document.getElementById('login-pw').value.trim();
-  const account = ACCOUNTS[inputId];
 
-  if (!account || account.password !== inputPw) {
+  if (!inputId || !inputPw) {
+    showToast('⚠️ 아이디와 비밀번호를 입력해주세요.');
+    return;
+  }
+
+  // Supabase에서 계정 조회
+  let account = null;
+  try {
+    const rows = await sbFetch('accounts?username=eq.' + encodeURIComponent(inputId) + '&is_active=eq.true&limit=1');
+    if (rows && rows.length > 0) {
+      const row = rows[0];
+      // 비밀번호 확인 (해시 or 평문 둘 다 지원)
+      const pwHash = await hashPw(inputPw);
+      if (row.password === inputPw || row.password === pwHash) {
+        account = row;
+      }
+    }
+  } catch(e) {
+    console.warn('Supabase 로그인 실패, 로컬 폴백:', e.message);
+  }
+
+  // Supabase 실패 시 로컬 폴백 (체험/개발용)
+  if (!account) {
+    const LOCAL_ACCOUNTS = {
+      'demo':      { username:'demo',      password:'demo1234',  role:'demo',    name:'체험 계정',  phone:'',             area:'',          company:'' },
+      'field01':   { username:'field01',   password:'field1234', role:'field',   name:'김현장',     phone:'010-1234-5678', area:'DMS 100·101', company:'' },
+      'manager01': { username:'manager01', password:'mgr1234',   role:'manager', name:'박관리',     phone:'010-3456-7890', area:'',          company:'' },
+      'client01':  { username:'client01',  password:'cli1234',   role:'client',  name:'최담당',     phone:'010-4567-8901', area:'',          company:'리드스마트스퀘어' },
+      'celsius':   { username:'celsius',   password:'Cel2026!',  role:'admin',   name:'강형직 대표', phone:'010-3966-9691', area:'',          company:'' },
+    };
+    const local = LOCAL_ACCOUNTS[inputId];
+    if (local && local.password === inputPw) {
+      account = local;
+    }
+  }
+
+  if (!account) {
     document.getElementById('login-pw').style.borderColor = 'var(--red)';
-    setTimeout(() => {
-      document.getElementById('login-pw').style.borderColor = '';
-    }, 1500);
+    setTimeout(() => { document.getElementById('login-pw').style.borderColor = ''; }, 1500);
     showToast('⚠️ 아이디 또는 비밀번호가 올바르지 않습니다.');
     return;
   }
 
-  currentUser = account.role;
+  // 로그인 성공
+  currentUser     = account.role;
+  currentUserInfo = account;
+  window.currentRole = account.role;
+
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('platform-screen').style.display = 'block';
 
   // 권한별 헤더 설정
   const roleMap = {
     demo:    { label:'체험 계정',      badge:'header-badge',      greeting:'안녕하세요! Previo를 체험해보세요 👀' },
-    field:   { label:'현장기사 L1',    badge:'header-badge',      greeting:'안녕하세요, 기사님 🔧' },
-    manager: { label:'관리자 L2',      badge:'header-badge',      greeting:'안녕하세요, 관리자님 ⚙️' },
-    client:  { label:'고객사 담당자',  badge:'header-badge',      greeting:'안녕하세요, 담당자님 🏢' },
-    admin:   { label:'운영자 L3',      badge:'header-badge gold', greeting:'안녕하세요, 운영자님 👑' },
+    field:   { label:'현장기사 L1',    badge:'header-badge',      greeting:'안녕하세요, ' + (account.name||'기사님') + ' 🔧' },
+    manager: { label:'관리자 L2',      badge:'header-badge',      greeting:'안녕하세요, ' + (account.name||'관리자님') + ' ⚙️' },
+    client:  { label:'고객사 담당자',  badge:'header-badge',      greeting:'안녕하세요, ' + (account.name||'담당자님') + ' 🏢' },
+    admin:   { label:'운영자 L3',      badge:'header-badge gold', greeting:'안녕하세요, ' + (account.name||'운영자님') + ' 👑' },
   };
-  const role = roleMap[currentUser] || roleMap['demo'];
+  const role   = roleMap[currentUser] || roleMap['demo'];
   const roleEl = document.getElementById('header-role');
-  const greetEl = document.getElementById('greeting-text');
-  if (roleEl) { roleEl.textContent = role.label; roleEl.className = role.badge; }
+  const greetEl= document.getElementById('greeting-text');
+  if (roleEl)  { roleEl.textContent = role.label; roleEl.className = role.badge; }
   if (greetEl) greetEl.textContent = role.greeting;
 
-  // 모든 메뉴 섹션 숨기기
+  // 메뉴 표시 제어
   const allMenus = ['menu-common','menu-field','menu-manager','menu-client','menu-admin','menu-ref','menu-power'];
-  allMenus.forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.style.display = 'none';
-  });
+  allMenus.forEach(id => { const el = document.getElementById(id); if (el) el.style.display = 'none'; });
+  const showMenu = id => { const el = document.getElementById(id); if (el) el.style.display = 'block'; };
 
-  // 권한별 메뉴 표시
-  const showMenu = id => {
-    const el = document.getElementById(id);
-    if (el) el.style.display = 'block';
-  };
-
-  // 공통 메뉴는 항상 표시
   showMenu('menu-common');
-
   if (currentUser === 'demo') {
-    // 체험: 전력분석 + 레퍼런스(점수제 가이드)
-    showMenu('menu-power');
-    showMenu('menu-ref');
-
+    showMenu('menu-power'); showMenu('menu-ref');
   } else if (currentUser === 'field') {
-    // L1 현장기사: 현장관리 + 레퍼런스
-    showMenu('menu-field');
-    showMenu('menu-ref');
-
+    showMenu('menu-field'); showMenu('menu-ref');
   } else if (currentUser === 'manager') {
-    // L2-A 셀시우스 관리자: 현장관리 + 운영관리 + 레퍼런스 + 전력
-    showMenu('menu-field');
-    showMenu('menu-manager');
-    showMenu('menu-ref');
-    showMenu('menu-power');
-
+    showMenu('menu-field'); showMenu('menu-manager'); showMenu('menu-ref'); showMenu('menu-power');
   } else if (currentUser === 'client') {
-    // L2-B 고객사 담당자: 고객서비스 + 전력 + 레퍼런스(점수제 가이드)
-    showMenu('menu-client');
-    showMenu('menu-power');
-    showMenu('menu-ref');
-
+    showMenu('menu-client'); showMenu('menu-power'); showMenu('menu-ref');
   } else if (currentUser === 'admin') {
-    // L3 운영자: 전체 (고객서비스는 현장관리/운영관리에 포함되므로 제외)
-    showMenu('menu-field');
-    showMenu('menu-manager');
-    showMenu('menu-admin');
-    showMenu('menu-ref');
-    showMenu('menu-power');
+    showMenu('menu-field'); showMenu('menu-manager'); showMenu('menu-admin'); showMenu('menu-ref'); showMenu('menu-power');
   }
 
-  // 체험판 페이지 접근 제한 설정
   window.currentRole = currentUser;
 
-  // 체험판/고객사/현장기사는 API 키 입력창 숨기기 (관리자/운영자만 표시)
+  // API 키 카드 표시 제어
   const apiKeyCard = document.getElementById('api-key-card');
   if (apiKeyCard) {
-    if (currentUser === 'demo' || currentUser === 'client' || currentUser === 'field') {
-      apiKeyCard.style.display = 'none';
-    } else {
-      apiKeyCard.style.display = '';
-    }
+    apiKeyCard.style.display = ['demo','client','field'].includes(currentUser) ? 'none' : '';
   }
 
-  // 체험판은 온보딩 먼저 표시
+  // 체험판 온보딩
   if (currentUser === 'demo') {
     document.getElementById('platform-screen').style.display = 'block';
     showOnboarding();
@@ -7652,29 +7688,480 @@ function usersTab(type) {
   });
 }
 
-function resetPw(btn, userId) {
-  if (!confirm(userId + ' 의 비밀번호를 마스터 비밀번호로 초기화하시겠습니까?')) return;
-  // ACCOUNTS 객체에서 해당 유저 비번 초기화
-  const roleMap = { field01:'field', field02:'field', manager01:'manager', client01:'client' };
-  const role = roleMap[userId];
-  if (role && typeof ACCOUNTS !== 'undefined') {
-    // 마스터 비번으로 초기화 (운영자 비번)
-    const masterPw = ACCOUNTS['celsius']?.password || 'Cel2026!';
-    if (ACCOUNTS[userId]) {
-      ACCOUNTS[userId].password = masterPw;
-      btn.textContent = '완료 ✓';
-      btn.style.color = '#4ade80';
-      btn.style.borderColor = 'rgba(34,197,94,.4)';
-      btn.style.background = 'rgba(34,197,94,.1)';
-      setTimeout(() => {
-        btn.textContent = '초기화';
-        btn.style.color = '#f87171';
-        btn.style.borderColor = 'rgba(239,68,68,.4)';
-        btn.style.background = 'rgba(239,68,68,.1)';
-      }, 2000);
-    }
+// ── 건물 관리 ──
+var sitesData = [];
+
+async function loadSitesFromDB() {
+  const setEl = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
+  try {
+    const rows = await sbFetch('sites?order=site_id.asc');
+    sitesData = rows || [];
+  } catch(e) {
+    console.warn('sites 로드 실패, 로컬 폴백:', e.message);
+    sitesData = [{
+      id: 1,
+      name: '리드스마트스퀘어 지식산업센터',
+      address: '경기도 안산시 단원구 산단로 325',
+      outdoor_count: 150,
+      indoor_count: 660,
+      dms_count: 3,
+      contract_type: 'TYPE 3 · 통합관리',
+      contract_start: '2024년 4월',
+      contract_end: '2026년 3월',
+      status: 'active',
+      manager_celsius: '강형직 대표',
+      manager_phone: '010-3966-9691',
+      client_name: '최담당',
+      client_phone: '010-4567-8901',
+      memo: ''
+    }];
   }
-  showToast('✅ ' + userId + ' 비밀번호가 마스터 비밀번호로 초기화되었습니다.');
+
+  // 요약 카드
+  const totalOutdoor = sitesData.reduce((s, r) => s + (r.outdoor_count||0), 0);
+  const totalIndoor  = sitesData.reduce((s, r) => s + (r.indoor_count||0), 0);
+  const totalDms     = sitesData.reduce((s, r) => s + (r.dms_count||0), 0);
+  setEl('site-count',   sitesData.length);
+  setEl('site-outdoor', totalOutdoor);
+  setEl('site-indoor',  totalIndoor);
+  setEl('site-dms',     totalDms);
+
+  renderSites();
+}
+
+function renderSites() {
+  const container = document.getElementById('sites-list');
+  if (!container) return;
+  const role     = currentUser || 'demo';
+  const canEdit  = role === 'admin';
+  const addBtn   = document.getElementById('site-add-btn');
+  if (addBtn) addBtn.style.display = canEdit ? '' : 'none';
+
+  if (!sitesData.length) {
+    container.innerHTML = '<div style="padding:40px;text-align:center;color:var(--muted)">등록된 현장 없음</div>';
+    return;
+  }
+
+  container.innerHTML = sitesData.map(s => {
+    const statusColor = s.status === 'active' ? '#4ade80' : s.status === 'warning' ? '#facc15' : 'var(--muted)';
+    const statusText  = s.status === 'active' ? '● 정상 운영' : s.status === 'warning' ? '⚠️ 주의' : '⬜ 비활성';
+    return `
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:16px">
+      <!-- 카드 헤더 -->
+      <div style="padding:20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="width:10px;height:10px;border-radius:50%;background:${statusColor};box-shadow:0 0 6px ${statusColor}"></div>
+          <div>
+            <div style="font-size:1rem;font-weight:700">${s.site_name||'-'}</div>
+            <div style="font-size:.75rem;color:var(--muted);margin-top:2px">${s.address||'-'}</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <span style="background:rgba(34,197,94,.15);color:${statusColor};padding:4px 14px;border-radius:20px;font-size:.75rem;font-weight:600">${statusText}</span>
+          ${canEdit ? `
+          <button onclick="siteOpenModal('edit',${s.site_id})" style="padding:5px 12px;font-size:.72rem;border:1px solid var(--border);color:var(--muted);background:transparent;border-radius:6px;cursor:pointer">편집</button>
+          <button onclick="siteDelete(${s.site_id})" style="padding:5px 12px;font-size:.72rem;border:1px solid rgba(239,68,68,.3);color:var(--red);background:transparent;border-radius:6px;cursor:pointer">삭제</button>
+          ` : ''}
+        </div>
+      </div>
+
+      <!-- 카드 내용 -->
+      <div style="padding:20px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px">
+        <!-- 계약 정보 -->
+        <div>
+          <div style="font-size:.72rem;color:var(--gold);letter-spacing:1.5px;font-weight:600;margin-bottom:12px">📋 계약 정보</div>
+          <div style="display:flex;flex-direction:column;gap:8px;font-size:.82rem">
+            <div style="display:flex;justify-content:space-between">
+              <span style="color:var(--muted)">계약 유형</span>
+              <span style="font-weight:600">${s.contract_type||'-'}</span>
+            </div>
+            <div style="display:flex;justify-content:space-between">
+              <span style="color:var(--muted)">계약 시작</span>
+              <span>${s.contract_start||'-'}</span>
+            </div>
+            <div style="display:flex;justify-content:space-between">
+              <span style="color:var(--muted)">계약 만료</span>
+              <span style="color:var(--gold)">${s.contract_end||'-'}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 장비 현황 -->
+        <div>
+          <div style="font-size:.72rem;color:var(--gold);letter-spacing:1.5px;font-weight:600;margin-bottom:12px">⚙️ 장비 현황</div>
+          <div style="display:flex;flex-direction:column;gap:8px;font-size:.82rem">
+            <div style="display:flex;justify-content:space-between">
+              <span style="color:var(--muted)">실외기</span>
+              <span style="color:var(--orange);font-weight:600">${s.outdoor_count||0}대</span>
+            </div>
+            <div style="display:flex;justify-content:space-between">
+              <span style="color:var(--muted)">실내기</span>
+              <span style="color:var(--blue);font-weight:600">${s.indoor_count||0}대</span>
+            </div>
+            <div style="display:flex;justify-content:space-between">
+              <span style="color:var(--muted)">DMS 시스템</span>
+              <span style="color:var(--green);font-weight:600">${s.dms_count||0}개</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 담당자 정보 -->
+        <div>
+          <div style="font-size:.72rem;color:var(--gold);letter-spacing:1.5px;font-weight:600;margin-bottom:12px">👤 담당자 정보</div>
+          <div style="display:flex;flex-direction:column;gap:8px;font-size:.82rem">
+            <div style="display:flex;justify-content:space-between">
+              <span style="color:var(--muted)">셀시우스</span>
+              <span style="font-weight:600">${s.manager_celsius||'-'}</span>
+            </div>
+            <div style="display:flex;justify-content:space-between">
+              <span style="color:var(--muted)">연락처</span>
+              <span>${s.manager_phone||'-'}</span>
+            </div>
+            <div style="display:flex;justify-content:space-between">
+              <span style="color:var(--muted)">고객사</span>
+              <span>${s.client_name||'-'}</span>
+            </div>
+            <div style="display:flex;justify-content:space-between">
+              <span style="color:var(--muted)">고객사 연락처</span>
+              <span>${s.client_phone||'-'}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      ${s.memo ? `<div style="padding:10px 20px;background:rgba(255,255,255,.02);border-top:1px solid var(--border);font-size:.75rem;color:var(--muted)">📝 ${s.memo}</div>` : ''}
+
+      <!-- 카드 푸터 -->
+      <div style="padding:14px 20px;border-top:1px solid var(--border);background:rgba(255,255,255,.02);display:flex;gap:8px">
+        <button onclick="showPage('equipment')" style="padding:6px 14px;font-size:.78rem;border:1px solid var(--border);color:var(--muted);background:transparent;border-radius:6px;cursor:pointer">⚙️ 장비 관리</button>
+        <button onclick="showPage('score')"     style="padding:6px 14px;font-size:.78rem;border:1px solid var(--border);color:var(--muted);background:transparent;border-radius:6px;cursor:pointer">🏥 건강점수</button>
+        <button onclick="showPage('report')"    style="padding:6px 14px;font-size:.78rem;border:1px solid var(--border);color:var(--muted);background:transparent;border-radius:6px;cursor:pointer">📋 점검보고서</button>
+        <button onclick="showPage('dms')"       style="padding:6px 14px;font-size:.78rem;border:1px solid var(--border);color:var(--muted);background:transparent;border-radius:6px;cursor:pointer">🖥️ DMS 관리</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── 현장 모달 열기 ──
+function siteOpenModal(mode, siteId) {
+  const modal = document.getElementById('site-modal');
+  const title = document.getElementById('site-modal-title');
+  modal._mode   = mode;
+  modal._siteId = siteId;
+
+  const setV = (id, val) => { const el = document.getElementById(id); if(el) el.value = val||''; };
+
+  if (mode === 'add') {
+    title.textContent = '+ 현장 등록';
+    ['sm-name','sm-address','sm-contract-start','sm-contract-end',
+     'sm-manager-celsius','sm-manager-phone','sm-client-name','sm-client-phone','sm-memo'].forEach(id => setV(id,''));
+    setV('sm-outdoor', 0); setV('sm-indoor', 0);
+  } else {
+    title.textContent = '✏️ 현장 편집';
+    const s = sitesData.find(r => r.site_id === siteId);
+    if (!s) return;
+    setV('sm-name',             s.name);
+    setV('sm-address',          s.address);
+    setV('sm-outdoor',          s.outdoor_count);
+    setV('sm-indoor',           s.indoor_count);
+    setV('sm-contract-type',    s.contract_type);
+    setV('sm-contract-start',   s.contract_start);
+    setV('sm-contract-end',     s.contract_end);
+    setV('sm-status',           s.status);
+    setV('sm-manager-celsius',  s.manager_celsius);
+    setV('sm-manager-phone',    s.manager_phone);
+    setV('sm-client-name',      s.client_name);
+    setV('sm-client-phone',     s.client_phone);
+    setV('sm-memo',             s.memo);
+  }
+  modal.style.display = 'flex';
+}
+
+function siteCloseModal() {
+  document.getElementById('site-modal').style.display = 'none';
+}
+
+// ── 현장 저장 ──
+async function siteSaveModal() {
+  const modal  = document.getElementById('site-modal');
+  const mode   = modal._mode;
+  const siteId = modal._siteId;
+  const getVal = id => { const el = document.getElementById(id); return el ? el.value.trim() : ''; };
+
+  const name = getVal('sm-name');
+  if (!name) { alert('현장명을 입력해주세요'); return; }
+
+  const payload = {
+    site_name: name,
+    address:          getVal('sm-address'),
+    outdoor_count:    parseInt(getVal('sm-outdoor'))  || 0,
+    indoor_count:     parseInt(getVal('sm-indoor'))   || 0,
+    contract_type:    getVal('sm-contract-type'),
+    contract_start:   getVal('sm-contract-start'),
+    contract_end:     getVal('sm-contract-end'),
+    status:           getVal('sm-status'),
+    manager_celsius:  getVal('sm-manager-celsius'),
+    manager_phone:    getVal('sm-manager-phone'),
+    client_name:      getVal('sm-client-name'),
+    client_phone:     getVal('sm-client-phone'),
+    memo:             getVal('sm-memo'),
+    updated_at:       new Date().toISOString(),
+  };
+
+  if (mode === 'add') {
+    payload.created_at = new Date().toISOString();
+    payload.dms_count  = 0;
+    try {
+      const result = await sbPost('sites', payload);
+      const newSite = Array.isArray(result) ? result[0] : result;
+      sitesData.push(newSite || { ...payload, id: Date.now() });
+      showToast('✅ 현장 등록됐어요');
+    } catch(e) {
+      sitesData.push({ ...payload, id: Date.now(), dms_count: 0 });
+      showToast('등록됨 (로컬)');
+    }
+  } else {
+    const s = sitesData.find(r => r.site_id === siteId);
+    if (s) Object.assign(s, payload);
+    try {
+      await sbPatchWhere('sites', 'site_id=eq.' + siteId, payload);
+      showToast('✅ 현장 정보 수정됐어요');
+    } catch(e) { showToast('수정됨 (로컬)'); }
+  }
+  siteCloseModal();
+
+  // 요약 카드 갱신
+  const setEl = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
+  setEl('site-count',   sitesData.length);
+  setEl('site-outdoor', sitesData.reduce((s,r) => s+(r.outdoor_count||0),0));
+  setEl('site-indoor',  sitesData.reduce((s,r) => s+(r.indoor_count||0),0));
+  setEl('site-dms',     sitesData.reduce((s,r) => s+(r.dms_count||0),0));
+  renderSites();
+}
+
+// ── 현장 삭제 (L3만) ──
+async function siteDelete(siteId) {
+  if (!confirm('정말 삭제할까요? 이 작업은 되돌릴 수 없어요.')) return;
+  const idx = sitesData.findIndex(r => r.site_id === siteId);
+  if (idx >= 0) sitesData.splice(idx, 1);
+  renderSites();
+  try {
+    await sbPatchWhere('sites', 'site_id=eq.' + siteId, {status:'inactive'});
+    showToast('🗑️ 삭제됐어요');
+  } catch(e) { showToast('삭제됨 (로컬)'); }
+}
+
+
+function resetPw(btn, userId) {
+  if (!confirm(userId + ' 의 비밀번호를 마스터 비밀번호(Cel2026!)로 초기화할까요?')) return;
+  userResetPassword(userId, btn);
+}
+
+// ── 사용자 관리 ──
+var usersData = { field: [], manager: [], client: [] };
+
+async function loadUsersFromDB() {
+  try {
+    const rows = await sbFetch('accounts?order=role.asc,username.asc');
+    usersData.field   = (rows||[]).filter(r => r.role === 'field');
+    usersData.manager = (rows||[]).filter(r => r.role === 'manager');
+    usersData.client  = (rows||[]).filter(r => r.role === 'client');
+    renderUsers();
+  } catch(e) {
+    console.warn('사용자 로드 실패:', e.message);
+    // 로컬 폴백
+    usersData.field   = [{id:1, username:'field01',   name:'김현장', phone:'010-1234-5678', area:'DMS 100·101', role:'field',   is_active:true},
+                         {id:2, username:'field02',   name:'이기사', phone:'010-2345-6789', area:'DMS 102',     role:'field',   is_active:true}];
+    usersData.manager = [{id:3, username:'manager01', name:'박관리', phone:'010-3456-7890', area:'',            role:'manager', is_active:true}];
+    usersData.client  = [{id:4, username:'client01',  name:'최담당', phone:'010-4567-8901', area:'',            role:'client',  is_active:true, company:'리드스마트스퀘어'}];
+    renderUsers();
+  }
+}
+
+function renderUsers() {
+  const role = currentUser || 'demo';
+  const canEdit   = role === 'admin';
+
+  // 현장기사 탭
+  const fieldTbody = document.getElementById('users-field-tbody');
+  if (fieldTbody) {
+    fieldTbody.innerHTML = usersData.field.map(u => `
+      <tr style="border-bottom:1px solid rgba(255,255,255,.05)">
+        <td style="padding:12px;font-family:'JetBrains Mono',monospace;font-size:.8rem">${u.username}</td>
+        <td style="padding:12px">${u.name||'-'}</td>
+        <td style="padding:12px;color:var(--muted)">${u.phone||'-'}</td>
+        <td style="padding:12px;color:var(--muted)">${u.area||'-'}</td>
+        <td style="padding:12px"><span style="background:${u.is_active?'rgba(34,197,94,.15)':'rgba(239,68,68,.15)'};color:${u.is_active?'#4ade80':'#f87171'};padding:3px 10px;border-radius:20px;font-size:.72rem">${u.is_active?'활성':'비활성'}</span></td>
+        <td style="padding:12px">
+          ${canEdit ? `
+          <div style="display:flex;gap:6px">
+            <button onclick="userEdit(${u.id},'field')" style="padding:3px 10px;font-size:.72rem;border:1px solid var(--border);color:var(--muted);background:transparent;border-radius:5px;cursor:pointer">편집</button>
+            <button onclick="userResetPassword('${u.username}',this)" style="padding:3px 10px;font-size:.72rem;border:1px solid rgba(239,68,68,.4);color:#f87171;background:rgba(239,68,68,.1);border-radius:5px;cursor:pointer">초기화</button>
+            <button onclick="userToggleActive(${u.id},${u.is_active})" style="padding:3px 10px;font-size:.72rem;border:1px solid var(--border);color:var(--muted);background:transparent;border-radius:5px;cursor:pointer">${u.is_active?'비활성화':'활성화'}</button>
+          </div>` : `<button onclick="userResetPassword('${u.username}',this)" style="padding:3px 10px;font-size:.72rem;border:1px solid rgba(239,68,68,.4);color:#f87171;background:rgba(239,68,68,.1);border-radius:5px;cursor:pointer">초기화</button>`}
+        </td>
+      </tr>`).join('') || '<tr><td colspan="6" style="padding:20px;text-align:center;color:var(--muted)">등록된 기사 없음</td></tr>';
+  }
+
+  // 관리자 탭
+  const mgrTbody = document.getElementById('users-manager-tbody');
+  if (mgrTbody) {
+    mgrTbody.innerHTML = usersData.manager.map(u => `
+      <tr style="border-bottom:1px solid rgba(255,255,255,.05)">
+        <td style="padding:12px;font-family:'JetBrains Mono',monospace;font-size:.8rem">${u.username}</td>
+        <td style="padding:12px">${u.name||'-'}</td>
+        <td style="padding:12px;color:var(--muted)">${u.phone||'-'}</td>
+        <td style="padding:12px"><span style="background:rgba(16,185,129,.15);color:#34d399;padding:3px 10px;border-radius:20px;font-size:.72rem">L2 관리자</span></td>
+        <td style="padding:12px"><span style="background:${u.is_active?'rgba(34,197,94,.15)':'rgba(239,68,68,.15)'};color:${u.is_active?'#4ade80':'#f87171'};padding:3px 10px;border-radius:20px;font-size:.72rem">${u.is_active?'활성':'비활성'}</span></td>
+        <td style="padding:12px">
+          ${canEdit ? `
+          <div style="display:flex;gap:6px">
+            <button onclick="userEdit(${u.id},'manager')" style="padding:3px 10px;font-size:.72rem;border:1px solid var(--border);color:var(--muted);background:transparent;border-radius:5px;cursor:pointer">편집</button>
+            <button onclick="userResetPassword('${u.username}',this)" style="padding:3px 10px;font-size:.72rem;border:1px solid rgba(239,68,68,.4);color:#f87171;background:rgba(239,68,68,.1);border-radius:5px;cursor:pointer">초기화</button>
+          </div>` : '<span style="color:var(--muted);font-size:.72rem">—</span>'}
+        </td>
+      </tr>`).join('') || '<tr><td colspan="6" style="padding:20px;text-align:center;color:var(--muted)">등록된 관리자 없음</td></tr>';
+  }
+
+  // 고객사 탭
+  const clientTbody = document.getElementById('users-client-tbody');
+  if (clientTbody) {
+    clientTbody.innerHTML = usersData.client.map(u => `
+      <tr style="border-bottom:1px solid rgba(255,255,255,.05)">
+        <td style="padding:12px;font-family:'JetBrains Mono',monospace;font-size:.8rem">${u.username}</td>
+        <td style="padding:12px">${u.company||'-'}</td>
+        <td style="padding:12px">${u.name||'-'}</td>
+        <td style="padding:12px;color:var(--muted)">${u.phone||'-'}</td>
+        <td style="padding:12px;color:var(--muted)">${u.area||'-'}</td>
+        <td style="padding:12px">
+          ${canEdit ? `
+          <div style="display:flex;gap:6px">
+            <button onclick="userEdit(${u.id},'client')" style="padding:3px 10px;font-size:.72rem;border:1px solid var(--border);color:var(--muted);background:transparent;border-radius:5px;cursor:pointer">편집</button>
+            <button onclick="userResetPassword('${u.username}',this)" style="padding:3px 10px;font-size:.72rem;border:1px solid rgba(239,68,68,.4);color:#f87171;background:rgba(239,68,68,.1);border-radius:5px;cursor:pointer">초기화</button>
+          </div>` : `<button onclick="userResetPassword('${u.username}',this)" style="padding:3px 10px;font-size:.72rem;border:1px solid rgba(239,68,68,.4);color:#f87171;background:rgba(239,68,68,.1);border-radius:5px;cursor:pointer">초기화</button>`}
+        </td>
+      </tr>`).join('') || '<tr><td colspan="6" style="padding:20px;text-align:center;color:var(--muted)">등록된 고객사 없음</td></tr>';
+  }
+}
+
+// ── 비밀번호 초기화 ──
+async function userResetPassword(username, btn) {
+  if (!confirm(username + ' 비밀번호를 마스터 비밀번호(Cel2026!)로 초기화할까요?')) return;
+  const masterPw = 'Cel2026!';
+  try {
+    await sbPatchWhere('accounts', 'username=eq.' + username, { password: masterPw, updated_at: new Date().toISOString() });
+    showToast('✅ ' + username + ' 비밀번호 초기화됐어요');
+  } catch(e) { showToast('초기화됨 (로컬)'); }
+  if (btn) {
+    btn.textContent = '완료 ✓';
+    btn.style.color = '#4ade80';
+    setTimeout(() => { btn.textContent = '초기화'; btn.style.color = '#f87171'; }, 2000);
+  }
+}
+
+// ── 활성/비활성 전환 ──
+async function userToggleActive(userId, currentActive) {
+  const newActive = !currentActive;
+  const arr = [...usersData.field, ...usersData.manager, ...usersData.client];
+  const user = arr.find(u => u.id === userId);
+  if (user) user.is_active = newActive;
+  renderUsers();
+  try {
+    await sbPatchWhere('accounts', 'id=eq.' + userId, { is_active: newActive });
+    showToast(newActive ? '✅ 계정 활성화됐어요' : '계정 비활성화됐어요');
+  } catch(e) { showToast('변경됨 (로컬)'); }
+}
+
+// ── 사용자 편집/등록 모달 ──
+function userOpenModal(mode, roleType, userId) {
+  const modal  = document.getElementById('user-modal');
+  const title  = document.getElementById('user-modal-title');
+  const roleEl = document.getElementById('um-role');
+
+  modal._mode   = mode;
+  modal._userId = userId;
+
+  if (mode === 'add') {
+    title.textContent = '+ 사용자 등록';
+    ['um-username','um-name','um-phone','um-area','um-company'].forEach(id => {
+      const el = document.getElementById(id); if (el) el.value = '';
+    });
+    if (roleEl) roleEl.value = roleType || 'field';
+  } else {
+    title.textContent = '✏️ 사용자 편집';
+    const arr = [...usersData.field, ...usersData.manager, ...usersData.client];
+    const user = arr.find(u => u.id === userId);
+    if (!user) return;
+    const setV = (id, val) => { const el = document.getElementById(id); if (el) el.value = val||''; };
+    setV('um-username', user.username);
+    setV('um-name',     user.name);
+    setV('um-phone',    user.phone);
+    setV('um-area',     user.area);
+    setV('um-company',  user.company);
+    if (roleEl) roleEl.value = user.role;
+  }
+  // 역할에 따라 필드 표시
+  userModalRoleChange();
+  modal.style.display = 'flex';
+}
+
+function userEdit(userId, roleType) { userOpenModal('edit', roleType, userId); }
+
+function userModalRoleChange() {
+  const role = document.getElementById('um-role')?.value;
+  const areaWrap    = document.getElementById('um-area-wrap');
+  const companyWrap = document.getElementById('um-company-wrap');
+  if (areaWrap)    areaWrap.style.display    = role === 'field' ? '' : 'none';
+  if (companyWrap) companyWrap.style.display = role === 'client' ? '' : 'none';
+}
+
+function userCloseModal() {
+  document.getElementById('user-modal').style.display = 'none';
+}
+
+async function userSaveModal() {
+  const modal    = document.getElementById('user-modal');
+  const mode     = modal._mode;
+  const userId   = modal._userId;
+  const getVal   = id => { const el = document.getElementById(id); return el ? el.value.trim() : ''; };
+  const username = getVal('um-username');
+  const name     = getVal('um-name');
+  const phone    = getVal('um-phone');
+  const role     = getVal('um-role');
+  const area     = getVal('um-area');
+  const company  = getVal('um-company');
+
+  if (!username) { alert('아이디를 입력해주세요'); return; }
+  if (!name)     { alert('이름을 입력해주세요'); return; }
+
+  const payload = { username, name, phone, role, area, company, updated_at: new Date().toISOString() };
+
+  if (mode === 'add') {
+    payload.password   = 'Cel2026!'; // 초기 비번 마스터로
+    payload.is_active  = true;
+    payload.created_at = new Date().toISOString();
+    try {
+      const result = await sbPost('accounts', payload);
+      const newUser = Array.isArray(result) ? result[0] : result;
+      const target = usersData[role] || usersData.field;
+      target.push(newUser || { ...payload, id: Date.now() });
+      showToast('✅ 사용자 등록됐어요 (초기 비번: Cel2026!)');
+    } catch(e) {
+      const target = usersData[role] || usersData.field;
+      target.push({ ...payload, id: Date.now() });
+      showToast('등록됨 (로컬)');
+    }
+  } else {
+    const arr = [...usersData.field, ...usersData.manager, ...usersData.client];
+    const user = arr.find(u => u.id === userId);
+    if (user) Object.assign(user, payload);
+    try {
+      await sbPatchWhere('accounts', 'id=eq.' + userId, payload);
+      showToast('✅ 사용자 정보 수정됐어요');
+    } catch(e) { showToast('수정됨 (로컬)'); }
+  }
+  userCloseModal();
+  renderUsers();
 }
 
 function showPage(name, skipHistory) {
@@ -7715,6 +8202,8 @@ function showPage(name, skipHistory) {
   if (name === 'compare') { setTimeout(function(){ renderCompareCharts(); }, 100); }
   if (name === 'score') loadSystemsFromDB();
   if (name === 'parts') loadPartsFromDB();
+  if (name === 'users') loadUsersFromDB();
+  if (name === 'sites') loadSitesFromDB();
   if (name === 'equipment') loadEquipmentFromDB();
   if (name === 'schedule') loadScheduleFromDB();
 }
