@@ -3472,6 +3472,47 @@ body {
     <!-- 대시보드 -->
     <div class="page active" id="page-dashboard">
       <div id="dashboard-content"></div>
+
+      <!-- 대시보드 실시간 카드 (DB 연동) -->
+      <div id="dash-realtime" style="display:none;padding:0 0 20px 0">
+
+        <!-- AS 알림 -->
+        <div id="dash-as-alert" style="margin-bottom:16px"></div>
+
+        <!-- 실시간 요약 카드 -->
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px">
+          <div class="stat-card">
+            <div class="stat-icon">🚨</div>
+            <div class="stat-val" id="dash-as-urgent" style="color:var(--red)">-</div>
+            <div class="stat-label">긴급 AS 대기</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">🔧</div>
+            <div class="stat-val" id="dash-as-progress" style="color:var(--orange)">-</div>
+            <div class="stat-label">AS 처리 중</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">⚠️</div>
+            <div class="stat-val" id="dash-low-stock" style="color:var(--yellow)">-</div>
+            <div class="stat-label">재고 부족</div>
+          </div>
+        </div>
+
+        <!-- 하단 2열 -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <!-- 재고 부족 목록 -->
+          <div style="background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:16px 20px">
+            <div style="font-size:.78rem;font-weight:600;color:var(--gold);letter-spacing:1px;margin-bottom:12px">📦 재고 부족 부품</div>
+            <div id="dash-stock-list">로드 중...</div>
+          </div>
+          <!-- 점검 일정 -->
+          <div style="background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:16px 20px">
+            <div style="font-size:.78rem;font-weight:600;color:var(--gold);letter-spacing:1px;margin-bottom:12px">📅 다가오는 점검 일정</div>
+            <div id="dash-schedule-list">로드 중...</div>
+          </div>
+        </div>
+
+      </div>
     </div>
 
     <!-- AI 챗봇 -->
@@ -5180,6 +5221,19 @@ body {
     <h1>⚡ 전력 분석</h1>
     <p>1차년도(2024.03~2025.02) vs 2차년도(2025.03~2026.02) · 리드스마트스퀘어</p>
   </div>
+  <div id="compare-role-banner" style="margin-bottom:16px"></div>
+  <script>
+    (function(){
+      const role = window.currentRole || localStorage.getItem('previo_role') || 'demo';
+      const el = document.getElementById('compare-role-banner');
+      if (!el) return;
+      if (role === 'demo') {
+        el.innerHTML = '<div style="background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.3);border-radius:8px;padding:10px 16px;font-size:.78rem;color:var(--gold)">👀 체험 모드 — 실제 리드스마트스퀘어 전력 데이터를 조회 중입니다.</div>';
+      } else if (role === 'client') {
+        el.innerHTML = '<div style="background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.3);border-radius:8px;padding:10px 16px;font-size:.78rem;color:#60a5fa">🏢 고객사 모드 — 계약 현장 전력 현황을 확인할 수 있습니다.</div>';
+      }
+    })();
+  </script>
 
   <!-- 요약 카드 4종 -->
   <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px">
@@ -7554,7 +7608,11 @@ async function doLogin() {
       const html = renderDashboard();
       const el = document.getElementById('dashboard-content');
       if (el && html) el.innerHTML = html;
-    }, 100);
+      // 실시간 DB 데이터 로드
+      const rt = document.getElementById('dash-realtime');
+      if (rt) rt.style.display = '';
+      loadDashboardData();
+    }, 300);
   }
   updateTime();
   setInterval(updateTime, 1000);
@@ -8204,6 +8262,13 @@ function showPage(name, skipHistory) {
   if (name === 'parts') loadPartsFromDB();
   if (name === 'users') loadUsersFromDB();
   if (name === 'sites') loadSitesFromDB();
+  if (name === 'dashboard') {
+    setTimeout(() => {
+      const rt = document.getElementById('dash-realtime');
+      if (rt) rt.style.display = '';
+      loadDashboardData();
+    }, 200);
+  }
   if (name === 'equipment') loadEquipmentFromDB();
   if (name === 'schedule') loadScheduleFromDB();
 }
@@ -10551,6 +10616,69 @@ function renderDashboard() {
   `;
 }
 
+// ── 대시보드 실시간 DB 데이터 로드 ──
+async function loadDashboardData() {
+  try {
+    // AS 건수
+    const asData = await sbFetch('complaints?select=id,status,type&limit=100');
+    const asUrgent   = (asData||[]).filter(a => a.type === 'emergency' && a.status !== 'done').length;
+    const asProgress = (asData||[]).filter(a => a.status === 'progress').length;
+    const asTotal    = (asData||[]).length;
+
+    // 부품 재고 부족
+    const masters = await sbFetch('part_master?select=part_id,name,min_quantity&limit=200');
+    const invs    = await sbFetch('part_inventory?select=part_id,stock_qty&limit=200');
+    const invMap  = {};
+    (invs||[]).forEach(i => { invMap[i.part_id] = i.stock_qty; });
+    const lowStock = (masters||[]).filter(p => (invMap[p.part_id]||0) < (p.min_quantity||1));
+
+    // 점검 일정 (오늘 이후)
+    const today = new Date().toISOString().split('T')[0];
+    const schedules = await sbFetch('maintenance_schedules?scheduled_date=gte.' + today + '&order=scheduled_date.asc&limit=5');
+
+    // 대시보드 업데이트
+    const setEl = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
+    const setHtml = (id, val) => { const el = document.getElementById(id); if(el) el.innerHTML = val; };
+
+    setEl('dash-as-urgent',   asUrgent);
+    setEl('dash-as-progress', asProgress);
+    setEl('dash-as-total',    asTotal);
+    setEl('dash-low-stock',   lowStock.length);
+
+    // 재고 부족 목록
+    const stockHtml = lowStock.length
+      ? lowStock.slice(0,5).map(p => `
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)">
+          <div style="font-size:.83rem">${p.name}</div>
+          <div style="font-family:'JetBrains Mono';font-size:.75rem;color:var(--red)">${invMap[p.part_id]||0}/${p.min_quantity} 개</div>
+        </div>`).join('')
+      : '<div style="padding:20px;text-align:center;color:var(--muted)">✅ 부족 부품 없음</div>';
+    setHtml('dash-stock-list', stockHtml);
+
+    // 점검 일정 목록
+    const schedHtml = (schedules||[]).length
+      ? (schedules||[]).map(s => `
+        <div style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--border)">
+          <div style="width:8px;height:8px;border-radius:50%;background:var(--blue);flex-shrink:0"></div>
+          <div style="flex:1;font-size:.83rem">${s.title||s.description||'점검 일정'}</div>
+          <div style="font-size:.72rem;color:var(--muted)">${(s.scheduled_date||'').substring(0,10)}</div>
+        </div>`).join('')
+      : '<div style="padding:20px;text-align:center;color:var(--muted)">📅 예정된 점검 없음</div>';
+    setHtml('dash-schedule-list', schedHtml);
+
+    // AS 알림
+    const asAlertEl = document.getElementById('dash-as-alert');
+    if (asAlertEl) {
+      asAlertEl.innerHTML = asUrgent > 0
+        ? `<div style="background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.4);border-radius:8px;padding:10px 16px;font-size:.82rem;color:var(--red)">🚨 긴급 AS 대기 ${asUrgent}건 — 즉시 처리 필요</div>`
+        : `<div style="background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.3);border-radius:8px;padding:10px 16px;font-size:.82rem;color:var(--green)">✅ 전체 시스템 정상 — 재고 이상 없음</div>`;
+    }
+
+  } catch(e) {
+    console.warn('대시보드 데이터 로드 실패:', e.message);
+  }
+}
+
 // ════ 전력 분석 ════
 // Supabase power_monthly 기반 실제 데이터
 
@@ -10660,6 +10788,13 @@ function roiReset() {
 }
 
 function renderCompareCharts() {
+  // 권한 체크 — 체험/고객사/관리자/운영자 접근 가능, L1 기사는 제한
+  const role = currentUser || 'demo';
+  if (role === 'field') {
+    const c = document.getElementById('pw-compare');
+    if (c) c.innerHTML = '<div style="padding:60px;text-align:center;color:var(--muted)">⚠️ 전력 분석은 관리자 이상 접근 가능합니다.</div>';
+    return;
+  }
   function sumCol(yrArr, col) { return yrArr.reduce(function(s,ym){ return s+pwGet(ym[0],ym[1])[col]; },0); }
   var r100 = {yr1: sumCol(YR1,2), yr2: sumCol(YR2,2)};
   var r101 = {yr1: sumCol(YR1,3), yr2: sumCol(YR2,3)};
