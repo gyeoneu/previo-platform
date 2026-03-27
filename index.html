@@ -1085,13 +1085,13 @@ body {
 #page-checklist .field { display:flex; flex-direction:column; gap:4px; }
 #page-checklist .field label { font-size:11px; font-weight:700; color:var(--t3); text-transform:uppercase; letter-spacing:.5px; }
 #page-checklist .field input, #page-checklist .field select, #page-checklist .field textarea {
-  background: var(--bg);
-  border: 1px solid var(--border);
+  background: #1a2f5e;
+  border: 1px solid rgba(59,130,246,.4);
   border-radius:8px;
   padding: 9px 12px;
   font-family: 'Noto Sans KR', sans-serif;
   font-size:13px;
-  color: var(--t1);
+  color: #e8f4ff;
   transition: border-color .2s, box-shadow .2s;
   width:100%;
 }
@@ -1446,15 +1446,41 @@ body {
 
 /* ── 인쇄 ── */
 @media print {
-  .hd { position:static; background:var(--t1) !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  /* 빈 첫 페이지 방지 */
+  body { margin: 0 !important; padding: 0 !important; }
+  .hd { display:none !important; }
+  .sidebar { display:none !important; }
+  .main-content > *:not(#page-checklist) { display:none !important; }
+  #page-checklist { display:block !important; margin:0 !important; padding:0 !important; }
+
+  /* 배경 흰색 — 잉크 절약 */
+  * { background: white !important; color: #1a1a1a !important; box-shadow: none !important; }
   .btn-group { display:none !important; }
+  [style*="background:linear-gradient"] { background: white !important; }
+
+  /* 버튼 숨김 */
+  button, .add-btn, .del-btn, .sec-toggle { display:none !important; }
+
+  /* 접힌 섹션 펼치기 */
   .sec-body.closed { display:block !important; }
-  .sec-toggle { display:none; }
   .sec-hd { cursor:default; }
 
-  .sec-card, .meta-card, .final-card { box-shadow:none !important; border:1px solid #ccc !important; page-break-inside:avoid; }
-  .add-btn { display:none; }
-  .del-btn { display:none; }
+  /* 카드 테두리 */
+  .sec-card, .meta-card, .final-card {
+    border:1px solid #999 !important;
+    page-break-inside:avoid;
+    margin-bottom:8px !important;
+  }
+
+  /* input 출력 시 테두리 표시 */
+  input, select, textarea {
+    border: 1px solid #999 !important;
+    background: white !important;
+    color: #1a1a1a !important;
+  }
+
+  /* 체크박스 표시 */
+  input[type="checkbox"] { width:14px; height:14px; }
 }
 
 /* ── 이벤트코드 ── */
@@ -3324,9 +3350,9 @@ body {
 <div id="login-screen">
   <div class="login-card">
     <div class="login-logo">
-      <span class="symbol">°C</span>
-      <span class="brand">CELSIUS</span>
-      <span class="sub">HVAC 통합 관리 플랫폼</span>
+      <span class="symbol">P</span>
+      <span class="brand">PREVIO</span>
+      <span class="sub">Habitat 통합 관리 플랫폼</span>
     </div>
     <div class="login-divider"></div>
 
@@ -3364,7 +3390,7 @@ body {
 
   <!-- 상단 헤더 -->
   <div class="top-header">
-    <div class="header-brand" onclick="doLogout()" style="cursor:pointer" title="로그인 화면으로"><span>°C</span> CELSIUS</div>
+    <div class="header-brand" onclick="doLogout()" style="cursor:pointer" title="로그인 화면으로"><span>P</span> PREVIO</div>
     <div class="header-info">
       <span id="header-site">리드스마트스퀘어</span>
       <span class="header-badge" id="header-role">관리자</span>
@@ -3518,8 +3544,8 @@ body {
     <!-- AI 챗봇 -->
     <div class="page" id="page-chat">
       <div class="dashboard-greeting">
-        <h1>🤖 AI 어시스턴트</h1>
-        <p>HVAC 전문 AI — 에러코드, 진단, 유지보수 무엇이든 질문하세요</p>
+        <h1>🤖 Previ AI</h1>
+        <p>Habitat 전문 AI — 에러코드, 진단, 유지보수 무엇이든 질문하세요</p>
       </div>
 
       <!-- API 키 설정 카드 -->
@@ -3856,7 +3882,7 @@ body {
     <button onclick="loadChecklistFromLocal()" style="padding:7px 14px;font-size:.78rem;border:1px solid var(--border);color:var(--muted);background:transparent;border-radius:8px;cursor:pointer">📂 불러오기</button>
     <button onclick="saveChecklistToLocal()" style="padding:7px 14px;font-size:.78rem;border:1px solid rgba(29,158,117,.4);color:var(--green);background:rgba(29,158,117,.1);border-radius:8px;cursor:pointer">💾 저장</button>
     <button onclick="resetChecklist()" style="padding:7px 14px;font-size:.78rem;border:1px solid rgba(239,68,68,.3);color:var(--red);background:transparent;border-radius:8px;cursor:pointer">🔄 초기화</button>
-    <button onclick="printChecklist()" style="padding:7px 14px;font-size:.78rem;border:none;background:linear-gradient(135deg,var(--blue),var(--cyan));color:white;border-radius:8px;cursor:pointer;font-weight:600">🖨️ 출력</button>
+    <button onclick="printChecklist()" class="no-print" style="padding:7px 14px;font-size:.78rem;border:none;background:linear-gradient(135deg,var(--blue),var(--cyan));color:white;border-radius:8px;cursor:pointer;font-weight:600">🖨️ 출력</button>
   </div>
 </div>
 <div class="main" id="checklist-form">
@@ -4795,13 +4821,13 @@ body {
             <div class="panel-card-hdr">보고서 관리</div>
             <div class="panel-card-body">
               <div class="action-grid">
-                <button class="action-big-btn btn-primary" onclick="printReport()">
+                <button class="action-big-btn btn-primary" onclick="generatePDF()">
                   <span>📄</span> PDF 생성 / 다운로드
                 </button>
-                <button class="action-big-btn btn-green" onclick="alert('관리사무소 발송 — 연동 예정')">
+                <button class="action-big-btn btn-green" onclick="sendReport()">
                   <span>📨</span> 관리사무소 발송
                 </button>
-                <button class="action-big-btn btn-ghost" onclick="showView('new')">
+                <button class="action-big-btn btn-ghost" onclick="copyReport()">
                   <span>✏️</span> 복사 후 수정
                 </button>
               </div>
@@ -4878,30 +4904,37 @@ body {
             <div class="panel-card-hdr">점수 변동 항목</div>
             <div class="panel-card-body">
               <div id="scoreInputs">
-                <div class="score-input-row">
-                  <span class="si-label">실외기 청소 완료 (3층 F구역)</span>
-                  <span class="si-type p">+</span>
-                  <span class="si-pts p">+5</span>
-                  <input type="checkbox" class="si-check" checked>
-                </div>
-                <div class="score-input-row">
-                  <span class="si-label">주소 충돌 수정 완료 (1층 B구역)</span>
-                  <span class="si-type p">+</span>
-                  <span class="si-pts p">+5</span>
-                  <input type="checkbox" class="si-check" checked>
-                </div>
-                <div class="score-input-row">
-                  <span class="si-label">PCB 이상 감지 (3층 F구역)</span>
-                  <span class="si-type m">-</span>
-                  <span class="si-pts m">-10</span>
-                  <input type="checkbox" class="si-check" checked>
-                </div>
-                <div class="score-input-row">
-                  <span class="si-label">정기점검 완료 (전체)</span>
-                  <span class="si-type n">유지</span>
-                  <span class="si-pts n">+3</span>
-                  <input type="checkbox" class="si-check" checked>
-                </div>
+                <!-- 감점 항목 -->
+                <div style="font-size:.72rem;color:var(--red);font-weight:600;margin:6px 0 4px 0;letter-spacing:1px">▸ 감점 항목</div>
+                <div class="score-input-row"><span class="si-label">미연결 호실 1개 (COM-01)</span><span class="si-type m">-</span><span class="si-pts m">-2</span><input type="checkbox" class="si-check"></div>
+                <div class="score-input-row"><span class="si-label">미연결 호실 3개↑ (COM-01×3)</span><span class="si-type m">-</span><span class="si-pts m">-5</span><input type="checkbox" class="si-check"></div>
+                <div class="score-input-row"><span class="si-label">주소 충돌 1회 (COM-02)</span><span class="si-type m">-</span><span class="si-pts m">-8</span><input type="checkbox" class="si-check"></div>
+                <div class="score-input-row"><span class="si-label">주소 충돌 재발 (COM-02 재발)</span><span class="si-type m">-</span><span class="si-pts m">-12</span><input type="checkbox" class="si-check"></div>
+                <div class="score-input-row"><span class="si-label">통신 PCB 이상 (COM-04)</span><span class="si-type m">-</span><span class="si-pts m">-10</span><input type="checkbox" class="si-check"></div>
+                <div class="score-input-row"><span class="si-label">충전포트 누설 이력 (REF-02)</span><span class="si-type m">-</span><span class="si-pts m">-10</span><input type="checkbox" class="si-check"></div>
+                <div class="score-input-row"><span class="si-label">냉매 반복 보충 2회↑ (REF-06)</span><span class="si-type m">-</span><span class="si-pts m">-10</span><input type="checkbox" class="si-check"></div>
+                <div class="score-input-row"><span class="si-label">냉매 누설 확정 (REF-05)</span><span class="si-type m">-</span><span class="si-pts m">-15</span><input type="checkbox" class="si-check"></div>
+                <div class="score-input-row"><span class="si-label">압축기 운전시간 6,000h↑ (OPR-01)</span><span class="si-type m">-</span><span class="si-pts m">-5</span><input type="checkbox" class="si-check"></div>
+                <div class="score-input-row"><span class="si-label">압축기 운전시간 8,000h↑ (OPR-01)</span><span class="si-type m">-</span><span class="si-pts m">-10</span><input type="checkbox" class="si-check"></div>
+                <div class="score-input-row"><span class="si-label">고압 경고 반복 3회↑ (OPR-02)</span><span class="si-type m">-</span><span class="si-pts m">-10</span><input type="checkbox" class="si-check"></div>
+                <div class="score-input-row"><span class="si-label">알람 3~5회 (30일)</span><span class="si-type m">-</span><span class="si-pts m">-8</span><input type="checkbox" class="si-check"></div>
+                <div class="score-input-row"><span class="si-label">알람 6회↑ (30일)</span><span class="si-type m">-</span><span class="si-pts m">-15</span><input type="checkbox" class="si-check"></div>
+                <div class="score-input-row"><span class="si-label">설치 불량 의심</span><span class="si-type m">-</span><span class="si-pts m">-5</span><input type="checkbox" class="si-check"></div>
+                <div class="score-input-row"><span class="si-label">정기점검 누락 (MNT-01)</span><span class="si-type m">-</span><span class="si-pts m">-5</span><input type="checkbox" class="si-check"></div>
+                <!-- 유지 항목 -->
+                <div style="font-size:.72rem;color:var(--blue);font-weight:600;margin:10px 0 4px 0;letter-spacing:1px">≡ 유지 항목</div>
+                <div class="score-input-row"><span class="si-label">정기점검 완료 (월)</span><span class="si-type n">유지</span><span class="si-pts n">+3</span><input type="checkbox" class="si-check"></div>
+                <div class="score-input-row"><span class="si-label">에러 없이 운전 (월)</span><span class="si-type n">유지</span><span class="si-pts n">+1</span><input type="checkbox" class="si-check"></div>
+                <div class="score-input-row"><span class="si-label">에러 해결 완료</span><span class="si-type n">유지</span><span class="si-pts n">+2</span><input type="checkbox" class="si-check"></div>
+                <div class="score-input-row"><span class="si-label">냉매 정상 범위 유지</span><span class="si-type n">유지</span><span class="si-pts n">+2</span><input type="checkbox" class="si-check"></div>
+                <!-- 가점 항목 -->
+                <div style="font-size:.72rem;color:var(--green);font-weight:600;margin:10px 0 4px 0;letter-spacing:1px">+ 가점 항목</div>
+                <div class="score-input-row"><span class="si-label">실외기 청소 완료</span><span class="si-type p">+</span><span class="si-pts p">+5</span><input type="checkbox" class="si-check"></div>
+                <div class="score-input-row"><span class="si-label">부품 교체 완료</span><span class="si-type p">+</span><span class="si-pts p">+4</span><input type="checkbox" class="si-check"></div>
+                <div class="score-input-row"><span class="si-label">설치 보완 완료</span><span class="si-type p">+</span><span class="si-pts p">+5</span><input type="checkbox" class="si-check"></div>
+                <div class="score-input-row"><span class="si-label">냉매 보충 완료</span><span class="si-type p">+</span><span class="si-pts p">+3</span><input type="checkbox" class="si-check"></div>
+                <div class="score-input-row"><span class="si-label">재활용 부품 비축</span><span class="si-type p">+</span><span class="si-pts p">+3</span><input type="checkbox" class="si-check"></div>
+                <div class="score-input-row"><span class="si-label">시즌 전 예방점검</span><span class="si-type p">+</span><span class="si-pts p">+5</span><input type="checkbox" class="si-check"></div>
               </div>
             </div>
           </div>
@@ -9029,6 +9062,56 @@ function openReport(id) {
   renderList();
   renderDetail(selectedReport);
   showView('detail');
+}
+
+// ── 복사 후 수정 ──
+function copyReport(id) {
+  const src = id ? reports.find(r => r.id === id) : selectedReport;
+  if (!src) { showToast('⚠️ 복사할 보고서를 선택해주세요'); return; }
+
+  // 작성 뷰로 전환
+  showView('new');
+
+  // 기존 데이터 채우기
+  const setVal = (id, val) => { const el = document.getElementById(id); if(el) el.value = val||''; };
+  setVal('newType',     src.type);
+  setVal('newDate',     new Date().toISOString().slice(0,10)); // 날짜는 오늘
+  setVal('newEngineer', src.engineer || '');
+  setVal('newSystem',   src.system || '');
+  setVal('newMemo',     src.memo || src.content || '');
+
+  showToast('✅ 보고서 복사됐어요. 내용을 수정 후 저장하세요.');
+}
+
+// ── PDF 출력 (브라우저 인쇄) ──
+function generatePDF() {
+  window.print();
+}
+
+// ── 보고서 관리사무소 발송 (mailto 방식 — Replit 이전 시 자동발송으로 업그레이드 예정) ──
+function sendReport() {
+  const r = selectedReport;
+  if (!r) { showToast('⚠️ 보고서를 선택해주세요'); return; }
+  const subject = encodeURIComponent('[셀시우스] 점검 보고서 — ' + (r.date || new Date().toLocaleDateString('ko-KR')));
+  const bodyText = [
+    '안녕하세요,',
+    '',
+    '점검 보고서를 발송드립니다.',
+    '',
+    '■ 보고서 유형: ' + (r.typeLabel || r.type),
+    '■ 점검 일자: ' + (r.date || '-'),
+    '■ 담당 기사: ' + (r.engineer || '-'),
+    '',
+    '점검 내용:',
+    (r.memo || r.content || '-'),
+    '',
+    '감사합니다.',
+    '셀시우스 드림',
+    'Tel: 010-3966-9691'
+  ].join('\n');
+  const body = encodeURIComponent(bodyText);
+  window.location.href = 'mailto:?subject=' + subject + '&body=' + body;
+  showToast('📨 메일 앱이 열립니다');
 }
 
 function renderDetail(r) {
