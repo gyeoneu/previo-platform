@@ -3806,16 +3806,60 @@ body {
     </div>
 
     <div class="page" id="page-error">
-      <div class="coming-soon">
-        <div class="icon">⚡</div>
-        <h2>에러코드 진단</h2>
-        <p>삼성 DVM 에러코드 검색 및 원인/조치 안내</p>
-        <p style="font-size:0.8rem;color:var(--text-muted);margin-top:8px">현장 전용 에러코드 DB 연동 중 — Previ AI에게 에러코드를 질문하세요</p>
-      </div>
-    </div>
+  <div class="dashboard-greeting">
+    <h1>⚡ 에러코드 진단</h1>
+    <p>삼성 DVM S2 에러코드 검색 · 원인 분석 · 조치 안내</p>
+  </div>
+
+  <!-- 검색 -->
+  <div style="display:flex;gap:10px;margin-bottom:20px">
+    <input id="error-search" type="text" placeholder="에러코드 입력 (예: E101) 또는 증상 키워드 검색..."
+      oninput="filterErrorCodes(this.value)"
+      style="flex:1;padding:10px 16px;background:var(--panel);border:1px solid var(--border);border-radius:10px;color:var(--white);font-size:.9rem">
+    <button onclick="filterErrorCodes('')" style="padding:10px 16px;background:var(--panel);border:1px solid var(--border);border-radius:10px;color:var(--muted);cursor:pointer">전체</button>
+  </div>
+
+  <!-- 카테고리 필터 -->
+  <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px">
+    <button onclick="filterErrorCategory('all')" id="err-cat-all" style="padding:5px 14px;font-size:.78rem;border-radius:20px;border:1px solid var(--border);background:var(--blue);color:white;cursor:pointer">전체</button>
+    <button onclick="filterErrorCategory('E1')" id="err-cat-E1" style="padding:5px 14px;font-size:.78rem;border-radius:20px;border:1px solid var(--border);background:var(--panel);color:var(--muted);cursor:pointer">E1xx 통신</button>
+    <button onclick="filterErrorCategory('E2')" id="err-cat-E2" style="padding:5px 14px;font-size:.78rem;border-radius:20px;border:1px solid var(--border);background:var(--panel);color:var(--muted);cursor:pointer">E2xx 센서</button>
+    <button onclick="filterErrorCategory('E3')" id="err-cat-E3" style="padding:5px 14px;font-size:.78rem;border-radius:20px;border:1px solid var(--border);background:var(--panel);color:var(--muted);cursor:pointer">E3xx 냉매</button>
+    <button onclick="filterErrorCategory('E4')" id="err-cat-E4" style="padding:5px 14px;font-size:.78rem;border-radius:20px;border:1px solid var(--border);background:var(--panel);color:var(--muted);cursor:pointer">E4xx 전기</button>
+    <button onclick="filterErrorCategory('E5')" id="err-cat-E5" style="padding:5px 14px;font-size:.78rem;border-radius:20px;border:1px solid var(--border);background:var(--panel);color:var(--muted);cursor:pointer">E5xx 운전</button>
+    <button onclick="filterErrorCategory('E9')" id="err-cat-E9" style="padding:5px 14px;font-size:.78rem;border-radius:20px;border:1px solid var(--border);background:var(--panel);color:var(--muted);cursor:pointer">E9xx 기타</button>
+  </div>
+
+  <!-- 결과 카운트 -->
+  <div style="font-size:.78rem;color:var(--muted);margin-bottom:12px">
+    검색 결과: <span id="error-count" style="color:var(--blue);font-weight:600">0</span>건
+  </div>
+
+  <!-- 에러코드 목록 -->
+  <div id="error-list" style="display:grid;gap:8px"></div>
+
+  <!-- Previ AI 안내 -->
+  <div style="margin-top:24px;padding:16px 20px;background:rgba(55,138,221,.08);border:1px solid rgba(55,138,221,.3);border-radius:10px;font-size:.82rem;color:#60a5fa">
+    💡 상세한 진단이 필요하면 <strong>Previ AI</strong>에게 에러코드를 질문하세요. 현장 맥락에 맞는 정밀 진단을 받을 수 있습니다.
+  </div>
+</div>
+
+
 
     <div class="page" id="page-checklist">
-<div class="main">
+<div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;background:var(--panel);border-bottom:1px solid var(--border)">
+  <div>
+    <h1 style="font-size:1.2rem;font-weight:700">📋 설치 준공 체크리스트</h1>
+    <div style="font-size:.75rem;color:var(--muted);margin-top:2px">삼성 DVM 시스템 설치 준공 점검 · 리드스마트스퀘어</div>
+  </div>
+  <div style="display:flex;gap:8px">
+    <button onclick="loadChecklistFromLocal()" style="padding:7px 14px;font-size:.78rem;border:1px solid var(--border);color:var(--muted);background:transparent;border-radius:8px;cursor:pointer">📂 불러오기</button>
+    <button onclick="saveChecklistToLocal()" style="padding:7px 14px;font-size:.78rem;border:1px solid rgba(29,158,117,.4);color:var(--green);background:rgba(29,158,117,.1);border-radius:8px;cursor:pointer">💾 저장</button>
+    <button onclick="resetChecklist()" style="padding:7px 14px;font-size:.78rem;border:1px solid rgba(239,68,68,.3);color:var(--red);background:transparent;border-radius:8px;cursor:pointer">🔄 초기화</button>
+    <button onclick="printChecklist()" style="padding:7px 14px;font-size:.78rem;border:none;background:linear-gradient(135deg,var(--blue),var(--cyan));color:white;border-radius:8px;cursor:pointer;font-weight:600">🖨️ 출력</button>
+  </div>
+</div>
+<div class="main" id="checklist-form">
 
 <div class="meta-card">
   <div class="meta-title">📋 기본 정보</div>
@@ -5011,7 +5055,7 @@ body {
         <input id="sched-assignee" style="width:100%;background:var(--card);border:1px solid var(--border);border-radius:6px;padding:8px 10px;color:var(--white);font-size:.82rem" placeholder="담당자명">
       </div>
     </div>
-    <button onclick="addSchedule()" style="background:linear-gradient(135deg,var(--blue),var(--accent));border:none;border-radius:8px;padding:10px 24px;color:#fff;font-size:.82rem;cursor:pointer;font-weight:600">등록</button>
+    <button onclick="schedAdd()" style="background:linear-gradient(135deg,var(--blue),var(--accent));border:none;border-radius:8px;padding:10px 24px;color:#fff;font-size:.82rem;cursor:pointer;font-weight:600">등록</button>
   </div>
 
   <!-- 일정 목록 -->
@@ -7746,6 +7790,321 @@ function usersTab(type) {
   });
 }
 
+// ════ 에러코드 데이터 ════
+const ERROR_CODES = [
+  // E1xx — 통신 이상
+  {code:'E101',cat:'E1',title:'실내기 통신 이상',cause:'실내기와 실외기 간 통신 두절. 통신선 단선 또는 접속 불량.',action:'통신선 연결 상태 확인. 단자 조임 상태 점검. 통신 PCB 불량 여부 확인.',level:'warn'},
+  {code:'E102',cat:'E1',title:'다수 실내기 통신 이상',cause:'여러 실내기 동시 통신 두절. 공통 통신선 문제 또는 실외기 통신 PCB 불량.',action:'실외기 통신 PCB 교체 검토. 공통 통신 배선 점검.',level:'error'},
+  {code:'E103',cat:'E1',title:'주소 설정 오류',cause:'실내기 주소 중복 또는 잘못 설정. 설치 시 임의 주소 설정 오류.',action:'DMS에서 실내기 주소 재확인. 중복 주소 수정. 주소 재설정 후 재기동.',level:'warn'},
+  {code:'E104',cat:'E1',title:'DMS 통신 이상',cause:'DMS 중앙 제어 시스템과 실외기 통신 두절.',action:'DMS 통신 케이블 점검. DMS 재기동. 통신 설정 확인.',level:'error'},
+  {code:'E105',cat:'E1',title:'실내외기 매칭 오류',cause:'실내기-실외기 연결 설정 불일치.',action:'시스템 구성 재확인. 매칭 설정 재등록.',level:'warn'},
+  // E2xx — 센서 이상
+  {code:'E201',cat:'E2',title:'실내기 흡입 온도 센서 이상',cause:'실내기 흡입구 온도 센서 단선 또는 단락.',action:'센서 저항값 측정 (25°C 기준 약 10kΩ). 규정값 벗어나면 센서 교체.',level:'warn'},
+  {code:'E202',cat:'E2',title:'실내기 열교환기 센서 이상',cause:'실내기 열교환기 온도 센서 불량.',action:'센서 저항값 측정. 센서 교체.',level:'warn'},
+  {code:'E203',cat:'E2',title:'실외기 흡입 온도 센서 이상',cause:'실외기 흡입 온도 센서 단선 또는 단락.',action:'센서 교체. 배선 점검.',level:'warn'},
+  {code:'E204',cat:'E2',title:'실외기 토출 온도 센서 이상',cause:'압축기 토출 온도 센서 불량. 고온 시 보호 회로 작동.',action:'센서 교체. 토출 온도 측정 후 이상 원인 파악.',level:'error'},
+  {code:'E205',cat:'E2',title:'실외기 열교환기 센서 이상',cause:'실외기 열교환기 온도 센서 불량.',action:'센서 교체. 연결 배선 점검.',level:'warn'},
+  {code:'E206',cat:'E2',title:'배관 온도 센서 이상',cause:'액관/가스관 온도 센서 불량.',action:'센서 교체.',level:'warn'},
+  // E3xx — 냉매 이상
+  {code:'E301',cat:'E3',title:'냉매 부족 (저압)',cause:'냉매 누설 또는 충전 부족으로 저압 보호 작동.',action:'냉매 압력 측정. 누설 탐지 실시. 누설 수리 후 냉매 재충전 (R410A).',level:'error'},
+  {code:'E302',cat:'E3',title:'고압 이상',cause:'냉매 과충전, 열교환기 오염, 팬 불량으로 고압 보호 작동.',action:'고압 측정. 열교환기 청소. 팬모터 점검. 냉매량 확인.',level:'error'},
+  {code:'E303',cat:'E3',title:'냉매 과충전',cause:'냉매 충전량 과다.',action:'냉매 회수 후 정량 재충전.',level:'warn'},
+  {code:'E304',cat:'E3',title:'냉매 회로 이상',cause:'팽창밸브 또는 냉매 회로 막힘.',action:'팽창밸브 점검. 필터 드라이어 교체 검토.',level:'error'},
+  {code:'E305',cat:'E3',title:'오일 부족',cause:'압축기 오일 부족.',action:'오일 레벨 확인. 오일 보충.',level:'error'},
+  // E4xx — 전기 이상
+  {code:'E401',cat:'E4',title:'실외기 전원 이상',cause:'전원 전압 이상 또는 순간 정전.',action:'공급 전압 측정 (3상 220V ±10%). 전원 케이블 점검.',level:'error'},
+  {code:'E402',cat:'E4',title:'과전류 보호',cause:'압축기 또는 팬모터 과전류.',action:'압축기 전류 측정. 팬모터 점검. 인버터 불량 확인.',level:'error'},
+  {code:'E403',cat:'E4',title:'IPM 모듈 이상',cause:'인버터 파워 모듈(IPM) 과열 또는 불량.',action:'IPM 온도 확인. 방열 핀 청소. IPM 교체.',level:'error'},
+  {code:'E404',cat:'E4',title:'DC 링크 전압 이상',cause:'인버터 DC 전압 이상.',action:'콘덴서 점검. 인버터 보드 교체.',level:'error'},
+  {code:'E405',cat:'E4',title:'압축기 기동 실패',cause:'압축기 기동 불량. 잠금 상태.',action:'압축기 저항값 측정. 기계적 잠금 여부 확인. 압축기 교체 검토.',level:'error'},
+  // E5xx — 운전 이상
+  {code:'E501',cat:'E5',title:'압축기 과열',cause:'압축기 토출 온도 과다 상승.',action:'냉매량 확인. 열교환기 청소. 통풍 환경 점검.',level:'error'},
+  {code:'E502',cat:'E5',title:'팬모터 이상',cause:'실외기 팬모터 과전류 또는 불량.',action:'팬모터 전류 측정. 팬 블레이드 이물질 확인. 팬모터 교체.',level:'warn'},
+  {code:'E503',cat:'E5',title:'실내기 팬 이상',cause:'실내기 팬모터 불량.',action:'팬모터 점검 및 교체.',level:'warn'},
+  {code:'E504',cat:'E5',title:'냉난방 동시 요청',cause:'동일 계통에서 냉방과 난방 동시 요청.',action:'DMS에서 운전 모드 통일. 계절별 운전 모드 설정 적용.',level:'warn'},
+  {code:'E505',cat:'E5',title:'연속 운전 과부하',cause:'장시간 연속 운전으로 압축기 과부하.',action:'운전 시간 제한 설정. 필터 청소. 냉매량 점검.',level:'warn'},
+  // E9xx — 기타
+  {code:'E901',cat:'E9',title:'PCB 이상',cause:'메인 제어 PCB 불량.',action:'PCB 교체. 전원 ON/OFF 후 재확인.',level:'error'},
+  {code:'E902',cat:'E9',title:'EEPROM 이상',cause:'메모리 칩 데이터 손상.',action:'PCB 교체.',level:'error'},
+  {code:'E903',cat:'E9',title:'시스템 설정 오류',cause:'시스템 구성 파라미터 오류.',action:'초기화 후 재설정.',level:'warn'},
+  {code:'E904',cat:'E9',title:'자가 진단 이상',cause:'자가 점검 루틴에서 이상 감지.',action:'전원 재기동 후 재확인. 지속 시 PCB 교체.',level:'warn'},
+];
+
+let errorCurrentCategory = 'all';
+
+function filterErrorCodes(keyword) {
+  const kw = keyword.toLowerCase().trim();
+  let list = ERROR_CODES;
+  if (errorCurrentCategory !== 'all') {
+    list = list.filter(e => e.code.startsWith(errorCurrentCategory));
+  }
+  if (kw) {
+    list = list.filter(e =>
+      e.code.toLowerCase().includes(kw) ||
+      e.title.toLowerCase().includes(kw) ||
+      e.cause.toLowerCase().includes(kw) ||
+      e.action.toLowerCase().includes(kw)
+    );
+  }
+  renderErrorList(list);
+}
+
+function filterErrorCategory(cat) {
+  errorCurrentCategory = cat;
+  // 버튼 스타일 업데이트
+  document.querySelectorAll('[id^="err-cat-"]').forEach(btn => {
+    btn.style.background = 'var(--panel)';
+    btn.style.color = 'var(--muted)';
+  });
+  const active = document.getElementById('err-cat-' + cat);
+  if (active) { active.style.background = 'var(--blue)'; active.style.color = 'white'; }
+  const kw = document.getElementById('error-search')?.value || '';
+  filterErrorCodes(kw);
+}
+
+function renderErrorList(list) {
+  const container = document.getElementById('error-list');
+  const counter   = document.getElementById('error-count');
+  if (!container) return;
+  if (counter) counter.textContent = list.length;
+
+  if (list.length === 0) {
+    container.innerHTML = '<div style="padding:40px;text-align:center;color:var(--muted)">검색 결과가 없습니다.</div>';
+    return;
+  }
+
+  container.innerHTML = list.map(e => {
+    const levelColor = e.level === 'error' ? 'var(--red)' : e.level === 'warn' ? 'var(--orange)' : 'var(--green)';
+    const levelText  = e.level === 'error' ? '즉시 조치' : e.level === 'warn' ? '점검 필요' : '참고';
+    return `
+    <div style="background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:16px 20px;cursor:pointer"
+      onclick="this.querySelector('.err-detail').style.display=this.querySelector('.err-detail').style.display==='none'?'':'none'">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:700;color:${levelColor};width:60px;flex-shrink:0">${e.code}</div>
+        <div style="flex:1">
+          <div style="font-size:.9rem;font-weight:600;color:var(--white)">${e.title}</div>
+          <div style="font-size:.75rem;color:var(--muted);margin-top:2px">${e.cause.substring(0,50)}...</div>
+        </div>
+        <span style="background:rgba(0,0,0,.3);color:${levelColor};padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:600;flex-shrink:0">${levelText}</span>
+      </div>
+      <div class="err-detail" style="display:none;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
+        <div style="margin-bottom:10px">
+          <div style="font-size:.72rem;color:var(--gold);font-weight:600;letter-spacing:1px;margin-bottom:4px">원인</div>
+          <div style="font-size:.85rem;color:var(--white)">${e.cause}</div>
+        </div>
+        <div>
+          <div style="font-size:.72rem;color:var(--blue);font-weight:600;letter-spacing:1px;margin-bottom:4px">조치 방법</div>
+          <div style="font-size:.85rem;color:var(--white)">${e.action}</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// 에러코드 페이지 초기화
+function initErrorPage() {
+  filterErrorCodes('');
+}
+
+// ════ 설치 체크리스트 저장/불러오기/출력 ════
+function saveChecklistToLocal() {
+  try {
+    const form = document.getElementById('checklist-form');
+    if (!form) { showToast('⚠️ 체크리스트 폼을 찾을 수 없습니다.'); return; }
+    const inputs = form.querySelectorAll('input,select,textarea');
+    const data = {};
+    inputs.forEach(el => { if (el.name || el.id) data[el.id || el.name] = el.type === 'checkbox' ? el.checked : el.value; });
+    const key = 'previo_checklist_' + new Date().toISOString().split('T')[0];
+    localStorage.setItem(key, JSON.stringify({ saved_at: new Date().toISOString(), data }));
+    showToast('✅ 체크리스트 저장됐어요 (로컬)');
+  } catch(e) { showToast('저장 중 오류: ' + e.message); }
+}
+
+function loadChecklistFromLocal() {
+  try {
+    const keys = Object.keys(localStorage).filter(k => k.startsWith('previo_checklist_')).sort().reverse();
+    if (keys.length === 0) { showToast('저장된 체크리스트가 없어요'); return; }
+    const latest = JSON.parse(localStorage.getItem(keys[0]));
+    const data = latest.data;
+    Object.entries(data).forEach(([id, val]) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (el.type === 'checkbox') el.checked = val;
+      else el.value = val;
+    });
+    showToast('✅ 체크리스트 불러왔어요 (' + keys[0].replace('previo_checklist_','') + ')');
+  } catch(e) { showToast('불러오기 오류: ' + e.message); }
+}
+
+function printChecklist() {
+  window.print();
+}
+
+function resetChecklist() {
+  if (!confirm('체크리스트를 초기화할까요?')) return;
+  const form = document.getElementById('checklist-form');
+  if (!form) return;
+  form.querySelectorAll('input').forEach(el => {
+    if (el.type === 'checkbox') el.checked = false;
+    else el.value = '';
+  });
+  form.querySelectorAll('select').forEach(el => el.selectedIndex = 0);
+  form.querySelectorAll('textarea').forEach(el => el.value = '');
+  showToast('초기화됐어요');
+}
+
+// ════ 점검 일정 Supabase 연동 ════
+var schedData = [];
+
+async function loadScheduleFromDB() {
+  try {
+    const rows = await sbFetch('maintenance_schedules?order=scheduled_date.asc&limit=100');
+    schedData = rows || [];
+  } catch(e) {
+    console.warn('점검 일정 로드 실패:', e.message);
+    schedData = [];
+  }
+  renderScheduleList();
+}
+
+function renderScheduleList() {
+  const list = document.getElementById('sched-list');
+  const cnt  = document.getElementById('sched-count');
+  if (!list) return;
+  if (cnt) cnt.textContent = schedData.length + '건';
+
+  if (schedData.length === 0) {
+    list.innerHTML = '<div style="text-align:center;padding:40px;color:var(--muted);font-size:.82rem">등록된 일정이 없습니다</div>';
+    return;
+  }
+
+  const role = currentUser || 'demo';
+  const canEdit = ['manager','admin'].includes(role);
+
+  list.innerHTML = schedData.map(s => {
+    const date = s.scheduled_date ? new Date(s.scheduled_date).toLocaleDateString('ko-KR') : '-';
+    const statusColor = s.status === 'done' ? 'var(--green)' : s.status === 'progress' ? 'var(--blue)' : 'var(--orange)';
+    const statusText  = s.status === 'done' ? '완료' : s.status === 'progress' ? '진행중' : '예정';
+    return `
+    <div style="background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:14px 18px;display:flex;align-items:center;gap:12px">
+      <div style="width:10px;height:10px;border-radius:50%;background:${statusColor};flex-shrink:0"></div>
+      <div style="flex:1">
+        <div style="font-size:.9rem;font-weight:600;color:var(--white)">${s.title||s.description||'점검 일정'}</div>
+        <div style="font-size:.75rem;color:var(--muted);margin-top:2px">${s.dms_system||'전체'} · 담당: ${s.assignee||'미배정'}</div>
+      </div>
+      <div style="font-size:.82rem;color:var(--muted);text-align:right">
+        <div style="color:var(--white)">${date}</div>
+        <span style="background:rgba(0,0,0,.3);color:${statusColor};padding:2px 8px;border-radius:20px;font-size:.72rem">${statusText}</span>
+      </div>
+      ${canEdit ? `
+      <div style="display:flex;gap:6px">
+        ${s.status !== 'done' ? `<button onclick="schedComplete(${s.id})" style="padding:4px 10px;font-size:.72rem;border:1px solid rgba(29,158,117,.4);color:var(--green);background:transparent;border-radius:6px;cursor:pointer">완료</button>` : ''}
+        <button onclick="schedDelete(${s.id})" style="padding:4px 10px;font-size:.72rem;border:1px solid rgba(239,68,68,.3);color:var(--red);background:transparent;border-radius:6px;cursor:pointer">삭제</button>
+      </div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+async function schedAdd() {
+  const title    = document.getElementById('sched-title')?.value.trim();
+  const system   = document.getElementById('sched-system')?.value;
+  const date     = document.getElementById('sched-date')?.value;
+  const assignee = document.getElementById('sched-assignee')?.value.trim();
+
+  if (!title) { showToast('⚠️ 일정 제목을 입력해주세요'); return; }
+  if (!date)  { showToast('⚠️ 예정일을 선택해주세요'); return; }
+
+  const payload = {
+    title, dms_system: system, scheduled_date: date,
+    assignee, status: 'pending',
+    created_at: new Date().toISOString()
+  };
+
+  try {
+    const result = await sbPost('maintenance_schedules', payload);
+    const newItem = Array.isArray(result) ? result[0] : result;
+    schedData.push(newItem || { ...payload, id: Date.now() });
+    showToast('✅ 일정 등록됐어요');
+  } catch(e) {
+    schedData.push({ ...payload, id: Date.now() });
+    showToast('등록됨 (로컬)');
+  }
+
+  // 폼 초기화
+  ['sched-title','sched-assignee'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
+
+  renderScheduleList();
+}
+
+async function schedComplete(id) {
+  const s = schedData.find(r => r.id === id);
+  if (s) s.status = 'done';
+  renderScheduleList();
+  try {
+    await sbPatchWhere('maintenance_schedules', 'id=eq.' + id, { status: 'done', completed_at: new Date().toISOString() });
+    showToast('✅ 완료 처리됐어요');
+  } catch(e) { showToast('완료 처리됨 (로컬)'); }
+}
+
+async function schedDelete(id) {
+  if (!confirm('일정을 삭제할까요?')) return;
+  const idx = schedData.findIndex(r => r.id === id);
+  if (idx >= 0) schedData.splice(idx, 1);
+  renderScheduleList();
+  try {
+    await sbPatchWhere('maintenance_schedules', 'id=eq.' + id, { status: 'cancelled' });
+    showToast('🗑️ 삭제됐어요');
+  } catch(e) { showToast('삭제됨 (로컬)'); }
+}
+
+// ════ 점검 보고서 기본 DB 연동 ════
+var reportsData = [];
+
+async function loadReportsFromDB() {
+  try {
+    const rows = await sbFetch('inspection_reports?order=created_at.desc&limit=50');
+    reportsData = rows || [];
+  } catch(e) {
+    console.warn('보고서 로드 실패:', e.message);
+    reportsData = [];
+  }
+  renderReportList();
+}
+
+function renderReportList() {
+  const sidebar = document.getElementById('report-sidebar-list');
+  if (!sidebar) return;
+
+  if (reportsData.length === 0) {
+    sidebar.innerHTML = '<div style="padding:20px;text-align:center;color:var(--muted);font-size:.78rem">보고서 없음</div>';
+    return;
+  }
+
+  const typeIcon = { monthly:'📊', emergency:'🚨', preventive:'🔧', complaint:'📢' };
+  sidebar.innerHTML = reportsData.map(r => `
+    <div class="sb-item" onclick="showReportDetail(${r.id})" style="cursor:pointer">
+      <div class="sb-dot" style="background:var(--blue)"></div>
+      <div style="flex:1;font-size:.8rem">
+        ${typeIcon[r.report_type]||'📋'} ${r.title||'점검 보고서'}
+        <div style="font-size:.7rem;color:var(--muted)">${(r.created_at||'').substring(0,10)}</div>
+      </div>
+    </div>`).join('');
+}
+
+function showReportDetail(id) {
+  const r = reportsData.find(x => x.id === id);
+  if (!r) return;
+  showView('detail');
+  const detail = document.getElementById('report-detail-content');
+  if (!detail) return;
+  detail.innerHTML = `
+    <div style="padding:20px">
+      <h2 style="font-size:1.1rem;font-weight:700;margin-bottom:12px">${r.title||'점검 보고서'}</h2>
+      <div style="font-size:.82rem;color:var(--muted);margin-bottom:16px">${(r.created_at||'').substring(0,10)} · ${r.inspector||'-'}</div>
+      <div style="font-size:.9rem;line-height:1.8;color:var(--white)">${r.content||r.description||'내용 없음'}</div>
+    </div>`;
+}
+
 // ── 건물 관리 ──
 var sitesData = [];
 
@@ -8262,6 +8621,9 @@ function showPage(name, skipHistory) {
   if (name === 'parts') loadPartsFromDB();
   if (name === 'users') loadUsersFromDB();
   if (name === 'sites') loadSitesFromDB();
+  if (name === 'error') initErrorPage();
+  if (name === 'schedule') loadScheduleFromDB();
+  if (name === 'report') loadReportsFromDB();
   if (name === 'dashboard') {
     setTimeout(() => {
       const rt = document.getElementById('dash-realtime');
